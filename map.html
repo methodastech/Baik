@@ -1,0 +1,376 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Baik · Khayr · Product Map · Brand Method</title>
+<meta name="robots" content="noindex">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Saira:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+  /* The whole page keeps the flat ramp: white, super light grey, light grey, grey, ink.
+     Colour appears only on the marks, one hue per branch, the same rule as the deck. */
+  :root{--paper:#FFFFFF;--panel:#F3F3F3;--line:#DBDBDB;--soft:#6E6E6E;--ink:#1E2124}
+  *{margin:0;padding:0;box-sizing:border-box}
+  html,body{height:100%}
+  body{font-family:"Saira",system-ui,sans-serif;background:var(--paper);color:var(--ink);
+   -webkit-font-smoothing:antialiased;overflow:hidden;display:flex;flex-direction:column}
+
+  /* ---- the shared admin strip, verbatim grammar from the sibling pages ---- */
+  .bmws{background:var(--paper);color:var(--ink);border-bottom:1px solid var(--line);flex:none}
+  .bmws-in{display:flex;align-items:center;justify-content:space-between;padding:8px clamp(14px,3vw,30px);gap:12px;flex-wrap:wrap}
+  .bmws-crumb{display:flex;flex-direction:column;line-height:1.3;white-space:nowrap}
+  .bmws-crumb b{font-size:12.5px;font-weight:700;color:var(--ink);letter-spacing:.01em}
+  .bmws-crumb span{font-family:"JetBrains Mono",monospace;font-size:8.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--soft)}
+  .bmws-tabs{display:flex;align-items:center;border:1px solid var(--line);border-radius:11px;overflow:auto;max-width:100%;margin-left:auto;padding:3px;gap:3px;background:var(--panel)}
+  .bmws-tabs a{font-family:"JetBrains Mono",monospace;font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink);text-decoration:none;padding:7px 13px;border-radius:8px;white-space:nowrap;display:inline-flex;align-items:center;gap:7px;transition:background .25s,color .25s}
+  .bmws-tabs a i{font-style:normal;color:var(--ink);font-size:9px;font-weight:700}
+  .bmws-tabs a:hover{background:rgba(30,33,36,.06)}
+  .bmws-tabs a.on{background:var(--ink);color:var(--paper);font-weight:700}
+  .bmws-tabs a.on i{color:rgba(255,255,255,.66)}
+
+  /* ---- header band ---- */
+  .head{flex:none;display:flex;align-items:baseline;gap:14px;flex-wrap:wrap;
+   padding:14px clamp(14px,3vw,30px) 12px;border-bottom:1px solid var(--line)}
+  .head h1{font-family:"Space Grotesk",sans-serif;font-size:20px;font-weight:700;letter-spacing:-.01em}
+  .head .k{font-family:"JetBrains Mono",monospace;font-size:9px;letter-spacing:.18em;text-transform:uppercase;color:var(--soft)}
+  .head .spacer{margin-left:auto;display:flex;gap:6px;align-items:center}
+  .zbtn{width:32px;height:32px;border:1px solid var(--line);background:var(--paper);border-radius:9px;
+   font-family:"JetBrains Mono",monospace;font-size:14px;color:var(--ink);cursor:pointer;transition:background .15s}
+  .zbtn:hover{background:var(--panel)}
+  .zbtn.fit{width:auto;padding:0 12px;font-size:10px;letter-spacing:.1em;text-transform:uppercase}
+  .legend{display:flex;gap:5px;flex-wrap:wrap;align-items:center}
+  .legend button{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line);
+   background:var(--paper);border-radius:999px;padding:5px 11px;font-family:"Saira",sans-serif;
+   font-size:10.5px;font-weight:600;color:var(--ink);cursor:pointer;transition:background .15s,border-color .15s}
+  .legend button i{font-style:normal;width:7px;height:7px;border-radius:50%;background:var(--c);flex:none}
+  .legend button:hover{background:var(--panel);border-color:var(--c)}
+  /* wires light in their branch hue when the branch is under the pointer */
+  #wires line.hot{stroke:var(--hue);stroke-width:1.5}
+  #wires line.stem.hot{stroke-width:2.2}
+  #world.anim{transition:transform .55s cubic-bezier(.16,1,.3,1)}
+  @media(prefers-reduced-motion:reduce){#world.anim{transition:none}}
+  /* the minimap: the whole plane at a glance, the viewport as a hairline box */
+  #mini{position:absolute;right:clamp(14px,3vw,30px);bottom:62px;z-index:5;width:150px;height:112px;
+   border:1px solid var(--line);border-radius:10px;background:rgba(255,255,255,.92);cursor:pointer;overflow:hidden}
+  #mini .mdot{position:absolute;width:3px;height:3px;border-radius:50%;background:var(--c,#6E6E6E)}
+  #mini .mcore{width:6px;height:6px;background:var(--ink)}
+  #mini #mview{position:absolute;border:1.5px solid var(--ink);border-radius:2px;background:rgba(30,33,36,.05)}
+  @media(max-width:700px){#mini{display:none}}
+
+  /* ---- the stage: a pannable, zoomable plane, centred on the mark ---- */
+  #stage{flex:1;position:relative;overflow:hidden;background:var(--paper);cursor:grab;touch-action:none}
+  #stage.drag{cursor:grabbing}
+  #world{position:absolute;left:0;top:0;transform-origin:0 0}
+  #wires{position:absolute;left:0;top:0;overflow:visible;pointer-events:none}
+  #wires line{stroke:var(--line);stroke-width:1}
+  #wires line.stem{stroke-width:1.5}
+
+  .node{position:absolute;transform:translate(-50%,-50%)}
+  /* the centre: the product itself */
+  .n-core{width:150px;height:150px;border-radius:50%;border:1px solid var(--ink);background:var(--paper);
+   display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px}
+  .n-core .wm{font-family:"Space Grotesk",sans-serif;font-weight:700;font-size:32px;letter-spacing:-.02em}
+  .n-core .wm i{font-style:normal;position:relative}
+  .n-core .sub{font-family:"JetBrains Mono",monospace;font-size:8px;letter-spacing:.2em;text-transform:uppercase;color:var(--soft)}
+  .n-core .cnt{font-family:"JetBrains Mono",monospace;font-size:9.5px;color:var(--ink);border:1px solid var(--line);border-radius:999px;padding:2px 8px;margin-top:3px}
+
+  /* a domain: one branch of the product */
+  .n-dom{min-width:150px;max-width:190px;border:1px solid var(--line);border-top:3px solid var(--c,#1E2124);
+   border-radius:4px 4px 12px 12px;background:var(--paper);padding:10px 13px 11px;text-align:left}
+  .n-dom .ic{width:17px;height:17px;color:var(--c);margin-bottom:6px}
+  .n-dom .ic svg{width:100%;height:100%;display:block}
+  .n-dom b{font-family:"Space Grotesk",sans-serif;font-size:13.5px;font-weight:700;display:block;line-height:1.15}
+  .n-dom small{font-family:"JetBrains Mono",monospace;font-size:8.2px;letter-spacing:.14em;text-transform:uppercase;color:var(--soft);display:block;margin-top:4px}
+
+  /* a leaf: one fact of the product */
+  .n-leaf{min-width:120px;max-width:168px;border:1px solid var(--line);border-radius:10px;background:var(--paper);
+   padding:8px 11px;text-align:left;cursor:pointer;transition:background .15s,border-color .15s}
+  .n-leaf:hover{background:var(--panel);border-color:var(--c,#6E6E6E)}
+  .n-leaf:focus-visible{outline:2px solid var(--ink);outline-offset:2px;background:var(--panel)}
+  .n-leaf b{font-family:"Saira",sans-serif;font-size:11.6px;font-weight:600;display:block;line-height:1.3}
+  .n-leaf small{font-size:10px;color:var(--soft);display:block;line-height:1.4;margin-top:1px}
+  .n-leaf .dot{display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--c,#6E6E6E);margin-right:5px;vertical-align:1px}
+  .n-leaf.done b::after{content:"✓";font-size:9.5px;color:#2E7D5B;margin-left:5px}
+
+  /* the chip cloud for the thirteen needs */
+  .n-chips{max-width:230px;display:flex;flex-wrap:wrap;gap:4px;justify-content:center}
+  .n-chips span{display:inline-flex;align-items:center;gap:4px;border:1px solid var(--line);border-radius:999px;
+   background:var(--paper);padding:2.5px 8px;font-size:9.6px;font-weight:600;color:var(--ink);white-space:nowrap}
+  .n-chips span i{font-style:normal;width:6px;height:6px;border-radius:50%;background:var(--c);flex:none}
+  .n-chips span.empty{color:var(--soft);border-style:dashed}
+
+  /* the detail rail: what a clicked leaf has to say */
+  #detail{position:absolute;left:clamp(14px,3vw,30px);bottom:16px;z-index:5;width:min(330px,calc(100vw - 40px));
+   border:1px solid var(--line);border-left:3px solid var(--dc,#1E2124);border-radius:4px 12px 12px 4px;
+   background:var(--paper);padding:12px 14px;display:none}
+  #detail.on{display:block}
+  #detail .dk{font-family:"JetBrains Mono",monospace;font-size:8.4px;letter-spacing:.16em;text-transform:uppercase;color:var(--dc,#6E6E6E)}
+  #detail b{font-family:"Space Grotesk",sans-serif;font-size:14px;display:block;margin:3px 0 4px}
+  #detail p{font-size:11.8px;line-height:1.55;color:var(--soft)}
+  #detail .dx{position:absolute;top:8px;right:8px;width:24px;height:24px;border:1px solid var(--line);
+   border-radius:7px;background:var(--paper);color:var(--soft);font-size:13px;line-height:1;cursor:pointer}
+  #detail .dx:hover{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+
+  /* the honesty line */
+  #foot{position:absolute;right:clamp(14px,3vw,30px);bottom:16px;z-index:5;
+   font-family:"JetBrains Mono",monospace;font-size:8.4px;letter-spacing:.13em;text-transform:uppercase;color:var(--soft);text-align:right}
+
+  /* entrance: opacity and a settle, nothing more */
+  @media(prefers-reduced-motion:no-preference){
+   .node{animation:in .5s cubic-bezier(.16,1,.3,1) both;animation-delay:var(--d,0s)}
+   @keyframes in{from{opacity:0;transform:translate(-50%,-46%)}to{opacity:1;transform:translate(-50%,-50%)}}
+  }
+</style>
+</head>
+<body>
+<div class="bmws"><div class="bmws-in">
+  <div class="bmws-crumb"><b>Baik · Khayr</b><span>Brand Method · Admin Navigation</span></div>
+  <nav class="bmws-tabs">
+    <a href="audit.html"><i>00</i>App Audit</a>
+    <a href="competitors.html"><i>01</i>Competitors</a>
+    <a href="plan.html"><i>02</i>Plan</a>
+    <a href="Khayr.html"><i>03</i>The App</a>
+    <a href="Site.html"><i>04</i>Site</a>
+    <a href="map.html" class="on"><i>05</i>Map</a>
+  </nav>
+</div></div>
+
+<div class="head">
+  <h1>The product, on one plane</h1>
+  <span class="k">Drag to pan · scroll to zoom · click a node</span>
+  <nav class="legend" id="legend" aria-label="Branches"></nav>
+  <span class="spacer">
+    <button class="zbtn" id="zOut" aria-label="Zoom out">−</button>
+    <button class="zbtn" id="zIn" aria-label="Zoom in">+</button>
+    <button class="zbtn fit" id="zFit">Fit</button>
+  </span>
+</div>
+
+<div id="stage">
+  <div id="world"><svg id="wires"></svg><div id="nodes"></div></div>
+  <div id="detail" role="dialog" aria-label="Node detail">
+    <button class="dx" id="dX" aria-label="Close">×</button>
+    <div class="dk" id="dK"></div><b id="dT"></b><p id="dP"></p>
+  </div>
+  <div id="foot">Counts read from the live build · 1 Sep 2026<br>Guide cards awaiting scholar review</div>
+</div>
+
+<script>
+/* ============================================================================
+   THE MAP IS THE DATA. Add a leaf: add one line. Add a branch: add one object.
+   Layout, wiring, colour and detail all follow from this tree, nothing else.
+   ============================================================================ */
+var NEEDS=[
+ ['Anxiety & the Heart','#B25B27',0],['Protection & Ease','#3E4FA3',9],['Forgiveness & Mercy','#7B4DA0',10],
+ ['Rizq & Work','#2E7D5B',1],['Health & Healing','#C0463F',4],['Knowledge & Study','#1D7276',9],
+ ['Home & Family','#8A5A2B',2],['Travel & Visits','#2B6E93',10],['Grief & Loss','#5B6874',0],
+ ['Gratitude & Praise','#8D7014',0],['Marriage & Love','#AC4A6E',0],['Morning & Evening','#697A31',0],['Food & Drink','#9A6B17',0]];
+
+var MAP={
+ core:{title:'Baik',sub:'The right dua for what you are facing',count:'77 cards live'},
+ branches:[
+  {t:'The Deck',c:'#3E4FA3',k:'30 duas · 5 surahs · 42 guides',
+   ic:'<path d="M6.5 4.5h11a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2h-11a2 2 0 0 1-2-2v-11a2 2 0 0 1 2-2z"/><path d="M8.6 9h6.8M8.6 12.5h6.8M8.6 16h4"/>',
+   leaves:[
+    {t:'Three kinds of card',s:'Dua white · Surah black · Guide sectioned',d:'A dua is a white card you read and hold. A surah is the same card inverted to black. A guide is a reference card of labelled sections. Told apart across a whole grid without reading a word.'},
+    {t:'Panduan Solat',s:'42 cards · 5 groups · 100 Arabic slots pending',d:'Who must pray, the rukun in order, the five waktu, the sunat prayers, and what to do when it goes wrong. Bilingual. Every Arabic slot is keyed and empty until the pipeline fills it, and every card carries its own awaiting-review mark.'},
+    {t:'Filter and search',s:'Set · kind · category · situation chips',d:'One panel picks a set and a kind and ticks categories, and the Facing row offers situation chips for common moments. Search reaches inside every card, guides included. Empty options dim instead of leading nowhere.'},
+    {t:'Grid, deck, table, system',s:'Four ways to hold it',d:'The grid scans everything, the deck draws one card at a time, the table lays out saved cards and can deal a spread, and the system view shows the deck as a structure. Same cards, four grips.'},
+    {t:'Bilingual throughout',s:'EN and BM, one toggle',d:'Titles, purposes, group headings, filter labels, the review marks: everything follows the language toggle, and the set names switch between Dua and Doa correctly.'},
+    {chips:true}
+   ]},
+  {t:'The Clock',c:'#8A4A88',k:'JAKIM official · honest limits',
+   ic:'<circle cx="12" cy="12" r="8.4"/><path d="M12 7.1v5.2l3.3 2"/>',
+   leaves:[
+    {t:'Prayer times',s:'60 JAKIM zones · week cache',d:'Official times fetched live from e-solat.gov.my, cached a week per zone. A solar calculation stands in offline, outside the 60 zones, or when the fetch fails: five methods, both Asr rulings, 26 world cities.'},
+    {t:'Qibla',s:'Great-circle · sun check · camera',d:'The bearing to the Kaaba computed properly, a sun calibration for drifting compasses, and a camera view that lays the direction over the room.'},
+    {t:'Zone auto-guess',s:'Nearest of 60, named, correctable',d:'Geolocation or a city pick guesses the nearest JAKIM zone and says so out loud. A manual pick always wins.'},
+    {t:'Next-prayer chip',s:'On the masthead, zone set',d:'The next prayer and a live countdown, glanceable without opening anything, in both layouts once a zone or location is set.'},
+    {t:'Deck meets day',s:'Time-aware banner + chips',d:'After Subuh the banner speaks to the morning, after Maghrib to the evening. Before Subuh, after a prayer and on Fridays the Facing row grows a chip for the hour. P1, shipped.',done:true},
+    {t:'The honest limit',s:'No azan from a browser',d:'A sleeping tab has no voice. The app says so plainly instead of promising web push theatre. The azan belongs to the native port.'}
+   ]},
+  {t:'The Pipeline',c:'#1D7276',k:'No Arabic is ever typed',
+   ic:'<path d="M4 7h16M4 12h16M4 17h10"/><path d="M18 15.5l2 1.7-2 1.7"/>',
+   leaves:[
+    {t:'Verified sources only',s:'Tanzil · QUL · sunnah.com',d:'The rule: no Arabic is ever typed, pasted or generated. The live cards carry their provenance, and everything new arrives keyed through tools/fetch-cards.mjs from a Tanzil or QUL export, with sunnah.com for hadith, regenerable from its key.'},
+    {t:'100 keyed slots open',s:'The guide waits for its Arabic',d:'Niat wordings, the tasbih phrases, the hadith on teaching children: each renders as a named empty slot on the card, visible until filled, never quietly faked.'},
+    {t:'Scholar review gate',s:'The last gate before release',d:'Every guide card carries awaiting-scholar-review. Each group was machine-reviewed and redrafted against the findings before it entered the deck, and the human gate still stands.'}
+   ]},
+  {t:'The Site',c:'#2E7D5B',k:'Site.html · feeds the waitlist',
+   ic:'<circle cx="12" cy="12" r="8.4"/><path d="M3.6 12h16.8M12 3.6c2.3 2.4 3.5 5.2 3.5 8.4s-1.2 6-3.5 8.4c-2.3-2.4-3.5-5.2-3.5-8.4s1.2-6 3.5-8.4z"/>',
+   leaves:[
+    {t:'Qibla & times section',s:'P1-3, shipped',d:'The direction and the hour, presented honestly: a browser cannot call you to prayer, and the section says so in those words while feeding the native-port waitlist.',done:true},
+    {t:'Three lead sources',s:'app-waitlist · qibla-times · daily-dua',d:'One leadWire path, three tagged sources, deduped, in baik.leads. P3 gives them a real endpoint and double opt-in before any email goes out.'},
+    {t:'Same flat language',s:'Rethemed with the app',d:'White, the grey ramp, zero gradients, zero glows. The site and the app read as one product.'}
+   ]},
+  {t:'The Business',c:'#9A6B17',k:'Free forever · premium supports it',
+   ic:'<rect x="3.6" y="6.6" width="16.8" height="11.4" rx="2.2"/><path d="M3.6 10.4h16.8"/>',
+   leaves:[
+    {t:'Free tier',s:'All duas, all guidance, 10 saves',d:'The religious content is never behind the wall. Premium unlocks convenience: unlimited saves, a longer recent list, and it funds the pipeline.'},
+    {t:'Premium pricing',s:'RM19.90 · RM179.10 · RM358.20',d:'Monthly, annual and lifetime, with a founding lifetime of RM129.90 for the first 1,000. Priced and presented, not yet connected: checkout waits on the P3 gateway decision between chip-in, toyyibPay and Stripe.'},
+    {t:'Leads before backend',s:'localStorage until P3',d:'Waitlist and daily-dua emails collect locally under baik.leads. No email goes out until the endpoint and double opt-in exist.'}
+   ]},
+  {t:'The Road',c:'#9A4B36',k:'plan.html · five bands',
+   ic:'<path d="M5 20c2.5-5.5 2.5-10.5 0-16M12 20c2.5-5.5 2.5-10.5 0-16M19 20c2.5-5.5 2.5-10.5 0-16"/>',
+   leaves:[
+    {t:'P0 · Surface what was built',s:'Chip · BM · zones · honesty',d:'Shipped and committed: the masthead chip, the qibla and solat sheets in Malay, the JAKIM zone auto-guess, and the plain sentence that web cannot sound the azan.',done:true},
+    {t:'P1 · Deck meets day',s:'The differentiator',d:'Time-aware daily dua, prayer-adjacent chips, and the site section. All three shipped this session.',done:true},
+    {t:'P2 · Grow the library',s:'Morning & Evening first',d:'Six need categories still hold zero cards, Anxiety & the Heart among them. The pipeline is ready; it waits on a Tanzil or QUL export dropped into tools/data.'},
+    {t:'P3 · Business & backend',s:'Leads endpoint · gateway · refunds',d:'A real endpoint with double opt-in, the payment gateway verdict documented in the Codex, and a plain-language refund page.'},
+    {t:'P4 · The native port',s:'Where the web honestly ends',d:'The azan that sounds when the phone is locked, the widget, the vibrating compass. Three promises a browser cannot keep, saved for the app that can.'}
+   ]}
+ ]};
+
+/* ---------------- layout: positions follow from the tree ---------------- */
+var W=document.getElementById('world'),NB=document.getElementById('nodes'),SV=document.getElementById('wires');
+var CX=1500,CY=1080,R1=365;
+var nodes=[],wires=[];
+nodes.push({x:CX,y:CY,cls:'n-core',html:'<span class="wm">Ba<i>ı</i>k</span><span class="sub">'+MAP.core.sub+'</span><span class="cnt">'+MAP.core.count+'</span>',d:0});
+var nB=MAP.branches.length;
+MAP.branches.forEach(function(br,bi){
+ var a=-Math.PI/2 + bi*(2*Math.PI/nB);
+ var bx=CX+Math.cos(a)*R1, by=CY+Math.sin(a)*R1*0.78;
+ wires.push([CX,CY,bx,by,'stem',br.c,bi]);
+ nodes.push({x:bx,y:by,cls:'n-dom',c:br.c,d:.08+bi*.06,bi:bi,
+  html:'<span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">'+br.ic+'</svg></span><b>'+br.t+'</b><small>'+br.k+'</small>'});
+ var nl=br.leaves.length;
+ var spread=Math.min(Math.PI*0.62, nl*0.30);
+ br.leaves.forEach(function(lf,li){
+  var la=a + (nl===1?0:(li/(nl-1)-0.5)*spread);
+  var r2=R1+245+((li%2)*58);
+  var lx=CX+Math.cos(la)*r2, ly=CY+Math.sin(la)*r2*0.78;
+  wires.push([bx,by,lx,ly,'',br.c,bi]);
+  if(lf.chips){
+   var ch=NEEDS.map(function(n){return '<span'+(n[2]?'':' class="empty"')+' style="--c:'+n[1]+'"><i></i>'+n[0]+(n[2]?' · '+n[2]:'')+'</span>';}).join('');
+   nodes.push({x:lx,y:ly,cls:'n-chips',d:.2+li*.04,bi:bi,html:ch});
+  }else{
+   nodes.push({x:lx,y:ly,cls:'n-leaf'+(lf.done?' done':''),c:br.c,d:.2+li*.04,bi:bi,leaf:lf,branch:br,
+    html:'<b><span class="dot"></span>'+lf.t+'</b><small>'+lf.s+'</small>'});
+  }
+ });
+});
+
+/* render */
+var minX=1e9,minY=1e9,maxX=-1e9,maxY=-1e9;
+nodes.forEach(function(n){minX=Math.min(minX,n.x-160);maxX=Math.max(maxX,n.x+160);minY=Math.min(minY,n.y-90);maxY=Math.max(maxY,n.y+90);});
+SV.setAttribute('width',maxX+200);SV.setAttribute('height',maxY+200);
+SV.innerHTML=wires.map(function(w){
+ var st=w[4]==='stem'?' style="stroke:'+w[5]+';--hue:'+w[5]+'"':' style="--hue:'+w[5]+'"';
+ return '<line x1="'+w[0]+'" y1="'+w[1]+'" x2="'+w[2]+'" y2="'+w[3]+'" class="'+w[4]+'" data-b="'+w[6]+'"'+st+'/>';}).join('');
+NB.innerHTML=nodes.map(function(n,i){
+ var tag=n.leaf?'button':'div';
+ return '<'+tag+' class="node '+n.cls+'" data-i="'+i+'"'+(n.bi!=null?' data-b="'+n.bi+'"':'')+' style="left:'+n.x+'px;top:'+n.y+'px;'+(n.c?'--c:'+n.c+';':'')+'--d:'+(n.d||0)+'s">'+n.html+'</'+tag+'>';
+}).join('');
+
+/* detail rail */
+var DET=document.getElementById('detail');
+NB.addEventListener('click',function(e){
+ var b=e.target.closest('.n-leaf');if(!b)return;
+ var n=nodes[+b.dataset.i];
+ DET.style.setProperty('--dc',n.branch.c);
+ document.getElementById('dK').textContent=n.branch.t;
+ document.getElementById('dK').style.color=n.branch.c;
+ document.getElementById('dT').textContent=n.leaf.t;
+ document.getElementById('dP').textContent=n.leaf.d;
+ DET.classList.add('on');
+});
+document.getElementById('dX').addEventListener('click',function(){DET.classList.remove('on');});
+document.addEventListener('keydown',function(e){if(e.key==='Escape')DET.classList.remove('on');});
+
+/* hover lights the branch's wires in its own hue */
+NB.addEventListener('pointerover',function(e){
+ var el=e.target.closest('[data-b]');if(!el)return;
+ SV.querySelectorAll('line[data-b="'+el.dataset.b+'"]').forEach(function(l){l.classList.add('hot');});
+});
+NB.addEventListener('pointerout',function(e){
+ var el=e.target.closest('[data-b]');if(!el)return;
+ SV.querySelectorAll('line.hot').forEach(function(l){l.classList.remove('hot');});
+});
+
+/* ---------------- pan and zoom ---------------- */
+var ST=document.getElementById('stage');
+var vx=0,vy=0,vs=1;
+function apply(){W.style.transform='translate('+vx+'px,'+vy+'px) scale('+vs+')';}
+function fit(){
+ var r=ST.getBoundingClientRect();
+ var w=maxX-minX,h=maxY-minY;
+ vs=Math.min(r.width/(w+80),r.height/(h+80));
+ vs=Math.max(.14,Math.min(vs,1.4));
+ vx=(r.width-w*vs)/2-minX*vs; vy=(r.height-h*vs)/2-minY*vs;
+ apply();
+}
+function panTo(x,y,s){
+ var r=ST.getBoundingClientRect();
+ W.classList.add('anim');
+ vs=s; vx=r.width/2-x*s; vy=r.height/2-y*s; apply(); syncMini();
+ setTimeout(function(){W.classList.remove('anim');},600);
+}
+/* the legend: one flat chip per branch, each a flight */
+document.getElementById('legend').innerHTML=MAP.branches.map(function(br,bi){
+ return '<button style="--c:'+br.c+'" data-fly="'+bi+'"><i></i>'+br.t+'</button>';}).join('');
+document.getElementById('legend').addEventListener('click',function(e){
+ var b=e.target.closest('[data-fly]');if(!b)return;
+ var n=nodes.find(function(x){return x.cls==='n-dom'&&x.bi===+b.dataset.fly;});
+ if(n)panTo(n.x,n.y,.62);
+});
+/* every leaf is addressable: #the-deck/panduan-solat survives a reload */
+function slug(t){return t.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');}
+NB.addEventListener('click',function(e){
+ var b=e.target.closest('.n-leaf');if(!b)return;
+ var n=nodes[+b.dataset.i];
+ try{history.replaceState(null,'','#'+slug(n.branch.t)+'/'+slug(n.leaf.t));}catch(err){}
+});
+fit(); addEventListener('resize',function(){fit();syncMini();});
+/* arriving with a hash lands on that node with its detail open */
+(function(){
+ var h=location.hash.replace(/^#/,'');if(!h)return;
+ var n=nodes.find(function(x){return x.leaf&&slug(x.branch.t)+'/'+slug(x.leaf.t)===h;});
+ if(!n)return;
+ setTimeout(function(){panTo(n.x,n.y,.8);
+  var el=NB.querySelector('[data-i="'+nodes.indexOf(n)+'"]');el&&el.click();},60);
+})();
+document.getElementById('zFit').addEventListener('click',fit);
+function zoomAt(px,py,f){
+ var ns=Math.max(.2,Math.min(vs*f,2.6));
+ vx=px-(px-vx)*(ns/vs); vy=py-(py-vy)*(ns/vs); vs=ns; apply();
+}
+document.getElementById('zIn').addEventListener('click',function(){var r=ST.getBoundingClientRect();zoomAt(r.width/2,r.height/2,1.25);});
+document.getElementById('zOut').addEventListener('click',function(){var r=ST.getBoundingClientRect();zoomAt(r.width/2,r.height/2,.8);});
+ST.addEventListener('wheel',function(e){e.preventDefault();var r=ST.getBoundingClientRect();zoomAt(e.clientX-r.left,e.clientY-r.top,e.deltaY<0?1.13:0.885);},{passive:false});
+var drag=null;
+ST.addEventListener('pointerdown',function(e){if(e.target.closest('#detail'))return;drag={x:e.clientX-vx,y:e.clientY-vy};ST.classList.add('drag');ST.setPointerCapture(e.pointerId);});
+ST.addEventListener('pointermove',function(e){if(!drag)return;vx=e.clientX-drag.x;vy=e.clientY-drag.y;apply();});
+ST.addEventListener('pointerup',function(){drag=null;ST.classList.remove('drag');});
+ST.addEventListener('pointercancel',function(){drag=null;ST.classList.remove('drag');});
+ST.addEventListener('scroll',function(){
+ if(ST.scrollLeft||ST.scrollTop){vx-=ST.scrollLeft;vy-=ST.scrollTop;ST.scrollLeft=0;ST.scrollTop=0;apply();}
+});
+ST.addEventListener('dblclick',function(e){
+ var r=ST.getBoundingClientRect();zoomAt(e.clientX-r.left,e.clientY-r.top,1.6);syncMini();});
+
+/* ---------------- the minimap ---------------- */
+var MINI=document.createElement('div');MINI.id='mini';
+var mk=150/(maxX-minX);
+MINI.innerHTML=nodes.map(function(n){
+ return '<span class="mdot'+(n.cls==='n-core'?' mcore':'')+'" style="left:'+((n.x-minX)*mk-1.5)+'px;top:'+((n.y-minY)*mk-1.5)+'px;'+(n.c?'--c:'+n.c:'')+'"></span>';
+}).join('')+'<span id="mview"></span>';
+ST.appendChild(MINI);
+var MV=document.getElementById('mview');
+function syncMini(){
+ var r=ST.getBoundingClientRect();
+ MV.style.left=((-vx/vs-minX)*mk)+'px';
+ MV.style.top=((-vy/vs-minY)*mk)+'px';
+ MV.style.width=(r.width/vs*mk)+'px';
+ MV.style.height=(r.height/vs*mk)+'px';
+}
+MINI.addEventListener('click',function(e){
+ var r=MINI.getBoundingClientRect();
+ panTo((e.clientX-r.left)/mk+minX,(e.clientY-r.top)/mk+minY,Math.max(vs,.5));
+});
+var _apply=apply;apply=function(){_apply();syncMini();};
+syncMini();
+</script>
+</body>
+</html>

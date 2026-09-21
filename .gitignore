@@ -1,0 +1,9 @@
+.claude/scheduled_tasks.lock
+.DS_Store
+tools/data/*
+!tools/data/.gitkeep
+
+# local backups and raw art exports, not used by the app
+.bak/
+assets/*.zip
+_probe_*.html
