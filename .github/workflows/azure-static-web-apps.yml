@@ -24,12 +24,13 @@ jobs:
           azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN }}
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           action: upload
-          # The site is plain HTML at the repo root: nothing to build.
+          # The site is plain HTML at the repo root: nothing to build. The api/ folder
+          # (email + password accounts) is built by Azure: npm install, then deployed.
           app_location: "/"
-          api_location: ""
+          api_location: "api"
           output_location: ""
           skip_app_build: true
-          skip_api_build: true
+          skip_api_build: false
 
   close_pull_request:
     if: github.event_name == 'pull_request' && github.event.action == 'closed'

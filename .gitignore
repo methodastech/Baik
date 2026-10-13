@@ -1,9 +1,40 @@
-.claude/scheduled_tasks.lock
-.DS_Store
+# Baik · what stays out of git.
+# The repo root IS the website (the deploy uploads app_location "/"), so anything committed
+# here is public on baikapp.com. Keep secrets, local data and working files out.
+
+# ---- secrets and server settings (set these in Azure, never in the repo) ----
+.env
+.env.*
+!.env.example
+api/local.settings.json
+*.pem
+*.key
+
+# ---- local account API: test accounts (password hashes), orders, installs ----
+api/.data/
+api/node_modules/
+node_modules/
+npm-debug.log*
+*.log
+
+# ---- card data pipeline output ----
 tools/data/*
 !tools/data/.gitkeep
 
-# local backups and raw art exports, not used by the app
+# ---- working files, not used by the site ----
 .bak/
+assets/_old-art/
 assets/*.zip
+art direction/
 _probe_*.html
+_cmp*.html
+
+# ---- editors and operating systems ----
+.claude/scheduled_tasks.lock
+.claude/settings.local.json
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+desktop.ini
+*.swp

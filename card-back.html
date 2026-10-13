@@ -39,7 +39,7 @@ h2.sec{font:600 13px 'Space Grotesk',sans-serif;margin:0;padding:18px 40px 6px;l
 </head>
 <body>
 <header><h1>Baik · card back</h1><span class="sub">one drawing, two inks — the same plate prints the surah and the dua</span></header>
-<div class="spec">630 × 1010 · Rub el Hizb over an astrolabe · dotted medallion · double frame, knot corners · paper grain · the wordmark's diamond dot is measured from the glyph, not guessed</div>
+<div class="spec">630 × 1010 · Rub el Hizb over an astrolabe · dotted medallion · double frame, knot corners · paper grain · the wordmark is the Baik logo itself (assets/logo)</div>
 <div class="ctl">
  <label>surah <input type="text" id="k1" value="SURAH 113 · 5 AYAT · MAKKAN" class="w" placeholder="kicker"> <input type="text" id="t1" value="Al-Falaq · The Daybreak" class="w" placeholder="title"> <input type="text" id="s1" value="" placeholder="source (none)"> <input type="text" id="c1" value="GZ-07" style="width:80px"></label>
 </div>
@@ -208,8 +208,7 @@ function plateSVG(o){
  s+='<circle cx="'+CX+'" cy="'+CY+'" r="120" fill="none" stroke="'+ink+'" stroke-width="3.4" stroke-dasharray="0 8.2" stroke-linecap="round"/>';
  s+='<circle cx="'+CX+'" cy="'+CY+'" r="98" fill="none" stroke="'+ink+'" stroke-width="2.8"/>';
  /* wordmark: dotless i, the diamond placed by measuring the glyph after layout (see fixDot) */
- s+='<text class="wm" x="'+CX+'" y="'+(CY+27)+'" text-anchor="middle" font-family="\'Playfair Display\',\'Times New Roman\',serif" font-weight="600" font-size="76" fill="'+ink+'" letter-spacing="-1">Baık</text>';
- s+='<polygon class="wm-dot" points="'+diamond(CX+21,CY-28,6.5)+'" fill="'+ink+'"/>';
+ s+=logoSVG(CX,(CY+27),76,ink,'middle');   /* the logo, where the typed wordmark was */
  /* ---- frame ---- */
  s+='<rect x="'+fo+'" y="'+fo+'" width="'+(W-2*fo)+'" height="'+(H-2*fo)+'" rx="14" fill="none" stroke="'+ink+'" stroke-width="3.6"/>';
  if(FR.double)s+='<rect x="'+FR.double+'" y="'+FR.double+'" width="'+(W-2*FR.double)+'" height="'+(H-2*FR.double)+'" rx="11" fill="none" stroke="'+ink+'" stroke-width="1.5"/>';
@@ -353,8 +352,7 @@ function hudSVG(o,V){
  if(o.code)s+='<text x="'+(V.codeX||CX)+'" y="'+(V.foot+22)+'" text-anchor="middle" font-size="11" font-weight="600" letter-spacing="2" fill="'+ink+'">'+esc(o.code)+'</text>';
  /* the wordmark, centred in the panel: the same setting as the plate's medallion, so fixDot
     finds it by class and seats the diamond over the i from the laid-out glyph */
- s+='<text class="wm" x="'+CX+'" y="'+(CY+27)+'" text-anchor="middle" font-family="\'Playfair Display\',\'Times New Roman\',serif" font-weight="600" font-size="76" fill="'+ink+'" letter-spacing="-1">Baık</text>';
- s+='<polygon class="wm-dot" points="'+diamond(CX+21,CY-28,6.5)+'" fill="'+ink+'"/>';
+ s+=logoSVG(CX,(CY+27),76,ink,'middle');   /* the logo, where the typed wordmark was */
  s+='</svg>';return s;
 }
 /* the four frames of the sheet, left to right */
@@ -455,8 +453,7 @@ function celestialSVG(o){
  var serif="'Playfair Display','Times New Roman',Georgia,serif";
  s+='<text x="'+CX+'" y="212" text-anchor="middle" font-family="'+serif+'" font-size="'+fz+'" fill="'+ink+'">'+esc(T[0])+'</text>';
  if(T[1])s+='<text x="'+CX+'" y="'+(212+Math.round(fz*1.22))+'" text-anchor="middle" font-family="'+serif+'" font-size="'+fz+'" fill="'+ink+'">'+esc(T[1])+'</text>';
- s+='<text class="wm" x="'+CX+'" y="'+(CY+120)+'" text-anchor="middle" font-family="'+serif+'" font-weight="600" font-size="74" fill="'+ink+'" letter-spacing="-1">Ba\u0131k</text>';
- s+='<polygon class="wm-dot" points="'+diamond(CX+20,CY+67,6.3)+'" fill="'+ink+'"/>';
+ s+=logoSVG(CX,(CY+120),74,ink,'middle');   /* the logo, where the typed wordmark was */
  s+='<text x="'+CX+'" y="890" text-anchor="middle" font-size="11.5" font-weight="500" letter-spacing="2.6" fill="'+ink+'">'+esc(o.source?String(o.source).toUpperCase():('BAIK '+kind+' \u00b7 '+(o.set||'SET 01')))+'</text>';
  if(o.code)s+='<text x="'+CX+'" y="912" text-anchor="middle" font-size="11" font-weight="600" letter-spacing="2" fill="'+ink+'">'+esc(o.code)+'</text>';
  s+='</svg>';return s;
@@ -498,8 +495,7 @@ function fretSVG(o){
  var serif="'Playfair Display','Times New Roman',Georgia,serif";
  s+='<text x="'+CX+'" y="276" text-anchor="middle" font-family="'+serif+'" font-size="'+fz+'" fill="'+ink+'">'+esc(T[0])+'</text>';
  if(T[1])s+='<text x="'+CX+'" y="'+(276+Math.round(fz*1.22))+'" text-anchor="middle" font-family="'+serif+'" font-size="'+fz+'" fill="'+ink+'">'+esc(T[1])+'</text>';
- s+='<text class="wm" x="'+CX+'" y="'+(CY+118)+'" text-anchor="middle" font-family="'+serif+'" font-weight="600" font-size="78" fill="'+ink+'" letter-spacing="-1">Ba\u0131k</text>';
- s+='<polygon class="wm-dot" points="'+diamond(CX+21,CY+62,6.6)+'" fill="'+ink+'"/>';
+ s+=logoSVG(CX,(CY+118),78,ink,'middle');   /* the logo, where the typed wordmark was */
  s+='<line x1="'+(CX-40)+'" y1="'+(CY+150)+'" x2="'+(CX+40)+'" y2="'+(CY+150)+'" stroke="'+ink+'" stroke-width="1.4"/>';
  s+='<text x="'+CX+'" y="812" text-anchor="middle" font-size="11.5" font-weight="500" letter-spacing="2.6" fill="'+ink+'">'+esc(o.source?String(o.source).toUpperCase():('BAIK '+kind+' \u00b7 '+(o.set||'SET 01')))+'</text>';
  if(o.code)s+='<text x="'+CX+'" y="834" text-anchor="middle" font-size="11" font-weight="600" letter-spacing="2" fill="'+ink+'">'+esc(o.code)+'</text>';
@@ -536,8 +532,7 @@ function swissSVG(o){
  s+='<text x="'+(R-40)+'" y="'+(M+22)+'" text-anchor="end" font-size="10.5" letter-spacing="3" fill="'+ink+'">'+esc(code)+'</text>';
  s+='<line x1="'+M+'" y1="'+(M+38)+'" x2="'+R+'" y2="'+(M+38)+'" stroke="'+ink+'" stroke-width="2.4"/>';
  /* the wordmark, oversized and flush left, cut under by a bar */
- s+='<text class="wm" x="'+(M-6)+'" y="300" font-family="'+grot+'" font-weight="700" font-size="212" letter-spacing="-.05em" fill="'+ink+'">Ba\u0131k</text>';
- s+='<polygon class="wm-dot" points="'+diamond(M+292,300-212*0.72,212*0.085)+'" fill="'+ink+'"/>';
+ s+=logoSVG((M-6),300,212,ink,'');   /* the logo, where the typed wordmark was */
  s+='<rect x="'+M+'" y="322" width="'+(R-M)+'" height="16" fill="'+ink+'"/>';
  /* the kicker as a running head, the title as the specimen */
  s+='<text x="'+M+'" y="372" font-size="10.5" letter-spacing="3" fill="'+mid+'">'+esc(String(o.kicker||'').toUpperCase())+'</text>';
@@ -559,6 +554,53 @@ function swissSVG(o){
  /* a rotated running foot up the right edge */
  s+='<text transform="translate('+(R+18)+' '+(H-M-10)+') rotate(-90)" font-size="9.5" letter-spacing="3.2" fill="'+mid+'">'+esc('BAIK \u00b7 '+kind+' COLLECTION \u00b7 '+(o.set||'SET 01').toUpperCase())+'</text>';
  /* the ruler */
+ var ry=H-M-6;
+ s+='<line x1="'+M+'" y1="'+ry+'" x2="'+R+'" y2="'+ry+'" stroke="'+ink+'" stroke-width="1.2"/>';
+ for(k=0;k<=(R-M);k+=12){var tall=k%60===0,x=M+k;
+  s+='<line x1="'+x+'" y1="'+ry+'" x2="'+x+'" y2="'+(ry-(tall?12:6))+'" stroke="'+ink+'" stroke-width="'+(tall?1.2:0.8)+'"/>';
+  if(tall&&k<R-M)s+='<text x="'+(x+3)+'" y="'+(ry-15)+'" font-size="7.5" letter-spacing="1" fill="'+mid+'">'+k+'</text>';}
+ s+='</svg>';return s;
+}
+
+/* ====================== SWISS · CENTRED ======================
+   The Swiss sheet (hairline twelve-column and baseline grids, crop marks, registration mark,
+   mono labels, Space Grotesk, a ruler along the foot) laid out the way the fret back is:
+   the kicker and the title centred at the top, the logo centred on the card with a short
+   rule under it, the source and the code centred at the foot. One ink, both stocks. */
+function swissCentredSVG(o){
+ var dark=!!o.dark;
+ var paper=dark?'#0F1012':'#F6F6F4',rim=dark?'#E8E7E3':'#FFFFFF',ink=dark?'#F2F2EE':'#141517';
+ var hair=dark?'rgba(242,242,238,.12)':'rgba(20,21,23,.10)',mid=dark?'rgba(242,242,238,.5)':'rgba(20,21,23,.5)';
+ var esc=function(t){return String(t==null?'':t).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');};
+ var M=36,R=W-M,COLS=12,GUT=8,cw=(R-M-GUT*(COLS-1))/COLS;
+ var mono="'JetBrains Mono',ui-monospace,monospace",grot="'Space Grotesk','Helvetica Neue',Helvetica,Arial,sans-serif";
+ var kind=(o.kind||'DUA').toUpperCase(),T=splitTitle(o.title),code=o.code||'';
+ var s='',k;
+ s+='<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 '+W+' '+H+'" font-family="'+mono+'">';
+ s+='<rect width="'+W+'" height="'+H+'" rx="18" fill="'+rim+'"/>';
+ s+='<rect x="7" y="7" width="'+(W-14)+'" height="'+(H-14)+'" rx="12" fill="'+paper+'"/>';
+ /* the grids */
+ for(k=0;k<=COLS;k++){var gx=f(M+k*(cw+GUT)-(k===COLS?GUT:0));s+='<line x1="'+gx+'" y1="'+M+'" x2="'+gx+'" y2="'+(H-M)+'" stroke="'+hair+'" stroke-width="1"/>';}
+ for(k=M;k<=H-M;k+=30){s+='<line x1="'+M+'" y1="'+k+'" x2="'+R+'" y2="'+k+'" stroke="'+hair+'" stroke-width="'+(k%150===M%150?1:0.6)+'"/>';}
+ /* crop marks at the four corners, and a registration mark at the top and the foot, on the axis */
+ var cm=function(x,y,dx,dy){return '<path d="M'+(x+dx*10)+' '+y+'H'+(x+dx*26)+'M'+x+' '+(y+dy*10)+'V'+(y+dy*26)+'" stroke="'+ink+'" stroke-width="1.2"/>';};
+ s+=cm(M-6,M-6,-1,-1)+cm(R+6,M-6,1,-1)+cm(M-6,H-M+6,-1,1)+cm(R+6,H-M+6,1,1);
+ var reg=function(x,y){return '<g stroke="'+ink+'" stroke-width="1.1" fill="none"><circle cx="'+x+'" cy="'+y+'" r="8"/><path d="M'+(x-12)+' '+y+'H'+(x+12)+'M'+x+' '+(y-12)+'V'+(y+12)+'"/></g>';};
+ s+=reg(CX,M+24);
+ /* top: a heavy rule, the kicker, the title */
+ s+='<line x1="'+(M+40)+'" y1="'+(M+58)+'" x2="'+(R-40)+'" y2="'+(M+58)+'" stroke="'+ink+'" stroke-width="2.4"/>';
+ s+='<text x="'+CX+'" y="216" text-anchor="middle" font-size="12" letter-spacing="4" fill="'+ink+'">'+esc(String(o.kicker||('BAIK \u00b7 '+kind)).toUpperCase())+'</text>';
+ var fz=Math.min(44,Math.floor(430/(Math.max(T[0].length,T[1].length,10)*0.55)));
+ s+='<text x="'+CX+'" y="'+(262+fz*0.35)+'" text-anchor="middle" font-family="'+grot+'" font-weight="700" font-size="'+fz+'" letter-spacing="-.02em" fill="'+ink+'">'+esc(T[0])+'</text>';
+ if(T[1])s+='<text x="'+CX+'" y="'+(262+fz*0.35+Math.round(fz*1.12))+'" text-anchor="middle" font-family="'+grot+'" font-weight="700" font-size="'+fz+'" letter-spacing="-.02em" fill="'+ink+'">'+esc(T[1])+'</text>';
+ /* the centre: the logo, a bar under it the way the Swiss sheet cuts its wordmark, and a short rule */
+ s+=logoSVG(CX,(CY+118),88,ink,'middle');
+ s+='<rect x="'+(CX-70)+'" y="'+(CY+136)+'" width="140" height="6" fill="'+ink+'"/>';
+ s+='<text x="'+CX+'" y="'+(CY+172)+'" text-anchor="middle" font-size="9.5" letter-spacing="3" fill="'+mid+'">'+esc(kind+' \u00b7 '+(o.set||'SET 01').toUpperCase()+' \u00b7 '+(dark?'BLACK':'WHITE')+' STOCK')+'</text>';
+ /* foot: the source and the code, centred, over a thin rule, then the ruler */
+ s+='<line x1="'+(M+40)+'" y1="782" x2="'+(R-40)+'" y2="782" stroke="'+ink+'" stroke-width="0.8"/>';
+ s+='<text x="'+CX+'" y="812" text-anchor="middle" font-size="11" font-weight="500" letter-spacing="2.4" fill="'+ink+'">'+esc(o.source?String(o.source).toUpperCase():('BAIK '+kind+' \u00b7 '+(o.set||'SET 01')))+'</text>';
+ if(code)s+='<text x="'+CX+'" y="834" text-anchor="middle" font-size="11" font-weight="600" letter-spacing="2" fill="'+ink+'">'+esc(code)+'</text>';
  var ry=H-M-6;
  s+='<line x1="'+M+'" y1="'+ry+'" x2="'+R+'" y2="'+ry+'" stroke="'+ink+'" stroke-width="1.2"/>';
  for(k=0;k<=(R-M);k+=12){var tall=k%60===0,x=M+k;
@@ -716,8 +758,7 @@ function cometSVG(o){
  var fz=Math.min(42,Math.floor(360/(Math.max(T[0].length,T[1].length,10)*0.5)));
  s+='<text x="'+CX+'" y="200" text-anchor="middle" font-family="'+serif+'" font-size="'+fz+'" fill="'+ink+'">'+esc(T[0])+'</text>';
  if(T[1])s+='<text x="'+CX+'" y="'+(200+Math.round(fz*1.22))+'" text-anchor="middle" font-family="'+serif+'" font-size="'+fz+'" fill="'+ink+'">'+esc(T[1])+'</text>';
- s+='<text class="wm" x="'+CX+'" y="662" text-anchor="middle" font-family="'+serif+'" font-weight="600" font-size="64" fill="'+ink+'" letter-spacing="-1">Baık</text>';
- s+='<polygon class="wm-dot" points="'+diamond(CX+17,617,5.4)+'" fill="'+ink+'"/>';
+ s+=logoSVG(CX,662,64,ink,'middle');   /* the logo, where the typed wordmark was */
  /* the foot, on the plain paper below the rock */
  s+='<text x="'+CX+'" y="902" text-anchor="middle" font-size="11.5" font-weight="500" letter-spacing="2.6" fill="'+ink+'">'+esc(o.source?String(o.source).toUpperCase():('BAIK '+kind+' · '+(o.set||'SET 01')))+'</text>';
  if(o.code)s+='<text x="'+CX+'" y="924" text-anchor="middle" font-size="11" font-weight="600" letter-spacing="2" fill="'+ink+'">'+esc(o.code)+'</text>';
@@ -788,8 +829,7 @@ function ogeeSVG(o){
  s+='<polygon points="'+diamond(CX,398,5)+'" fill="'+ink+'"/>';
  s+='<line x1="'+(CX-58)+'" y1="398" x2="'+(CX-14)+'" y2="398" stroke="'+ink+'" stroke-width="1.2"/>';
  s+='<line x1="'+(CX+14)+'" y1="398" x2="'+(CX+58)+'" y2="398" stroke="'+ink+'" stroke-width="1.2"/>';
- s+='<text class="wm" x="'+CX+'" y="634" text-anchor="middle" font-family="'+serif+'" font-weight="600" font-size="76" fill="'+ink+'" letter-spacing="-1">Baık</text>';
- s+='<polygon class="wm-dot" points="'+diamond(CX+20,579,6.4)+'" fill="'+ink+'"/>';
+ s+=logoSVG(CX,634,76,ink,'middle');   /* the logo, where the typed wordmark was */
  s+='<text x="'+CX+'" y="838" text-anchor="middle" font-size="11.5" font-weight="500" letter-spacing="2.6" fill="'+ink+'">'+esc(o.source?String(o.source).toUpperCase():('BAIK '+kind+' · '+(o.set||'SET 01')))+'</text>';
  if(o.code)s+='<text x="'+CX+'" y="860" text-anchor="middle" font-size="11" font-weight="600" letter-spacing="2" fill="'+ink+'">'+esc(o.code)+'</text>';
  if(o.grain!==false)s+='<rect x="7" y="7" width="'+(W-14)+'" height="'+(H-14)+'" rx="20" filter="url(#'+id+'-gr)"/>';
@@ -805,9 +845,20 @@ var BACKS={
  celestial:{name:'Celestial',corners:false,draw:function(o){return celestialSVG(o);}},
  fret:{name:'Fret border',corners:false,draw:function(o){return fretSVG(o);}},
  swiss:{name:'Swiss \u00b7 technical editorial',corners:false,draw:function(o){return swissSVG(o);}},
+ swisscentred:{name:'Swiss \u00b7 centred',corners:false,draw:function(o){return swissCentredSVG(o);}},
  comet:{name:'Comet · scalloped cartouche',corners:false,draw:function(o){return cometSVG(o);}},
  ogee:{name:'Ogee panel',corners:false,draw:function(o){return ogeeSVG(o);}}
 };
+
+/* the Baik logo (assets/logo/baik-logo_caps.svg), placed where a word of size fz would sit on baseline 'base'.
+   Each use gets its own mask id, so many cards on one page (and a downloaded SVG) stay valid. */
+var LOGO_N=0;
+function logoSVG(x,base,fz,ink,anchor){
+ var k=fz*0.70/41.04,w=118.13*k,h=45.82*k,left=anchor==='middle'?x-w/2:x,id='bklogo'+(LOGO_N++);
+ return '<svg class="wm-logo" x="'+f(left)+'" y="'+f(base-45.2*k)+'" width="'+f(w)+'" height="'+f(h)+'" viewBox="0 0 118.13 45.82" overflow="visible" aria-label="Baik">'
+  +'<defs><mask id="'+id+'" maskUnits="userSpaceOnUse" x="0" y="0" width="118.13" height="45.82"><rect width="118.13" height="45.82" fill="#fff"/><g fill="#000"><path d="M9.05 12.16H19.44A4.26 4.26 0 0 1 19.44 20.68H9.05Z"/><path d="M9.05 28.08H20.44A4.56 4.56 0 0 1 20.44 37.2H9.05Z"/><circle cx="53.78" cy="31.15" r="6.96"/><polygon points="60.73,16 56.23,16 60.73,19.7"/><polygon points="60.73,46.3 56.23,46.3 60.73,42.5"/></g></mask></defs>'
+  +'<g fill="'+ink+'" mask="url(#'+id+')"><polygon points="0,4.16 9.05,4.16 9.05,45.2 0,45.2"/><path d="M0 4.16H21.14A11.96 11.96 0 0 1 21.14 28.08H0Z"/><path d="M0 20.68H22.14A12.26 12.26 0 0 1 22.14 45.2H0Z"/><ellipse cx="53.78" cy="31" rx="15.43" ry="14.79"/><polygon points="60.73,16.9 69.38,16.9 69.38,45.2 60.73,45.2"/><polygon points="75.13,20.26 84.18,16.9 84.18,45.2 75.13,45.2"/><polygon points="79.66,0 85.96,6.3 79.66,12.6 73.36,6.3"/><polygon points="89.4,7.69 98.33,4.16 98.33,28.6 99.53,29.7 99.53,33 98.33,33.7 98.33,45.2 89.4,45.2"/><polygon points="98.33,28.46 107.15,16.9 118.13,16.9 106.3,30.6 117.97,45.2 108.02,45.2 98.33,33.85"/></g></svg>';
+}
 function backSVG(o){var b=BACKS[o.back]||BACKS.plate;return b.draw(o);}
 </script>
 

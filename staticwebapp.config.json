@@ -15,6 +15,12 @@
   },
   "routes": [
     {
+      "route": "/login.html",
+      "headers": {
+        "Cache-Control": "no-cache"
+      }
+    },
+    {
       "route": "/assets/*",
       "headers": {
         "Cache-Control": "public, max-age=31536000, immutable"
@@ -35,6 +41,13 @@
   },
   "navigationFallback": {
     "rewrite": "/index.html",
-    "exclude": ["/assets/*", "/tools/*", "/*.{css,js,mjs,json,xml,txt,webp,png,jpg,svg,woff2}"]
+    "exclude": [
+      "/assets/*",
+      "/tools/*",
+      "/*.{css,js,mjs,json,xml,txt,webp,png,jpg,svg,woff2}"
+    ]
+  },
+  "platform": {
+    "apiRuntime": "node:20"
   }
 }
