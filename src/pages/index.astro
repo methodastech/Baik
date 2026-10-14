@@ -1,0 +1,980 @@
+---
+import Head from "../layouts/Head.astro";
+---
+<!doctype html>
+<html lang="en">
+<head>
+<link rel="stylesheet" href="/css/site.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Baik · The right dua for what you are facing</title>
+<meta name="description" content="Baik is a dua card deck. Say what you are facing and draw the right dua: Arabic, transliteration, meaning and source, on one beautiful card. Free forever on the web, app coming soon.">
+<meta property="og:title" content="Baik · The right dua for what you are facing">
+<meta property="og:description" content="A card deck of authentic duas. Free forever on the web, app coming soon.">
+<meta property="og:type" content="website">
+<!-- og:image · VISUAL NEEDED: 1200x630 social card. The Baik wordmark in gold on the deep
+     emerald field, three dua cards fanned to the right, tagline under the mark. Export PNG,
+     under 300KB, then point this tag at its URL. -->
+<meta name="twitter:card" content="summary_large_image">
+<link rel="canonical" href="/">
+<meta property="og:url" content="/">
+<meta property="og:site_name" content="Baik">
+<meta property="og:locale" content="en_MY">
+<meta name="theme-color" content="#FFFFFF">
+<script is:inline type="application/ld+json">
+{"@context":"https://schema.org","@graph":[
+ {"@type":"WebSite","name":"Baik","description":"A card deck of authentic duas. Say what you are facing and draw the right dua.","inLanguage":["en-MY","ms-MY"]},
+ {"@type":"MobileApplication","name":"Baik","applicationCategory":"LifestyleApplication",
+  "operatingSystem":"Web, iOS, Android","inLanguage":["en-MY","ms-MY"],
+  "description":"A dua card deck: Arabic, transliteration, meaning and source on every card. Free forever on the web.",
+  "offers":[{"@type":"Offer","price":"0","priceCurrency":"MYR","name":"Free"},
+            {"@type":"Offer","price":"19.90","priceCurrency":"MYR","name":"Premium monthly"},
+            {"@type":"Offer","price":"179.10","priceCurrency":"MYR","name":"Premium annual"},
+            {"@type":"Offer","price":"358.20","priceCurrency":"MYR","name":"Premium lifetime"}]}
+]}
+</script>
+<link rel="icon" href="data:image/svg+xml,%3Csvg%20viewBox%3D%220%200%2064%2064%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%3Crect%20x%3D%222%22%20y%3D%222%22%20width%3D%2260%22%20height%3D%2260%22%20rx%3D%2217%22%20fill%3D%22%231E2124%22%2F%3E%3Ctext%20x%3D%2232%22%20y%3D%2234%22%20text-anchor%3D%22middle%22%20dominant-baseline%3D%22central%22%20font-family%3D%22Space%20Grotesk%2C%20Helvetica%2C%20sans-serif%22%20font-weight%3D%22700%22%20font-size%3D%2240%22%20fill%3D%22%23FFFFFF%22%3Eb%3C%2Ftext%3E%3C%2Fsvg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Saira:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Space+Grotesk:wght@500;600;700&family=JetBrains+Mono:wght@400;500;700&family=Scheherazade+New:wght@500;700&display=swap" rel="stylesheet">
+<script is:inline>/* the hero 3D deck is coming: keep the 2D fan hidden until it either arrives or fails (4 s) */
+(function(){try{var c=document.createElement('canvas');if(!(c.getContext('webgl2')||c.getContext('webgl')))return;}catch(e){return;}
+var r=document.documentElement;r.classList.add('d3-pending');setTimeout(function(){r.classList.remove('d3-pending');},4000);})();</script>
+<Head />
+</head>
+<body>
+
+<div class="loader" id="loader" aria-hidden="true">
+  <span class="mark"><span class="baik-logo" role="img" aria-label="Baik"></span></span>
+  <span class="bar"><i id="loadBar"></i></span>
+  <span class="ct" id="loadCt">0</span>
+</div>
+<noscript></noscript>
+
+<div class="atmo" id="atmo" aria-hidden="true"></div>
+<div class="grain" aria-hidden="true"></div>
+<div class="cur-ring" id="curRing" aria-hidden="true"></div>
+<div class="cur-dot" id="curDot" aria-hidden="true"></div>
+<div class="scroll-progress" aria-hidden="true"><span id="sprog"></span></div>
+
+<header class="nav" id="nav">
+  <a class="mark" href="#top"><span class="baik-logo" role="img" aria-label="Baik"></span></a>
+  <nav class="nav-links" aria-label="Pages">
+    <a href="/" aria-current="page" class="cur">Home</a>
+    <a href="/khayr">Web app</a>
+    <a href="/codex">Codex</a>
+  </nav>
+  <a class="btn btn-gold" href="/khayr">Open the web app</a>
+</header>
+
+<main id="top">
+
+<!-- ============ 1 · HERO ============ -->
+<section class="hero">
+  <div class="wrap hero-in">
+    <div>
+      <span class="k">Duas for every moment</span>
+      <h1>Facing something?<br>There is a <span class="nw"><span class="g">dua</span> for it.</span></h1>
+      <p class="lede">Baik is a card deck of authentic duas. Say what you are facing and draw the right card:
+      the Arabic, how to say it, what it means, and exactly where it comes from. Nothing invented, every card sourced.</p>
+      <div class="hero-cta">
+        <a class="btn btn-gold" href="/khayr">Use Baik on the web · free</a>
+        <a class="btn btn-line" href="#how">See how it works</a>
+      </div>
+      <p class="hero-note">Free forever. Every dua stays free; Premium only unlocks the tools around them.</p>
+    </div>
+    <div class="deck" id="deck" aria-label="Three dua cards from the deck">
+      <div class="d3" id="d3"></div>
+      <div class="mini m1" data-speed="0.06">
+        <div class="mhead"><span class="mk">Dua · Protection</span><span class="pip"><i>01</i></span></div>
+        <div class="mi"><canvas class="pcv mcv" data-scene="hizb" aria-hidden="true"></canvas>
+          <span class="ms">Protection &amp; Ease</span>
+          <span class="mt">Ayat al-Kursi</span>
+          <span class="ar">ٱللَّهُ لَآ إِلَـٰهَ إِلَّا هُوَ</span>
+        </div>
+        <div class="mfoot"><span>Protection Set</span><span>2:255</span></div>
+      </div>
+      <div class="mini m2" data-speed="-0.05">
+        <div class="mhead"><span class="mk">Dua · Steadfastness</span><span class="pip"><i>02</i></span></div>
+        <div class="mi"><canvas class="pcv mcv" data-scene="dua" aria-hidden="true"></canvas>
+          <span class="ms">Forgiveness &amp; Mercy</span>
+          <span class="mt">Steadfastness of Heart</span>
+          <span class="ar">رَبَّنَا لَا تُزِغْ قُلُوبَنَا</span>
+        </div>
+        <div class="mfoot"><span>Gen Z Set</span><span>3:8</span></div>
+      </div>
+      <div class="mini m3" data-speed="0.1">
+        <div class="mhead"><span class="mk">Dua · Travel</span><span class="pip"><i>01</i></span></div>
+        <div class="mi"><canvas class="pcv mcv" data-scene="qibla" aria-hidden="true"></canvas>
+          <span class="ms">Travel &amp; Visits</span>
+          <span class="mt">Beginning a Journey</span>
+          <span class="ar">بِسْمِ ٱللَّهِ مَجْرِىٰهَا</span>
+        </div>
+        <div class="mfoot"><span>Travel Set</span><span>11:41</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 1b · THE OPEN MUSHAF (mushaf3d.js) ============ -->
+<section class="mf" id="mushaf">
+  <div class="wrap mf-in">
+    <div>
+      <span class="k">The surahs</span>
+      <h2 data-reveal>Turn the page.</h2>
+      <p class="mf-lp" data-reveal data-reveal-delay="0.06">Every surah card is set the way a mushaf page is: the name in its
+      cartouche, the Arabic with its ayah marks, and the meaning facing it with its source. Drag a page across to turn it,
+      or leave it and it turns on its own.</p>
+      <a class="btn btn-line" href="/khayr">Read the surah cards</a>
+    </div>
+    <div class="mf-wrap"><div class="mf-stage" id="mf3"></div></div>
+  </div>
+</section>
+
+<!-- ============ 2 · SOURCES STRIP ============ -->
+<div class="sources" aria-label="Where the duas come from">
+  <div class="marquee">
+    <div class="mq-track">
+      <span class="mq-group">
+        <span class="mq-item">Qur'an · Uthmani text</span><span class="mq-sep"></span>
+        <span class="mq-item">Verified via Tanzil</span><span class="mq-sep"></span>
+        <span class="mq-item">Sahih collections</span><span class="mq-sep"></span>
+        <span class="mq-item">Source on every card</span><span class="mq-sep"></span>
+        <span class="mq-item">Scholar review before release</span><span class="mq-sep"></span>
+        <span class="mq-item">Nothing invented</span><span class="mq-sep"></span>
+        <span class="mq-item">Every card cites its source</span><span class="mq-sep"></span>
+        <span class="mq-item">No AI-written duas</span><span class="mq-sep"></span>
+        <span class="mq-item">Free forever</span><span class="mq-sep"></span>
+        </span>
+      <span class="mq-group" aria-hidden="true">
+        <span class="mq-item">Qur'an · Uthmani text</span><span class="mq-sep"></span>
+        <span class="mq-item">Verified via Tanzil</span><span class="mq-sep"></span>
+        <span class="mq-item">Sahih collections</span><span class="mq-sep"></span>
+        <span class="mq-item">Source on every card</span><span class="mq-sep"></span>
+        <span class="mq-item">Scholar review before release</span><span class="mq-sep"></span>
+        <span class="mq-item">Nothing invented</span><span class="mq-sep"></span>
+        <span class="mq-item">Every card cites its source</span><span class="mq-sep"></span>
+        <span class="mq-item">No AI-written duas</span><span class="mq-sep"></span>
+        <span class="mq-item">Free forever</span><span class="mq-sep"></span>
+        </span>
+    </div>
+  </div>
+</div>
+
+<!-- ============ 3 · WHAT ARE YOU FACING ============ -->
+<section id="facing">
+  <div class="wrap facing-in">
+    <div>
+      <div class="sh" style="margin-bottom:0">
+        <span class="k">What are you facing?</span>
+        <h2 data-reveal>Pick the moment.<br>The deck answers.</h2>
+        <p data-reveal data-reveal-delay="0.06">An exam, a flight, a hard conversation, a heavy heart.
+        Tap what you are facing and Baik hands you the dua that was made for it.</p>
+      </div>
+      <div class="fchips" id="fchips" data-reveal data-reveal-delay="0.1"></div>
+    </div>
+    <div data-reveal data-reveal-delay="0.08">
+      <div class="facing-card">
+        <div class="fcard" id="fcard">
+          <div class="fcard-in">
+            <span class="fk" id="fcK">Dua · Guidance</span>
+            <span class="ft" id="fcT">Seeking Wisdom &amp; Mercy</span>
+            <div class="far" id="fcA">رَبِّ هَبْ لِي حُكْمًا وَأَلْحِقْنِي بِالصَّالِحِينَ</div>
+            <div class="fen" id="fcE">“My Lord, grant me wisdom and join me with the righteous.”</div>
+            <div class="fsrc" id="fcS">Qur'an · Ash-Shu'ara 26:83</div>
+          </div>
+        </div>
+      </div>
+      <a class="openlink" href="/khayr">Open this card in the web app ›</a>
+    </div>
+  </div>
+</section>
+
+<hr class="divider" aria-hidden="true">
+
+<!-- ============ 4 · HOW IT WORKS ============ -->
+<section id="how" class="how2">
+  <div class="wrap">
+    <div class="sh">
+      <span class="k">How it works</span>
+      <h2 data-reveal>Three moves, then you are reciting.</h2>
+    </div>
+    <div class="hw">
+      <ol class="hw-steps">
+        <li class="hw-step on" data-s="1"><span class="hw-n">01</span><div><h3>Say what you are facing</h3>
+          <p>Search in your own words, tap a situation, or tick tags by set, kind and any of the 23 needs. Chosen tags sit under the field, and any one of them lifts off with a tap.</p></div></li>
+        <li class="hw-step" data-s="2"><span class="hw-n">02</span><div><h3>Draw the card</h3>
+          <p>Each dua is one card: the Arabic set like a mushaf page with its pause marks, the transliteration, and the meaning in plain words.</p></div></li>
+        <li class="hw-step" data-s="3"><span class="hw-n">03</span><div><h3>Go deeper, or turn it over</h3>
+          <p>Open <i>About this dua</i> for when it may be read and the story of its revelation. Turn the card over and the back is a plain deck back, the way a real card is. Save it, or share it with the source attached.</p></div></li>
+      </ol>
+      <div class="hw-stage" data-step="1" aria-hidden="true">
+        <div class="hw-rail"><i></i></div>
+        <div class="hw-search"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg><span class="hw-q"></span><span class="hw-caret"></span></div>
+        <div class="hw-tags"><span class="hw-tag">Study <b>×</b></span><span class="hw-tag">Anxiety <b>×</b></span><span class="hw-count">6 cards fit</span></div>
+        <div class="hw-deck">
+          <img class="hw-back b1" src="assets/site/card-back.webp" alt="" loading="lazy">
+          <img class="hw-back b2" src="assets/site/card-back.webp" alt="" loading="lazy">
+          <div class="hw-card"><div class="hw-flip"><img class="hw-front" src="assets/site/card-front.webp" alt="" loading="lazy"><img class="hw-rear" src="assets/site/card-back.webp" alt="" loading="lazy"></div></div>
+        </div>
+        <div class="hw-about"><span class="hw-ak">About this dua</span><b>When it may be read</b><span>Read when a decision is made and the outcome is no longer yours to hold.</span><b>Context of revelation</b><span>Part of the example set by Ibrahim and those with him, cited in al-Mumtahanah.</span></div>
+        <div class="hw-acts"><span>☆ Save</span><span>Share</span><span>Read large</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 4b · THE SETS: scroll deals the deck ============ -->
+<section id="sets">
+  <div class="wrap">
+    <div class="sh">
+      <span class="k">The sets</span>
+      <h2 data-reveal>Ten sets. Scroll to deal them.</h2>
+      <p data-reveal data-reveal-delay="0.06">Every set has its own colour and its own ground to cover.
+      Together they are one deck of 130 cards, filed across 23 needs, and growing.</p>
+    </div>
+    <div class="stack">
+      <div class="scard" style="--i:0">
+        <div><span class="sk">Set 01 · Doa Gen Z</span><h3>For everyday battles.</h3>
+        <p class="sd">Steadfastness of heart, pressure, sadness, a big decision, forgiveness. The duas for the life you are actually living.</p>
+        <span class="sm">13 cards · blue suit</span></div>
+        <div class="sart live"><canvas class="pcv" data-scene="dua" aria-hidden="true"></canvas><span class="ar" lang="ar">رَبَّنَا لَا تُزِغْ قُلُوبَنَا</span></div>
+      </div>
+      <div class="scard" style="--i:1">
+        <div><span class="sk">Set 02 · Doa Travel</span><h3>For every mile of the way.</h3>
+        <p class="sd">Leaving home, boarding, the road, arrival, and the family left behind. A journey held from door to door.</p>
+        <span class="sm">9 cards · rose suit</span></div>
+        <div class="sart live"><canvas class="pcv" data-scene="qibla" aria-hidden="true"></canvas><span class="ar" lang="ar">بِسْمِ ٱللَّهِ مَجْرِىٰهَا</span></div>
+      </div>
+      <div class="scard" style="--i:2">
+        <div><span class="sk">Set 03 · Doa Rezeki</span><h3>For what you work for.</h3>
+        <p class="sd">Mercy, a clean heart towards others, and the plea that your efforts are accepted. Provision asked for the right way round.</p>
+        <span class="sm">4 cards · amber suit</span></div>
+        <div class="sart live"><canvas class="pcv" data-scene="masjid" aria-hidden="true"></canvas><span class="ar" lang="ar">رَبَّنَا تَقَبَّلْ مِنَّآ</span></div>
+      </div>
+      <div class="scard" style="--i:3">
+        <div><span class="sk">Set 04 · Doa Protection</span><h3>For safety, seen and unseen.</h3>
+        <p class="sd">Ayat al-Kursi, and the duas against slipping, against the Fire, and against becoming a trial for others.</p>
+        <span class="sm">5 cards · emerald suit</span></div>
+        <div class="sart live"><canvas class="pcv" data-scene="hizb" aria-hidden="true"></canvas><span class="ar" lang="ar">ٱللَّهُ لَآ إِلَـٰهَ إِلَّا هُوَ</span></div>
+      </div>
+      <div class="scard" style="--i:4">
+        <div><span class="sk">Set 05 · Rabbana</span><h3>For when you say “our Lord”.</h3>
+        <p class="sd">Twenty-two of the Qur’an’s own duas that open with Rabbana: patience, a family kept in prayer, reliance, a sorrow lifted.</p>
+        <span class="sm">22 cards</span></div>
+        <div class="sart live"><canvas class="pcv" data-scene="rehal" aria-hidden="true"></canvas><span class="ar" lang="ar">رَبَّنَآ أَفْرِغْ عَلَيْنَا صَبْرًا</span></div>
+      </div>
+      <div class="scard" style="--i:5">
+        <div><span class="sk">Set 06 · Kesihatan</span><h3>For the sick, and those sitting with them.</h3>
+        <p class="sd">Ibrahim’s “when I am ill, He heals me”, Ayyub’s dua, and the ayat that name the Qur’an itself as healing.</p>
+        <span class="sm">7 cards</span></div>
+        <div class="sart live"><canvas class="pcv" data-scene="sajadah" aria-hidden="true"></canvas><span class="ar" lang="ar">وَإِذَا مَرِضْتُ فَهُوَ يَشْفِينِ</span></div>
+      </div>
+      <div class="scard" style="--i:6">
+        <div><span class="sk">Set 07 · Surah</span><h3>For recitation itself.</h3>
+        <p class="sd">Whole short surahs on near-black stock with gold rule, from Al-Fatihah to An-Nas: the illumination colours of a mushaf.</p>
+        <span class="sm">15 cards · black stock</span></div>
+        <div class="sart live"><canvas class="pcv" data-scene="surah" aria-hidden="true"></canvas><span class="ar" lang="ar">قُلْ هُوَ ٱللَّهُ أَحَدٌ</span></div>
+      </div>
+      <div class="scard" style="--i:7">
+        <div><span class="sk">Sets 08 & 09 · Panduan</span><h3>For the prayer and the fast.</h3>
+        <p class="sd">Panduan Solat walks the prayer from its conditions to what to do when it goes wrong. Panduan Puasa covers intention, what breaks a fast, who is excused, and making days up.</p>
+        <span class="sm">42 + 10 cards · Shafi’i, awaiting review</span></div>
+        <div class="sart live"><canvas class="pcv" data-scene="adhan" aria-hidden="true"></canvas></div>
+      </div>
+      <div class="scard" style="--i:8">
+        <div><span class="sk">Set 10 · Zikir</span><h3>For the words that steady you.</h3>
+        <p class="sd">Hasbunallah, the dua of Yunus in the dark, and what is said on hearing of a death. Each with its own counter.</p>
+        <span class="sm">3 cards</span></div>
+        <div class="sart live"><canvas class="pcv" data-scene="tasbih" aria-hidden="true"></canvas><span class="ar" lang="ar">حَسْبُنَا ٱللَّهُ وَنِعْمَ ٱلْوَكِيلُ</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="divider" aria-hidden="true">
+
+<!-- ============ 4c · THE TABLE ============ -->
+<section id="table">
+  <div class="wrap facing-in">
+    <div>
+      <div class="sh" style="margin-bottom:0">
+        <span class="k">The table</span>
+        <h2 data-reveal>Set down what you are carrying.</h2>
+        <p data-reveal data-reveal-delay="0.06">Money and a marriage. An exam and an anxious heart.
+        Put the cubes for what you are facing on the table and Baik deals the cards that fit the
+        combination, not just one of them. Saved cards stay where you leave them, like a spread you
+        can come back to.</p>
+      </div>
+      <ul class="app-list" data-reveal data-reveal-delay="0.1">
+        <li>Nine cubes: rizq, marriage, health, anxious heart, grief, travel, study, protection, forgiveness</li>
+        <li>Combine any of them; the deal is scored across all of them</li>
+        <li>Your own table remembers where every card lies</li>
+      </ul>
+    </div>
+    <div data-reveal data-reveal-delay="0.08">
+      <div class="t3-wrap"><div class="t3" id="t3"></div><figure class="shot t3-fallback"><img src="assets/site/table.webp" width="1365" height="805" loading="lazy" alt="The table view: saved cards lying at angles on the table, ready to drag and flip"></figure></div>
+    </div>
+  </div>
+</section>
+
+<hr class="divider" aria-hidden="true">
+
+<!-- ============ 4d · QIBLA + PRAYER TIMES ============ -->
+<section id="compass">
+  <div class="wrap">
+    <div class="sh">
+      <span class="k">Qibla and prayer times</span>
+      <h2 data-reveal>The direction, and the hour.</h2>
+      <p data-reveal data-reveal-delay="0.06">Both are open in the web app today, free with a free account.
+      What a browser can do properly, they do properly. What a browser cannot do, this page says outright.</p>
+    </div>
+    <div class="qtc">
+      <article class="qtcard" data-reveal>
+        <span class="qti"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M15.5 8.5l-2 5-5 2 2-5z"/></svg></span>
+        <h3>Qibla</h3>
+        <p>The great-circle bearing to the Kaaba from where you stand, in degrees from true north.
+        A compass is a magnetometer, so metal and cars pull it off true. When it drifts, find north by the
+        sun instead, then hold the phone up and the camera view lays the line over what the lens sees.</p>
+        <ul class="qtl">
+          <li>Great-circle bearing to the Kaaba, with the distance</li>
+          <li>Sun calibration for when the compass is unreliable</li>
+          <li>Camera view, the qibla drawn over the live picture</li>
+        </ul>
+      </article>
+      <article class="qtcard" data-reveal data-reveal-delay="0.08">
+        <span class="qti"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7.2V12l3.2 2"/></svg></span>
+        <h3>Prayer times</h3>
+        <p>All 60 JAKIM e-solat zones. Official times are fetched from e-solat.gov.my and kept in your
+        browser a week at a time, so the sheet still reads with no connection. Outside Malaysia, and any time
+        e-solat cannot be reached, the times are calculated from the sun by bisecting the altitude curve.</p>
+        <ul class="qtl">
+          <li>60 JAKIM zones, official times, cached a week at a time</li>
+          <li>Five calculation methods, standard and Hanafi Asr</li>
+          <li>Geolocation and 26 cities guess your nearest zone; your own pick always wins</li>
+        </ul>
+      </article>
+    </div>
+    <a class="openlink" href="/khayr">Open Qibla and prayer times in the web app ›</a>
+
+    <div class="qtlim" data-reveal>
+      <div>
+        <span class="k">The web limit</span>
+        <h3>A browser cannot call you to prayer.</h3>
+        <p>The web version cannot sound the azan when your phone is locked. A sleeping tab has no
+        voice, so Baik does not promise one: no background audio, no push notification, no widget.
+        Open the page and the times are there. Close it and it is quiet. The native app is where the
+        azan lands, and that is the reason it is being built.</p>
+      </div>
+      <div>
+        <form class="wait" id="qtForm" data-reveal data-reveal-delay="0.08">
+          <input type="email" id="qtMail" placeholder="Your email for the native app" autocomplete="email" aria-label="Email for the native app waitlist">
+          <button class="btn btn-gold" type="submit">Tell me when it lands</button>
+        </form>
+        <p class="wait-note">The same waitlist as the app section below. One email, at launch, nothing else.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="divider" aria-hidden="true">
+
+<!-- ============ 5 · FEATURES ============ -->
+<section>
+  <div class="wrap">
+    <div class="sh">
+      <span class="k">Built with care</span>
+      <h2 data-reveal>Everything a dua needs.<br>Nothing it doesn't.</h2>
+    </div>
+    <div class="feats">
+      <div class="feat" data-reveal><span class="fi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 6.5C10 4.5 7 4 4 4.5v13c3-.5 6 0 8 2 2-2 5-2.5 8-2v-13c-3-.5-6 0-8 2z"/><path d="M12 6.5v13"/></svg></span>
+        <h3>Authentic, cited, checked</h3><p>Qur'anic text transcribed from the Uthmani mushaf and verified. Every card names its surah, ayah or hadith source.</p></div>
+      <div class="feat" data-reveal data-reveal-delay="0.05"><span class="fi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M4 7V5h16v2M9 20h6M12 5v15"/></svg></span>
+        <h3>Read it your way</h3><p>Arabic with pause marks explained on hover, transliteration for learners, and the meaning in English or Bahasa Melayu: the toggle switches every card and label.</p></div>
+      <div class="feat" data-reveal data-reveal-delay="0.1"><span class="fi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 3h12v18l-6-4.5L6 21z"/></svg></span>
+        <h3>Your own deck</h3><p>Save the duas you return to. A daily featured dua keeps one card on your table every morning.</p></div>
+      <div class="feat" data-reveal data-reveal-delay="0.05"><span class="fi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="6" cy="12" r="2.6"/><circle cx="17.5" cy="6" r="2.6"/><circle cx="17.5" cy="18" r="2.6"/><path d="M8.4 10.8l6.7-3.6M8.4 13.2l6.7 3.6"/></svg></span>
+        <h3>Share with the source</h3><p>Copy or share any card to WhatsApp, Telegram or anywhere. The reference travels with it, always.</p></div>
+      <div class="feat" data-reveal data-reveal-delay="0.1"><span class="fi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9v6h4l5 4V5L8 9H4z"/><path d="M16.5 8.8a4.5 4.5 0 0 1 0 6.4"/></svg></span>
+        <h3>Hear the Arabic</h3><p>Your device reads the Arabic aloud so you can hear the words as you follow them. It is a speech voice, not a reciter and not tajwid, and the app says so. Recorded recitation by a named qari <span class="lock soon">In build</span></p></div>
+      <div class="feat" data-reveal data-reveal-delay="0.15"><span class="fi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3.5v5c0 4.5-2.9 8-7 9.5-4.1-1.5-7-5-7-9.5v-5z"/></svg></span>
+        <h3>Private by design</h3><p>No ads, no selling of your data, and no AI-invented duas presented as authentic. Ever.</p></div>
+    </div>
+    <div class="stats">
+      <div class="stat" data-reveal><b data-countup="130">130</b><span>cards in the deck today</span></div>
+      <div class="stat" data-reveal data-reveal-delay="0.05"><b data-countup="10">10</b><span>sets, each its own colour</span></div>
+      <div class="stat" data-reveal data-reveal-delay="0.1"><b data-countup="23">23</b><span>needs to filter by</span></div>
+      <div class="stat" data-reveal data-reveal-delay="0.15"><b data-countup="128">128</b><span>features on the build plan</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ kinetic strip: the promise, oversized ============ -->
+<div class="kinetic" aria-hidden="true">
+  <div class="kt" id="kinetic"><div class="kt-run"><span class="kt-g"><span>The right dua</span><span class="solid">·</span><span>for this moment</span><span class="solid">·</span><span>with its source</span><span class="solid">·</span><span>free forever</span><span class="solid">·</span></span><span class="kt-g"><span>The right dua</span><span class="solid">·</span><span>for this moment</span><span class="solid">·</span><span>with its source</span><span class="solid">·</span><span>free forever</span><span class="solid">·</span></span></div></div>
+</div>
+
+<hr class="divider" aria-hidden="true">
+
+<!-- ============ 5b · THE APP ============ -->
+<section id="app">
+  <div class="wrap app-in">
+    <div>
+      <div class="sh" style="margin-bottom:0">
+        <span class="k">The app</span>
+        <h2 data-reveal>The same deck,<br>in your pocket.</h2>
+        <p data-reveal data-reveal-delay="0.06">The web version is the deck today. The app carries it with you:
+        offline, quietly, without ever needing a signal to find the right words.</p>
+      </div>
+      <ul class="app-list" data-reveal data-reveal-delay="0.1">
+        <li>Every card offline, including Arabic text and sources</li>
+        <li>A gentle daily dua notification, if you want one</li>
+        <li>Recitation audio downloads for travel</li>
+        <li>Qibla, prayer times and the Hijri date</li>
+      </ul>
+      <form class="wait" id="waitForm" data-reveal data-reveal-delay="0.14">
+        <input type="email" id="waitMail" placeholder="Your email for launch day" autocomplete="email" aria-label="Email for the app launch waitlist">
+        <button class="btn btn-gold" type="submit">Notify me</button>
+      </form>
+      <p class="wait-note">First 1,000 join as founding members: lifetime Premium at RM129.90.</p>
+    </div>
+    <div data-reveal data-reveal-delay="0.08">
+      <figure class="shot shot-phone"><div class="iphone"><span class="ip-key ip-action"></span><span class="ip-key ip-vol1"></span><span class="ip-key ip-vol2"></span><span class="ip-key ip-power"></span><div class="ip-screen"><video class="app-vid" src="assets/site/app-scroll.mp4" poster="assets/site/app-scroll-poster.jpg" width="740" height="1516" muted loop playsinline preload="metadata" aria-label="Baik on a phone: scrolling the deck and turning a card over to its back"></video><div class="ip-status" aria-hidden="true"><span class="ip-time">9:41</span><span class="ip-icons"><svg viewBox="0 0 18 12" width="17" height="11" fill="currentColor"><rect x="0" y="8" width="3" height="4" rx=".8"/><rect x="5" y="5.5" width="3" height="6.5" rx=".8"/><rect x="10" y="3" width="3" height="9" rx=".8"/><rect x="15" y="0" width="3" height="12" rx=".8"/></svg><svg viewBox="0 0 16 12" width="15" height="11" fill="currentColor"><path d="M8 2.2c2.3 0 4.4.9 6 2.4l1.3-1.4A10.4 10.4 0 0 0 8 .3 10.4 10.4 0 0 0 .7 3.2L2 4.6a8.5 8.5 0 0 1 6-2.4zm0 3.7c1.3 0 2.5.5 3.4 1.4l1.3-1.4A6.6 6.6 0 0 0 8 4 6.6 6.6 0 0 0 3.3 5.9l1.3 1.4C5.5 6.4 6.7 5.9 8 5.9zm0 3.6-1.9 2 1.9 2 1.9-2z"/></svg><svg viewBox="0 0 27 12" width="25" height="11"><rect x=".5" y=".5" width="22" height="11" rx="3.2" fill="none" stroke="currentColor" opacity=".4"/><rect x="2" y="2" width="17" height="8" rx="2" fill="currentColor"/><path d="M24 4v4c.9-.3 1.5-1.1 1.5-2S24.9 4.3 24 4z" fill="currentColor" opacity=".45"/></svg></span></div><span class="ip-island" aria-hidden="true"></span><span class="ip-home" aria-hidden="true"></span></div></div></figure>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 6 · SHARE ============ -->
+<section id="share">
+  <div class="wrap share-in">
+    <div>
+      <div class="sh" style="margin-bottom:0">
+        <span class="k">Pass it on</span>
+        <h2 data-reveal>A dua is better given away.</h2>
+        <p data-reveal data-reveal-delay="0.06">Send a card to someone who needs it today. Every share carries the
+        Arabic, the meaning and the source, so what arrives can be trusted and looked up.</p>
+      </div>
+      <div class="share-btns" data-reveal data-reveal-delay="0.1">
+        <a class="sbtn" id="shWa" href="#" rel="noopener" target="_blank">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2zm5.3 14.2c-.2.6-1.2 1.2-1.7 1.2-.5.1-1 .2-3.3-.7-2.8-1.1-4.6-4-4.7-4.2-.1-.2-1.1-1.5-1.1-2.9s.7-2 1-2.3c.2-.3.5-.3.7-.3h.5c.2 0 .4 0 .6.5l.9 2.1c.1.2.1.4 0 .6l-.4.6-.2.3c-.1.2-.2.3 0 .6.2.3.9 1.4 1.9 2.3 1.3 1.2 2.4 1.5 2.7 1.7.3.1.5.1.7-.1l1-1.2c.2-.3.4-.2.7-.1l2.1 1c.3.2.5.3.6.4 0 .1 0 .7-.2 1.4z"/></svg>
+          WhatsApp</a>
+        <a class="sbtn" id="shTg" href="#" rel="noopener" target="_blank">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M21.9 4.6l-3.1 14.7c-.2 1-.8 1.3-1.7.8l-4.7-3.5-2.3 2.2c-.3.3-.5.5-1 .5l.4-4.8L18.2 6.6c.4-.3-.1-.5-.6-.2L6.7 13.2 2 11.7c-1-.3-1-1 .2-1.5l18.3-7c.9-.3 1.6.2 1.4 1.4z"/></svg>
+          Telegram</a>
+        <a class="sbtn" id="shX" href="#" rel="noopener" target="_blank">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M18.9 2H22l-6.8 7.8L23.3 22h-6.3l-4.9-6.4L6.5 22H3.4l7.3-8.3L1 2h6.5l4.4 5.9zm-1.1 18.1h1.7L6.6 3.8H4.7z"/></svg>
+          X</a>
+        <button class="sbtn" id="shCopy">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg>
+          Copy link</button>
+      </div>
+    </div>
+    <div class="share-quote" data-reveal data-reveal-delay="0.08">
+      <div class="ar">رَبِّ اشْرَحْ لِي صَدْرِي وَيَسِّرْ لِي أَمْرِي</div>
+      <div class="en">“My Lord, expand for me my chest, and ease for me my task.”</div>
+      <div class="src">Qur'an · Ta-Ha 20:25-26 · shared from Baik</div>
+    </div>
+  </div>
+</section>
+
+<hr class="divider" aria-hidden="true">
+
+<!-- ============ 6b · WORDS FROM READERS ============ -->
+<section id="words">
+  <div class="wrap">
+    <div class="sh">
+      <span class="k">Words from readers</span>
+      <h2 data-reveal>What a card meant<br>to the people who drew it.</h2>
+    </div>
+    <div class="quotes">
+      <figure class="quote q2" data-reveal data-sample>
+        <span class="q-sample">Sample</span>
+        <div class="q-stars" aria-label="5 out of 5">★★★★★</div>
+        <blockquote>“I had my viva the next morning and couldn’t sleep. I typed “exam tomorrow” and it gave me Taha 20:25. I read it over and over until I calmed down. Having the source right there made me trust it.”</blockquote>
+        <div class="q-card">Drew · <b>Opening the Heart & Easing Speech</b></div>
+        <figcaption class="qhead"><span class="qav" aria-hidden="true">N</span><span class="qwho"><b>Nur Aisyah</b><span>Postgraduate student · Bangi</span></span></figcaption>
+      </figure>
+      <figure class="quote q2" data-reveal data-reveal-delay="0.07" data-sample>
+        <span class="q-sample">Sample</span>
+        <div class="q-stars" aria-label="5 out of 5">★★★★★</div>
+        <blockquote>“I use the cards with my Year 4 class every morning. The children each pick one, read the meaning out loud, then we check the ayah together. They’ve started asking where every dua comes from.”</blockquote>
+        <div class="q-card">Drew · <b>Comfort of the Eyes</b></div>
+        <figcaption class="qhead"><span class="qav" aria-hidden="true">F</span><span class="qwho"><b>Ustazah Farhana</b><span>Primary school teacher · Shah Alam</span></span></figcaption>
+      </figure>
+      <figure class="quote q2" data-reveal data-reveal-delay="0.14" data-sample>
+        <span class="q-sample">Sample</span>
+        <div class="q-stars" aria-label="5 out of 5">★★★★★</div>
+        <blockquote>“Studying abroad, I don’t always have someone to ask. The travel set lives on my phone now. I said the dua for boarding before my first winter flight home, and I knew exactly which surah it was from.”</blockquote>
+        <div class="q-card">Drew · <b>Upon Boarding a Vehicle</b></div>
+        <figcaption class="qhead"><span class="qav" aria-hidden="true">H</span><span class="qwho"><b>Hakim R.</b><span>Engineering student · Manchester</span></span></figcaption>
+      </figure>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 7 · PRICING ============ -->
+<section id="pricing">
+  <div class="wrap">
+    <div class="sh">
+      <span class="k">Free &amp; Premium</span>
+      <h2 data-reveal>Every dua stays free. Always.</h2>
+      <p data-reveal data-reveal-delay="0.06">Premium never unlocks a dua. It supports the app and unlocks the tools
+      around the duas: audio, unlimited saves, guided journeys and offline packs.</p>
+    </div>
+    <div class="plans">
+      <div class="plan" data-reveal>
+        <span class="k">Free</span>
+        <div class="pv">RM0 <small>forever</small></div>
+        <ul>
+          <li>Every authentic dua, full text and source</li>
+          <li>English and Bahasa Melayu</li>
+          <li>Search, situations and tag filters</li>
+          <li>Grid, deck and table views</li>
+          <li>Daily featured dua</li>
+          <li>Save up to 10 cards</li>
+          <li>Share, copy and download a card as an image</li>
+          <li>Hear the Arabic read aloud by your device</li>
+          <li>36 collections by feeling and by life, and every journey as a list</li>
+          <li>Dark mode, high contrast, three card themes, text sizes</li>
+          <li>Qibla, prayer times, the Hijri date and prayer reminders</li>
+        </ul>
+        <a class="btn btn-line" href="/khayr">Start on the web</a>
+      </div>
+      <div class="plan hero-plan" data-reveal data-reveal-delay="0.08">
+        <span class="tag">Best value</span>
+        <span class="k">Premium</span>
+        <div class="pv">RM19.90 <small>/month · or RM179.10/year, 25% off</small></div>
+        <ul>
+          <li>Unlimited saves, collections with covers, pinned cards, searchable notes <span class="live">live now</span></li>
+          <li>Memorisation mode, flashcards and your progress <span class="live">live now</span></li>
+          <li>Guided journeys: Ramadan, travel, family, marriage, grief <span class="live">live now</span></li>
+          <li>Every card theme, reading layout and share design <span class="live">live now</span></li>
+          <li>Arabic, verse and source search; cloud sync <span class="live">live now</span></li>
+          <li>Umrah and Hajj journeys <span class="soon">gathering sourced duas</span></li>
+          <li>Recorded recitation by a qari, word-by-word meaning, commentary <span class="soon">in build</span></li>
+          <li>Offline packs <span class="soon">in build</span></li>
+        </ul>
+        <p class="plan-honest">The first five work today. The rest are marked for what they are,
+        and the trial is free precisely so you can see what exists before anything is charged.</p>
+        <a class="btn btn-gold" href="/khayr">Try 7 days free</a>
+      </div>
+    </div>
+    
+    <p class="plan-note">Lifetime RM358.20, two years' worth · Founding member RM129.90 for the first 1,000 · The trial takes nothing today, reminds you 2 days before it ends, and stops in one tap.</p>
+  </div>
+</section>
+
+<hr class="divider" aria-hidden="true">
+
+<!-- ============ 7b · ONE DUA A MORNING ============ -->
+<section id="daily">
+  <div class="wrap daily-in">
+    <div>
+      <span class="k">One a morning</span>
+      <h2 data-reveal>A dua in your inbox,<br>before the day starts.</h2>
+      <p class="daily-p" data-reveal data-reveal-delay="0.06">One card each morning: the Arabic, how to say it,
+      what it means, and where it comes from. No newsletter, no marketing, one dua. Stop whenever you like.</p>
+      <form class="wait" id="dailyForm" data-reveal data-reveal-delay="0.1">
+        <input type="email" id="dailyMail" placeholder="you@example.com" autocomplete="email" aria-label="Email for the daily dua">
+        <button class="btn btn-gold" type="submit">Send me one a day</button>
+      </form>
+      <p class="wait-note">Free, and it stays free. We never sell or share your email.</p>
+    </div>
+    <div class="daily-card" data-reveal data-reveal-delay="0.08">
+      <div class="shot shot-scene"><canvas class="pcv" data-scene="solat" aria-label="The sun moving through the five prayer times"></canvas><span class="shot-cap">One card a day, timed to your morning</span></div>
+    </div>
+  </div>
+</section>
+
+<hr class="divider" aria-hidden="true">
+
+<!-- ============ 8 · FAQ ============ -->
+<section id="faq">
+  <div class="wrap">
+    <div class="sh">
+      <span class="k">Questions</span>
+      <h2 data-reveal>Asked and answered.</h2>
+    </div>
+    <div class="faq">
+      <details data-reveal><summary>Are the duas authentic?</summary><p class="fa-p">Yes. Qur'anic text is transcribed from the Uthmani mushaf and verified against Tanzil, never typed by hand and never generated. Every card names its exact source, and if a dua cannot carry a checkable source it does not enter the deck. Scholar review is the last gate before public release: every card records whether it has been reviewed and by whom, and today that field reads pending.</p></details>
+      <details data-reveal><summary>Is Baik really free?</summary><p class="fa-p">Every dua, its Arabic, transliteration, meaning and source, is free forever. Premium only unlocks tools around the duas: audio, unlimited saves, guided journeys, offline packs. The religious content itself is never behind a price.</p></details>
+      <details data-reveal><summary>Do I need to download the app?</summary><p class="fa-p">No. The web version works in any browser today, free. The mobile app is on its way; it adds offline access, notifications and audio downloads. Use the web now, take the app when it lands.</p></details>
+      <details data-reveal><summary>When does the app launch?</summary><p class="fa-p">It is in development. The first 1,000 users get the founding member lifetime price of RM129.90. Open the web app and you will see the plan and progress inside.</p></details>
+      <details data-reveal><summary>What about my privacy?</summary><p class="fa-p">No advertisements, no selling of personal data. Your notes, saves and reading habits stay yours. Location is only ever requested for Qibla and prayer times, and only when you ask for them.</p></details>
+      <details data-reveal><summary>Bahasa Melayu?</summary><p class="fa-p">Ya, insya-Allah. The deck was born bilingual; the BM layer ships with the language toggle. English is first while the Malay translations go through review.</p></details>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 9 · FINAL CTA ============ -->
+<section class="final">
+  <div class="wrap">
+    <h2 data-reveal>The right dua,<br>in seconds, with its source.</h2>
+    <p data-reveal data-reveal-delay="0.06">Open the deck. It is free, and it always will be.</p>
+    <div class="hero-cta" data-reveal data-reveal-delay="0.1">
+      <a class="btn btn-gold" href="/khayr">Open Baik on the web</a>
+    </div>
+    <div class="stores" data-reveal data-reveal-delay="0.14">
+      <a class="store" href="#faq"><span class="soon">Coming soon</span>
+        <svg viewBox="0 0 384 512" fill="currentColor"><path d="M318.7 268.7c-.2-36.7 16.4-64.4 50-84.8-18.8-26.9-47.2-41.7-84.7-44.6-35.5-2.8-74.3 20.7-88.5 20.7-15 0-49.4-19.7-76.4-19.7C63.3 141.2 4 184.8 4 273.5q0 39.3 14.4 81.2c12.8 36.7 59 126.7 107.2 125.2 25.2-.6 43-17.9 75.8-17.9 31.8 0 48.3 17.9 76.4 17.9 48.6-.7 90.4-82.5 102.6-119.3-65.2-30.7-61.7-90-61.7-91.9zm-56.6-164.2c27.3-32.4 24.8-61.9 24-72.5-24.1 1.4-52 16.4-67.9 34.9-17.5 19.8-27.8 44.3-25.6 71.9 26.1 2 49.9-11.4 69.5-34.3z"/></svg>
+        <span><span class="pre">Download on the</span><b>App Store</b></span></a>
+      <a class="store" href="#faq"><span class="soon">Coming soon</span>
+        <svg viewBox="0 0 512 512" fill="currentColor"><path d="M325.3 234.3L104.6 13l280.8 161.2-60.1 60.1zM47 0C34 6.8 25.3 19.2 25.3 35.3v441.3c0 16.1 8.7 28.5 21.7 35.3l256.6-256L47 0zm425.2 225.6l-58.9-34.1-65.7 64.5 65.7 64.5 60.1-34.1c18-14.3 18-46.5 18-46.5v-14.3zm-160.3 76.7l60.1 60.1L104.6 499 264.9 302.3z"/></svg>
+        <span><span class="pre">Get it on</span><b>Google Play</b></span></a>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer>
+  <div class="wrap foot-in">
+    <a class="mark" href="#top"><span class="baik-logo" role="img" aria-label="Baik"></span></a>
+    <div class="foot-links">
+      <a href="/khayr">Web app</a>
+      <a href="#pricing">Free &amp; Premium</a>
+      <a href="#faq">FAQ</a>
+      <a href="/codex">Codex</a>
+    </div>
+    <div class="socials" aria-label="Social profiles, opening soon">
+      <button class="soc" data-soc="Instagram" title="Instagram · profile coming with launch"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.2" cy="6.8" r="1.1" fill="currentColor" stroke="none"/></svg></button>
+      <button class="soc" data-soc="TikTok" title="TikTok · profile coming with launch"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M16.8 5.8a4.8 4.8 0 0 1-1.1-3.1h-3.2v12.9a2.7 2.7 0 1 1-2.7-2.7c.3 0 .6 0 .8.1V9.7a6 6 0 0 0-.8-.1 6 6 0 1 0 6 6V9.4a7.9 7.9 0 0 0 4.4 1.3V7.5a4.8 4.8 0 0 1-3.4-1.7z"/></svg></button>
+      <button class="soc" data-soc="X" title="X · profile coming with launch"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M18.9 2H22l-6.8 7.8L23.3 22h-6.3l-4.9-6.4L6.5 22H3.4l7.3-8.3L1 2h6.5l4.4 5.9zm-1.1 18.1h1.7L6.6 3.8H4.7z"/></svg></button>
+    </div>
+    <p class="foot-note">Baik never invents Arabic text, hadith or Qur'anic references. Content is transcribed from approved
+    sources and reviewed before release. No dua is ever behind a price.</p>
+  </div>
+  <div class="foot-mark" aria-hidden="true"><span class="baik-logo"></span></div>
+</footer>
+
+<div class="toast" id="toast" role="status"></div>
+
+<script is:inline defer src="/js/vendor/gsap.min.js"></script>
+<script is:inline defer src="/js/vendor/ScrollTrigger.min.js"></script>
+<script is:inline defer src="/js/vendor/lenis.min.js"></script>
+<script is:inline defer>
+(function(){
+'use strict';
+var reduced=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+/* ---------- sticky nav ---------- */
+var nav=document.getElementById('nav'),solid=false;
+function navUpd(){var s=window.scrollY>24;if(s!==solid){solid=s;nav.classList.toggle('is-solid',s);}}
+window.addEventListener('scroll',navUpd,{passive:true});navUpd();
+
+/* ---------- preloader: fast, honest, impossible to strand ----------
+   Counts while fonts load, lifts on fonts.ready, and a hard 1.8s timeout lifts it
+   no matter what. Reduced motion never sees it (CSS display:none). */
+(function(){
+ var el=document.getElementById('loader');if(!el)return;
+ try{if(sessionStorage.getItem('baik.seen')){el.classList.add('done');return;}sessionStorage.setItem('baik.seen','1');}catch(e){}
+ var ct=document.getElementById('loadCt'),bar=document.getElementById('loadBar');
+ var p=0,done=false,tick=setInterval(function(){
+  p=Math.min(p+Math.random()*22,96);
+  ct.textContent=Math.round(p);bar.style.transform='scaleX('+(p/100)+')';
+ },90);
+ function lift(){
+  if(done)return;done=true;clearInterval(tick);
+  ct.textContent='100';bar.style.transform='scaleX(1)';
+  setTimeout(function(){el.classList.add('done');},180);
+ }
+ if(document.fonts&&document.fonts.ready)document.fonts.ready.then(lift);
+ window.addEventListener('load',lift);
+ setTimeout(lift,1800);   /* the hard failsafe */
+})();
+
+/* ---------- custom cursor: dot at the point, ring on a lag ---------- */
+(function(){
+ if(reduced||!window.matchMedia('(hover:hover) and (pointer:fine)').matches)return;
+ var dot=document.getElementById('curDot'),ring=document.getElementById('curRing');
+ if(!dot||!ring)return;
+ document.body.classList.add('has-cursor');
+ var x=-100,y=-100,rx=-100,ry=-100,seen=false;
+ document.addEventListener('mousemove',function(e){x=e.clientX;y=e.clientY;seen=true;},{passive:true});
+ (function loop(){
+  rx+=(x-rx)*.16;ry+=(y-ry)*.16;
+  if(seen){dot.style.transform='translate('+x+'px,'+y+'px) translate(-50%,-50%)';
+   ring.style.transform='translate('+rx+'px,'+ry+'px) translate(-50%,-50%)';}
+  requestAnimationFrame(loop);
+ })();
+ document.addEventListener('mouseover',function(e){
+  ring.classList.toggle('big',!!(e.target.closest&&e.target.closest('a,button,summary,input,.fchip,.mini')));
+ });
+})();
+
+/* ---------- magnetic buttons: the gold ones lean toward the hand ---------- */
+(function(){
+ if(reduced||!window.matchMedia('(hover:hover) and (pointer:fine)').matches)return;
+ document.querySelectorAll('.btn-gold').forEach(function(b){
+  b.addEventListener('mousemove',function(e){
+   var r=b.getBoundingClientRect();
+   var dx=e.clientX-(r.left+r.width/2),dy=e.clientY-(r.top+r.height/2);
+   b.style.transform='translate('+dx*.18+'px,'+dy*.3+'px)';
+  });
+  b.addEventListener('mouseleave',function(){b.style.transform='';});
+ });
+})();
+
+/* ---------- gold progress hairline ---------- */
+var sprog=document.getElementById('sprog');
+function progUpd(){
+ var max=document.documentElement.scrollHeight-window.innerHeight;
+ sprog.style.transform='scaleX('+(max>0?window.scrollY/max:0)+')';
+}
+window.addEventListener('scroll',progUpd,{passive:true});progUpd();
+
+/* ---------- the hero fan leans toward the pointer (fine pointers only) ---------- */
+(function(){
+ if(reduced||!window.matchMedia('(hover:hover) and (pointer:fine)').matches)return;
+ var deck=document.getElementById('deck'),hero=document.querySelector('.hero-in');
+ if(!deck||!hero)return;
+ hero.addEventListener('mousemove',function(e){
+  if(deck.classList.contains('gl'))return;
+  var r=deck.getBoundingClientRect();
+  var dx=(e.clientX-(r.left+r.width/2))/r.width, dy=(e.clientY-(r.top+r.height/2))/r.height;
+  deck.style.transform='rotateY('+(dx*7)+'deg) rotateX('+(dy*-7)+'deg)';
+ });
+ hero.addEventListener('mouseleave',function(){deck.style.transform='';});
+})();
+
+/* ---------- toast ---------- */
+function toast(m){var t=document.getElementById('toast');t.textContent=m;t.classList.add('on');
+ clearTimeout(t._h);t._h=setTimeout(function(){t.classList.remove('on');},2400);}
+
+/* ---------- "what are you facing" demo: chips swap the card ---------- */
+var FACES=[
+ {n:'Exam tomorrow',k:'Dua · Guidance',t:'Seeking Wisdom & Mercy',
+  ar:'رَبِّ هَبْ لِي حُكْمًا وَأَلْحِقْنِي بِالصَّالِحِينَ',
+  en:'“My Lord, grant me wisdom and join me with the righteous.”',s:"Qur'an · Ash-Shu'ara 26:83"},
+ {n:'Travelling',k:'Dua · Travel',t:'Beginning a Journey',
+  ar:'بِسْمِ ٱللَّهِ مَجْرِىٰهَا وَمُرْسَىٰهَآ',
+  en:'“In the name of Allah is its course and its anchorage.”',s:"Qur'an · Hud 11:41"},
+ {n:'Feeling anxious',k:'Dua · Ease',t:'An Opened Chest',
+  ar:'رَبِّ اشْرَحْ لِي صَدْرِي وَيَسِّرْ لِي أَمْرِي',
+  en:'“My Lord, expand for me my chest, and ease for me my task.”',s:"Qur'an · Ta-Ha 20:25-26"},
+ {n:'A heavy heart',k:'Dua · Steadfastness',t:'Steadfastness of Heart',
+  ar:'رَبَّنَا لَا تُزِغْ قُلُوبَنَا بَعْدَ إِذْ هَدَيْتَنَا',
+  en:'“Our Lord, let not our hearts deviate after You have guided us.”',s:"Qur'an · Ali 'Imran 3:8"},
+ {n:'Family conflict',k:'Dua · Family',t:'Comfort of the Eyes',
+  ar:'رَبَّنَا هَبْ لَنَا مِنْ أَزْوَٰجِنَا وَذُرِّيَّـٰتِنَا قُرَّةَ أَعْيُنٍ',
+  en:'“Our Lord, grant us from our spouses and offspring comfort to our eyes.”',s:"Qur'an · Al-Furqan 25:74"},
+ {n:'Seeking forgiveness',k:'Dua · Mercy',t:'Complete Reliance',
+  ar:'رَبَّنَا عَلَيْكَ تَوَكَّلْنَا وَإِلَيْكَ أَنَبْنَا',
+  en:'“Our Lord, upon You we rely, and to You we return.”',s:"Qur'an · Al-Mumtahanah 60:4"}
+];
+var chipsEl=document.getElementById('fchips'),card=document.getElementById('fcard'),cur=0,busy=false;
+FACES.forEach(function(f,i){
+ var b=document.createElement('button');b.className='fchip'+(i===0?' on':'');b.textContent=f.n;
+ b.addEventListener('click',function(){pick(i,b);});chipsEl.appendChild(b);
+});
+function setCard(f){
+ document.getElementById('fcK').textContent=f.k;
+ document.getElementById('fcT').textContent=f.t;
+ document.getElementById('fcA').textContent=f.ar;
+ document.getElementById('fcE').textContent=f.en;
+ document.getElementById('fcS').textContent=f.s;
+}
+function pick(i,btn){
+ if(busy||i===cur)return;busy=true;cur=i;
+ chipsEl.querySelectorAll('.fchip').forEach(function(c){c.classList.remove('on');});
+ btn.classList.add('on');
+ if(reduced){setCard(FACES[i]);busy=false;return;}
+ card.classList.add('swap');
+ setTimeout(function(){setCard(FACES[i]);card.classList.remove('swap');busy=false;},230);
+}
+
+/* ---------- leads: kept locally, exportable, honest about having no backend ----------
+   Nothing is sent anywhere. The list lives in this browser until a backend exists, and
+   the page says so rather than implying a signup happened. */
+function leadAdd(email,source){
+ var list=[];
+ try{list=JSON.parse(localStorage.getItem('baik.leads')||'[]');}catch(e){}
+ if(list.some(function(l){return l.e===email;}))return 'dupe';
+ list.push({e:email,s:source,at:Date.now()});
+ try{localStorage.setItem('baik.leads',JSON.stringify(list));}catch(e){}
+ return list.length;
+}
+function leadWire(form,input,source,okMsg){
+ if(!form)return;
+ form.addEventListener('submit',function(e){
+  e.preventDefault();
+  var v=input.value.trim();
+  if(!/^\S+@\S+\.\S+$/.test(v)){toast('That email does not look right.');return;}
+  var r=leadAdd(v,source);
+  input.value='';
+  toast(r==='dupe'?'You are already on the list.':okMsg);
+ });
+}
+
+/* ---------- waitlist: honest stub until a backend exists ---------- */
+leadWire(document.getElementById('waitForm'),document.getElementById('waitMail'),'app-waitlist',
+ 'You are on the list. We will write once, when the app lands.');
+leadWire(document.getElementById('qtForm'),document.getElementById('qtMail'),'qibla-times',
+ 'You are on the list. We will write once, when the app lands.');
+leadWire(document.getElementById('dailyForm'),document.getElementById('dailyMail'),'daily-dua',
+ 'Noted. One dua a morning, nothing else, and you can stop any time.');
+
+/* ---------- social profiles: named, not yet open ---------- */
+document.querySelectorAll('.soc').forEach(function(b){
+ b.addEventListener('click',function(){toast(b.dataset.soc+' opens with the app launch.');});
+});
+
+/* ---------- share ---------- */
+var URLS=function(){var u=encodeURIComponent(location.href.split('#')[0]);
+ var m=encodeURIComponent('Baik · the right dua for what you are facing. Free on the web: ');
+ return {wa:'https://wa.me/?text='+m+u,tg:'https://t.me/share/url?url='+u+'&text='+m,
+  x:'https://twitter.com/intent/tweet?text='+m+'&url='+u};}();
+document.getElementById('shWa').href=URLS.wa;
+document.getElementById('shTg').href=URLS.tg;
+document.getElementById('shX').href=URLS.x;
+document.getElementById('shCopy').addEventListener('click',function(){
+ var u=location.href.split('#')[0];
+ if(navigator.clipboard)navigator.clipboard.writeText(u).then(function(){toast('Link copied.');},function(){toast(u);});
+ else toast(u);
+});
+
+/* ---------- marquee speed normalised to content width ---------- */
+function mq(){var tr=document.querySelector('.mq-track');if(!tr||!tr.firstElementChild)return;
+ var w=tr.firstElementChild.offsetWidth;if(w>0)tr.style.animationDuration=(w/60)+'s';}
+mq();if(document.fonts&&document.fonts.ready)document.fonts.ready.then(mq);
+window.addEventListener('resize',mq);
+
+/* ---------- GSAP layer (page fully readable without it) ---------- */
+var hasGSAP=typeof window.gsap!=='undefined'&&typeof window.ScrollTrigger!=='undefined';
+if(!hasGSAP||reduced)return;
+gsap.registerPlugin(ScrollTrigger);
+
+/* Lenis: the weighted scroll every current award winner shares. Wired the one safe
+   way: one rAF loop through GSAP's ticker, ScrollTrigger updated from Lenis, native
+   smooth-behavior turned off so nothing double-eases. Absent or failed, native scroll
+   simply remains. */
+if(typeof window.Lenis!=='undefined'){
+ try{
+  var lenis=new Lenis({duration:1.05,easing:function(t){return 1-Math.pow(1-t,3);}});
+  lenis.on('scroll',ScrollTrigger.update);
+  gsap.ticker.add(function(time){lenis.raf(time*1000);});
+  gsap.ticker.lagSmoothing(0);
+  document.documentElement.style.scrollBehavior='auto';
+ }catch(e){}
+}
+
+/* reveals: immediateRender:false so a missed trigger never hides content */
+var revealEls=gsap.utils.toArray('[data-reveal]');
+var fired=new WeakSet();
+revealEls.forEach(function(el){
+ var d=parseFloat(el.getAttribute('data-reveal-delay'))||0;
+ gsap.from(el,{opacity:0,y:26,duration:.85,delay:d,ease:'power3.out',immediateRender:false,
+  scrollTrigger:{trigger:el,start:'top 88%',once:true,onEnter:function(){fired.add(el);}}});
+});
+window.addEventListener('load',function(){
+ ScrollTrigger.refresh();
+ revealEls.forEach(function(el){
+  if(!fired.has(el)&&el.getBoundingClientRect().top<window.innerHeight)
+   gsap.set(el,{clearProps:'opacity,transform'});
+ });
+});
+
+/* split-text hero: words rise out of their own clips. The CSS blur intro is
+   dropped only when this richer entrance actually takes over. */
+(function(){
+ var h=document.querySelector('.hero h1');if(!h)return;
+ function wrapWords(node){
+  [].slice.call(node.childNodes).forEach(function(n){
+   if(n.nodeType===3){
+    var frag=document.createDocumentFragment();
+    n.textContent.split(/(\s+)/).forEach(function(part){
+     if(!part)return;
+     if(/^\s+$/.test(part)){frag.appendChild(document.createTextNode(part));return;}
+     var w=document.createElement('span');w.className='w';
+     var wi=document.createElement('span');wi.className='wi';wi.textContent=part;
+     w.appendChild(wi);frag.appendChild(w);
+    });
+    node.replaceChild(frag,n);
+   }else if(n.nodeType===1&&n.tagName!=='BR')wrapWords(n);
+  });
+ }
+ wrapWords(h);
+ h.style.animation='none';
+ var chunks=h.querySelectorAll('.wi');
+ gsap.set(chunks,{yPercent:115});
+ gsap.to(chunks,{yPercent:0,duration:.95,ease:'expo.out',stagger:.055,delay:.55});
+ /* if the tween is ever interrupted, the words must still stand */
+ setTimeout(function(){gsap.set(chunks,{clearProps:'transform'});},2600);
+})();
+
+/* the kinetic strip is dragged by the scrollbar, outline ink over the field */
+gsap.to('#kinetic',{xPercent:-28,ease:'none',
+ scrollTrigger:{trigger:'.kinetic',start:'top bottom',end:'bottom top',scrub:.6,invalidateOnRefresh:true}});
+
+/* hero deck parallax: gentle drift per data-speed, desktop only */
+if(window.matchMedia('(min-width: 901px)').matches){
+ gsap.utils.toArray('.mini[data-speed]').forEach(function(el){
+  var sp=parseFloat(el.getAttribute('data-speed'))||0;
+  gsap.to(el,{yPercent:sp*160,ease:'none',
+   scrollTrigger:{trigger:'#deck',start:'top bottom',end:'bottom top',scrub:.5,invalidateOnRefresh:true}});
+ });
+}
+
+/* count-up stats */
+gsap.utils.toArray('[data-countup]').forEach(function(el){
+ var target=parseFloat(el.getAttribute('data-countup'))||0,obj={v:0};
+ ScrollTrigger.create({trigger:el,start:'top 88%',once:true,onEnter:function(){
+  gsap.to(obj,{v:target,duration:1.3,ease:'power2.out',
+   onUpdate:function(){el.textContent=Math.round(obj.v);},
+   onComplete:function(){el.textContent=target;}});
+ }});
+});
+
+if(document.fonts&&document.fonts.ready)document.fonts.ready.then(function(){ScrollTrigger.refresh();});
+})();
+</script>
+<script is:inline src="/particles.js"></script>
+<script is:inline>
+/* particle scenes: the showcase switches on a tap and turns by itself until touched;
+   each set panel mounts its own scene at half rate (only on-screen canvases draw) */
+(function(){
+  if(!window.BaikParticles)return;
+  var P=window.BaikParticles, reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var reducedP=reduced;   /* the old showcase is gone; the set panels still mount their scenes */
+  document.querySelectorAll('canvas.pcv[data-scene]').forEach(function(c,i){
+    P.mount(c,c.dataset.scene,{half:1+i%2,zoom:1.05,hoverEl:c.closest('.scard')||c.parentElement});
+  });
+})();
+</script>
+<script is:inline src="/deck3d-cards.js"></script>
+<script is:inline type="importmap">{"imports":{"three":"/js/vendor/three/three.module.js","three/addons/":"/js/vendor/three/addons/"}}</script>
+<script is:inline type="module" src="/deck3d.js"></script>
+<script is:inline src="/table3d-cards.js"></script>
+<script is:inline type="module" src="/table3d.js"></script>
+<script is:inline src="/mushaf-cards.js"></script>
+<script is:inline type="module" src="/mushaf3d.js"></script>
+<script is:inline>
+/* the phone video plays only while it is on screen, and not at all for reduced motion */
+(function(){var v=document.querySelector('.app-vid');if(!v)return;
+ if(matchMedia('(prefers-reduced-motion: reduce)').matches)return;
+ new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){var p=v.play();p&&p.catch(function(){});}else v.pause();});},{threshold:.25}).observe(v);})();
+</script>
+<script is:inline>
+/* How it works: the step in view drives the stage; on phones the stage plays the steps by itself */
+(function(){
+ var st=document.querySelector('.hw-stage'),steps=[].slice.call(document.querySelectorAll('.hw-step'));if(!st)return;
+ var q=st.querySelector('.hw-q'),reduced=matchMedia('(prefers-reduced-motion: reduce)').matches,timer=null,cur=0,TEXT='exam tomorrow, and I am anxious';
+ function type(){clearInterval(timer);st.classList.remove('typed');q.textContent='';
+  if(reduced){q.textContent=TEXT;st.classList.add('typed');return;}
+  var i=0;timer=setInterval(function(){q.textContent=TEXT.slice(0,++i);if(i>=TEXT.length){clearInterval(timer);setTimeout(function(){if(cur===1)st.classList.add('typed');},180);}},55);}
+ function go(n){if(n===cur)return;cur=n;st.setAttribute('data-step',n);steps.forEach(function(s){s.classList.toggle('on',+s.dataset.s===n);});if(n===1)type();}
+ var mobile=matchMedia('(max-width:860px)');
+ if(!mobile.matches){
+  var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting)go(+e.target.dataset.s);});},{rootMargin:'-45% 0px -45% 0px'});
+  steps.forEach(function(s){io.observe(s);});go(1);
+ }else{
+  var loop=null;go(1);
+  new IntersectionObserver(function(es){es.forEach(function(e){
+   if(e.isIntersecting&&!loop&&!reduced){loop=setInterval(function(){go(cur%3+1);},4200);}
+   else if(!e.isIntersecting&&loop){clearInterval(loop);loop=null;}});},{threshold:.4}).observe(st);
+ }
+})();
+</script>
+
+</body>
+</html>

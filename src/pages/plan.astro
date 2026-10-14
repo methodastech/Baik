@@ -1,0 +1,93 @@
+---
+---
+<!doctype html>
+<html lang="en">
+<head>
+<link rel="stylesheet" href="/css/plan.css">
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>Baik · Khayr · Plan · Brand Method</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,500&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+</head>
+<body>
+<div class="bmws"><div class="bmws-in"><div class="bmws-crumb"><b>Baik &middot; Khayr</b><span>Brand Method &middot; Admin Navigation</span></div><nav class="bmws-tabs"><a href="/audit"><i>00</i>App Audit</a><a href="/competitors"><i>01</i>Competitors</a><a href="/plan" class="on"><i>02</i>Plan</a><a href="/khayr"><i>03</i>The App</a><a href="/"><i>04</i>Site</a><a href="/khayr#map"><i>05</i>Map</a></nav></div></div>
+
+<div class="wrap">
+  <header class="hero">
+    <span class="eyebrow">Build Plan · Brand Method</span>
+    <h1>The plan, <em>in five bands</em></h1>
+    <p class="lede">The qibla and waktu solat foundation is built and audited. What follows is ordered by leverage: first make the new features findable, then make them fully bilingual and effortless, then let the deck and the day feed each other, then grow the library, then port. Each band clears before the next begins.</p>
+    <div class="vrow"><span class="vchip">Drafted 5 Aug 2026</span><span class="vchip">Feeds from the audit</span><span class="vchip">Effort: S under a day, M days, L weeks</span></div>
+  </header>
+
+  <div class="chapdiv" id="p0"><div class="cd-no">P0</div><div><div class="cd-h">Surface what was built</div><div class="cd-sub">The audit's high finding, plus the two mediums</div></div></div>
+  <section>
+    <div class="tscroll"><table>
+      <thead><tr><th>#</th><th>Item</th><th>Detail</th><th>Where</th><th style="width:70px">Effort</th></tr></thead>
+      <tbody>
+        <tr><td class="dim">1</td><td><b>Next-prayer chip on the masthead</b></td><td>Name, time and a live countdown in the header of both layouts, fed by the same NEXT state the sheet already computes. One tap opens the prayer sheet. This single item converts the whole build from hidden to habitual.</td><td>Khayr.html header, drawCount()</td><td><span class="vtag s">S</span></td></tr>
+        <tr><td class="dim">2</td><td><b>BM the new sheets</b></td><td>Route every qibla and prayer-sheet string through the LANG switch the rest of the app uses: titles, buttons, zone notes, countdown labels, error copy. Prayer names already carry BM inline.</td><td>qib/qpt overlays</td><td><span class="vtag s">S</span></td></tr>
+        <tr><td class="dim">3</td><td><b>Zone auto-pick from location</b></td><td>Static table of one reference coordinate per JAKIM zone, nearest-neighbour match on Use my location, with a confirm line naming the guess so the reader stays in charge. Official times then arrive with zero list-hunting.</td><td>new ZONELL table, ptLoc()</td><td><span class="vtag m">M</span></td></tr>
+        <tr><td class="dim">4</td><td><b>State the notification truth</b></td><td>One sentence in the prayer sheet: the web version does not sound the azan, the native app will. No unreliable web push theatre.</td><td>qib-note</td><td><span class="vtag s">S</span></td></tr>
+      </tbody>
+    </table></div>
+  </section>
+
+  <div class="chapdiv" id="p1"><div class="cd-no">P1</div><div><div class="cd-h">Deck meets day</div><div class="cd-sub">The differentiator no competitor can copy cheaply</div></div></div>
+  <section>
+    <p class="sec-intro">The times give Khayr a clock. The deck gives it content. Joined, they make the daily-open habit: <strong>the right dua for the moment of the day</strong>, not just the moment of life.</p>
+    <div class="tscroll"><table>
+      <thead><tr><th>#</th><th>Item</th><th>Detail</th><th style="width:70px">Effort</th></tr></thead>
+      <tbody>
+        <tr><td class="dim">1</td><td><b>Time-aware daily dua</b></td><td>After Subuh surface a morning card, after Maghrib an evening card, drawn from the Morning &amp; Evening set once it lands. The banner already rotates daily; this adds the day-part signal.</td><td><span class="vtag m">M</span></td></tr>
+        <tr><td class="dim">2</td><td><b>Prayer-adjacent shortcuts</b></td><td>The Facing? row learns the clock: Before Subuh, After prayer, Friday. Same chip mechanic, new triggers.</td><td><span class="vtag s">S</span></td></tr>
+        <tr><td class="dim">3</td><td><b>Qibla and times on the site</b></td><td>Site.html gains a feature section for both, honest about web limits, feeding the waitlist for the native port.</td><td><span class="vtag m">M</span></td></tr>
+      </tbody>
+    </table></div>
+  </section>
+
+  <div class="chapdiv" id="p2"><div class="cd-no">P2</div><div><div class="cd-h">Grow the library</div><div class="cd-sub">Through the pipeline, never around it</div></div></div>
+  <section>
+    <div class="tscroll"><table>
+      <thead><tr><th>#</th><th>Item</th><th>Detail</th><th style="width:70px">Effort</th></tr></thead>
+      <tbody>
+        <tr><td class="dim">1</td><td><b>Morning &amp; Evening set</b></td><td>Highest traffic in every azkar app, and the fuel for P1's time-aware banner. Blocked on dropping a Tanzil or QUL export into tools/data, then fetch-cards.mjs does the rest.</td><td><span class="vtag m">M</span></td></tr>
+        <tr><td class="dim">2</td><td><b>Grief &amp; Loss, Anxiety &amp; the Heart</b></td><td>The emotional register the deck lacks and the shelf ignores. Same pipeline.</td><td><span class="vtag m">M</span></td></tr>
+        <tr><td class="dim">3</td><td><b>The forty Rabbanas</b></td><td>All Quranic, all verifiable, a set with a name people already search for.</td><td><span class="vtag m">M</span></td></tr>
+        <tr><td class="dim">4</td><td><b>Scholar review pass</b></td><td>Cards carry review: pending. Before any public release the FAQ's promise holds: review is the last gate.</td><td><span class="vtag l">L</span></td></tr>
+      </tbody>
+    </table></div>
+    <span class="pin"><b>The rule stands:</b> no Arabic is ever typed, pasted from a webpage, or generated. Every character arrives from a verified machine-readable source, keyed, and can be regenerated from that key.</span>
+  </section>
+
+  <div class="chapdiv" id="p3"><div class="cd-no">P3</div><div><div class="cd-h">Business and backend</div><div class="cd-sub">Carried from the master backlog</div></div></div>
+  <section>
+    <div class="tscroll"><table>
+      <thead><tr><th>#</th><th>Item</th><th>Detail</th><th style="width:70px">Effort</th></tr></thead>
+      <tbody>
+        <tr><td class="dim">1</td><td><b>Leads backend</b></td><td>Waitlist and daily-dua leads sit in localStorage under baik.leads. They need a real endpoint and double opt-in before any email goes out.</td><td><span class="vtag m">M</span></td></tr>
+        <tr><td class="dim">2</td><td><b>Gateway decision</b></td><td>Chip or toyyibPay for recurring plus TnG and FPX, against Stripe for cards. Document the verdict in the Codex.</td><td><span class="vtag m">M</span></td></tr>
+        <tr><td class="dim">3</td><td><b>Refund policy page</b></td><td>Plain language, a contact address, linked from the premium sheet.</td><td><span class="vtag s">S</span></td></tr>
+      </tbody>
+    </table></div>
+  </section>
+
+  <div class="chapdiv" id="p4"><div class="cd-no">P4</div><div><div class="cd-h">The native port</div><div class="cd-sub">Where the web version honestly ends</div></div></div>
+  <section>
+    <p class="sec-intro">Three things a browser cannot honestly promise: <strong>the azan that sounds when the phone is locked, the home-screen widget, and a compass that vibrates on alignment</strong>. These are the port's reasons to exist, and the web version's job until then is to say so plainly while doing everything else so well the port has a waiting audience.</p>
+    <div class="tscroll"><table>
+      <thead><tr><th>#</th><th>Item</th><th>Detail</th><th style="width:70px">Effort</th></tr></thead>
+      <tbody>
+        <tr><td class="dim">1</td><td><b>Azan notifications</b></td><td>Local notifications scheduled from the same week cache, per prayer, with the reader choosing which prayers sound.</td><td><span class="vtag l">L</span></td></tr>
+        <tr><td class="dim">2</td><td><b>Next-prayer widget</b></td><td>The masthead chip, on the home screen.</td><td><span class="vtag l">L</span></td></tr>
+        <tr><td class="dim">3</td><td><b>Haptic qibla</b></td><td>The vibrate-on-alignment detail the benchmark surfaced, on real sensors.</td><td><span class="vtag m">M</span></td></tr>
+      </tbody>
+    </table></div>
+  </section>
+
+  <footer>Baik · Khayr · Build Plan · Brand Method · August 2026</footer>
+</div>
+
+</body>
+</html>

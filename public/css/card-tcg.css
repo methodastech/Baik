@@ -1,0 +1,108 @@
+
+:root{
+ --pg:#ECE7DC;--pg-ink:#1E2124;--pg-mut:#6F6A62;--pg-line:rgba(30,33,36,.14);
+ --stock:#F6F2E9;--panel:#FCFAF5;--ink:#1E2124;--dim:#4A4741;--mut:#6F6A62;
+ --coral:#C8664A;--teal:#1D7276;
+ --e-hi:#EBDDB5;--e:#C7B27C;--e-lo:#9C8956;--key:rgba(156,137,86,.48);
+}
+@media (prefers-color-scheme:dark){
+ :root:not([data-theme="light"]){--pg:#17191C;--pg-ink:#F2EFE8;--pg-mut:#9A968E;--pg-line:rgba(255,255,255,.12);}
+}
+:root[data-theme="dark"]{--pg:#17191C;--pg-ink:#F2EFE8;--pg-mut:#9A968E;--pg-line:rgba(255,255,255,.12);}
+
+*{box-sizing:border-box}
+body{margin:0;background:var(--pg);color:var(--pg-ink);font:14px/1.5 'Saira',system-ui,sans-serif;
+ -webkit-font-smoothing:antialiased;}
+.wrap{max-width:980px;margin:0 auto;padding:40px 24px 72px;display:flex;flex-direction:column;align-items:center;gap:36px;}
+.lede{width:100%;max-width:560px;text-align:center;display:flex;flex-direction:column;gap:6px;}
+.lede .k{font:500 9.5px/1 'JetBrains Mono',monospace;letter-spacing:.2em;text-transform:uppercase;color:var(--pg-mut);}
+.lede h1{margin:0;font:600 22px/1.15 'Space Grotesk',sans-serif;letter-spacing:-.01em;text-wrap:balance;}
+.lede p{margin:0;color:var(--pg-mut);font-size:13px;max-width:52ch;margin-inline:auto;}
+
+/* ---- the card ------------------------------------------------------------------------ */
+.stage{perspective:1400px;}
+/* overflow:hidden clips the sliding sheen to the rounded frame; an element's own shadow is
+   painted outside its box and is not clipped by it, so the lift survives */
+.card{position:relative;width:400px;height:560px;border-radius:18px;padding:3px;overflow:hidden;
+ --rx:0deg;--ry:0deg;--sx:-70%;
+ background:linear-gradient(135deg,var(--e-hi) 0%,var(--e) 26%,var(--e-lo) 50%,var(--e) 74%,var(--e-hi) 100%);
+ box-shadow:0 34px 70px -34px rgba(30,33,36,.5),0 3px 8px rgba(30,33,36,.14);
+ transform:rotateX(var(--rx)) rotateY(var(--ry));
+ transition:transform .55s cubic-bezier(.2,.8,.25,1),box-shadow .35s;}
+.card.track{transition:transform .1s linear,box-shadow .35s;}
+.card:hover{box-shadow:0 44px 90px -36px rgba(30,33,36,.55),0 4px 10px rgba(30,33,36,.16);}
+/* the sheen lives on the card element itself, under the ivory stock, so it can only ever
+   show through the 3px frame: foil on the framing, never behind the text */
+.card::before{content:'';position:absolute;inset:0;border-radius:inherit;pointer-events:none;
+ background:linear-gradient(115deg,transparent 34%,rgba(255,255,255,.72) 50%,transparent 66%);
+ transform:translateX(var(--sx));transition:transform .6s cubic-bezier(.2,.8,.25,1);}
+.card:hover::before{--sx:70%;}
+.stock{position:relative;z-index:1;height:100%;border-radius:15px;background:var(--stock);padding:5px;}
+.stock::after{content:'';position:absolute;inset:0;border-radius:inherit;pointer-events:none;
+ background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 .6 0'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23g)'/%3E%3C/svg%3E");background-size:140px 140px;opacity:.055;mix-blend-mode:multiply;}
+.key{height:100%;border-radius:11px;border:1px solid var(--key);padding:12px 14px 11px;
+ display:flex;flex-direction:column;gap:10px;position:relative;z-index:1;}
+
+/* header */
+.hd{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;}
+.hd .t{margin:0;font:600 15.5px/1.15 'Space Grotesk',sans-serif;color:var(--ink);letter-spacing:-.005em;text-wrap:balance;}
+.hd .k{margin-top:5px;font:500 8.5px/1 'JetBrains Mono',monospace;letter-spacing:.2em;text-transform:uppercase;color:var(--mut);}
+.medal{flex:none;width:38px;height:38px;border-radius:50%;display:grid;place-items:center;
+ background:radial-gradient(circle at 34% 28%,var(--e-hi) 0%,var(--e) 52%,var(--e-lo) 100%);
+ box-shadow:inset 0 0 0 1px rgba(255,255,255,.55),inset 0 -1px 2px rgba(0,0,0,.18),0 1px 2px rgba(30,33,36,.22);
+ font:700 14px/1 'JetBrains Mono',monospace;color:var(--ink);font-variant-numeric:tabular-nums;}
+
+/* art window */
+.art{margin:0;border-radius:8px;padding:2px;
+ background:linear-gradient(135deg,var(--e-hi),var(--e) 48%,var(--e-lo));}
+.art img{display:block;width:100%;aspect-ratio:26/9;object-fit:cover;border-radius:6px;}
+
+/* attributes */
+.attrs{list-style:none;margin:0;padding:0;display:flex;flex-wrap:wrap;gap:7px;}
+.attrs li{display:inline-flex;align-items:center;gap:6px;padding:0 9px 0 6px;height:23px;border-radius:6px;
+ border:1px solid var(--a);color:var(--ink);font:600 10.5px/1 'Saira',sans-serif;letter-spacing:.01em;
+ background:color-mix(in srgb,var(--a) 5%,transparent);}
+.attrs svg{width:12px;height:12px;fill:var(--a);flex:none;}
+.a-heart{--a:var(--coral);}.a-know{--a:var(--teal);}
+
+/* sacred text panel */
+.text{flex:1;min-height:0;border-radius:8px;background:var(--panel);border:1px solid rgba(156,137,86,.24);
+ padding:12px 13px 11px;display:flex;flex-direction:column;gap:7px;position:relative;
+ background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='30' height='30' viewBox='0 0 30 30'%3E%3Cg fill='none' stroke='%239C8956' stroke-opacity='.13' stroke-width='.6'%3E%3Crect x='7.5' y='7.5' width='15' height='15'/%3E%3Crect x='7.5' y='7.5' width='15' height='15' transform='rotate(45 15 15)'/%3E%3C/g%3E%3C/svg%3E");background-size:30px 30px;}
+.ar{margin:0;direction:rtl;text-align:center;font:500 25px/1.85 'Scheherazade New','Amiri',serif;color:var(--ink);
+ font-feature-settings:'calt' 1,'liga' 1,'rlig' 1,'mark' 1,'mkmk' 1;}
+.tr{margin:0;text-align:center;font:400 10.5px/1.45 'Saira',sans-serif;color:var(--dim);}
+.en{margin:auto 0 0;padding:8px 11px 8px 12px;border-radius:6px;border-left:2px solid var(--e);
+ background:color-mix(in srgb,var(--e-lo) 7%,transparent);
+ font:italic 400 12px/1.42 'Saira',sans-serif;color:var(--dim);}
+
+/* collector bar */
+.bar{display:flex;align-items:center;gap:9px;font:500 8.3px/1 'JetBrains Mono',monospace;letter-spacing:.14em;
+ text-transform:uppercase;color:var(--mut);font-variant-numeric:tabular-nums;white-space:nowrap;}
+.bar .em{width:14px;height:14px;fill:var(--e-lo);flex:none;}
+.bar .dot{opacity:.45;}
+.bar .src{margin-left:auto;color:var(--ink);}
+
+/* edge treatments */
+.card[data-edge="silver"]{--e-hi:#F0F2F5;--e:#B8BCC3;--e-lo:#7F858E;--key:rgba(127,133,142,.45);}
+.card[data-edge="teal"]{--e-hi:#BFE2DF;--e:#2E8A8B;--e-lo:#155658;--key:rgba(21,86,88,.40);}
+.card[data-edge="gold"]{--e-hi:#EBDDB5;--e:#C7B27C;--e-lo:#9C8956;--key:rgba(156,137,86,.48);}
+.card[data-edge="holo"]{--e-hi:#E8DFF0;--e:#BFCBD8;--e-lo:#9AA6B8;--key:rgba(154,166,184,.5);
+ background:linear-gradient(135deg,#DCCFE6 0%,#C6DBE3 18%,#E4DAC0 36%,#CFE1D4 54%,#D9CAE0 72%,#C8D6E6 90%,#E6DFCB 100%);}
+
+/* the four edges, side by side */
+.row{display:grid;grid-template-columns:repeat(4,1fr);gap:18px;width:100%;max-width:900px;}
+.row figure{margin:0;display:flex;flex-direction:column;align-items:center;gap:10px;}
+.row .mini{width:200px;height:280px;overflow:visible;}
+.row .mini .card{transform:scale(.5);transform-origin:top left;pointer-events:none;}
+.row figcaption{font:500 9.5px/1.4 'JetBrains Mono',monospace;letter-spacing:.16em;text-transform:uppercase;color:var(--pg-mut);text-align:center;}
+.row figcaption b{display:block;color:var(--pg-ink);font-weight:700;}
+
+.spec{width:100%;max-width:560px;border-top:1px solid var(--pg-line);padding-top:18px;
+ display:grid;grid-template-columns:auto 1fr;gap:6px 18px;font-size:12.5px;color:var(--pg-mut);}
+.spec b{font:500 9.5px/1.6 'JetBrains Mono',monospace;letter-spacing:.16em;text-transform:uppercase;color:var(--pg-ink);}
+.sw{display:inline-block;width:10px;height:10px;border-radius:2px;vertical-align:-1px;margin-right:5px;border:1px solid rgba(0,0,0,.12);}
+
+@media (max-width:960px){.row{grid-template-columns:repeat(2,1fr);}}
+@media (max-width:460px){.card{width:340px;height:476px;}.row .mini{width:170px;height:238px;}.row .mini .card{transform:scale(.5);}}
+@media (prefers-reduced-motion:reduce){.card,.card::before{transition:none;}.card:hover::before{--sx:-70%;}}

@@ -1,0 +1,40 @@
+
+:root{--bg:#EAEBED;--card:#FFFFFF;--ink:#16181C;--muted:#5D636D;--soft:#8A9099;--line:#DCDEE2;--chip:#F3F3F3;--sage:#E7F1EA;--sage-ink:#3E6B52;--bad:#8A2B2B;--bad-bg:#FBEAEA}
+*{box-sizing:border-box}
+html,body{margin:0;min-height:100%}
+body{background:var(--bg);color:var(--ink);font:15px/1.55 Saira,system-ui,sans-serif;-webkit-font-smoothing:antialiased;display:flex;flex-direction:column;min-height:100vh}
+.top{display:flex;align-items:center;padding:22px 38px}
+.logo{font-weight:700;font-size:30px;letter-spacing:-.02em;color:var(--ink);text-decoration:none}
+main{flex:1;display:grid;place-items:center;padding:16px}
+.card{width:min(440px,100%);background:var(--card);border:1px solid var(--line);border-radius:24px;padding:32px 32px 26px;box-shadow:0 30px 60px -40px rgba(20,24,30,.35)}
+.bis{font-family:Amiri,serif;font-size:22px;color:var(--muted);text-align:center;direction:rtl;margin-bottom:12px}
+.k{font:500 11px "JetBrains Mono",monospace;letter-spacing:.14em;text-transform:uppercase;color:var(--sage-ink)}
+h1{font-size:27px;line-height:1.15;margin:8px 0 6px;letter-spacing:-.015em}
+.p{color:var(--muted);margin:0 0 20px}
+.seg{display:grid;grid-template-columns:1fr 1fr;background:var(--chip);border-radius:999px;padding:4px;margin-bottom:20px}
+.seg button{border:0;background:none;border-radius:999px;padding:9px;font:600 14px Saira,sans-serif;color:var(--muted);cursor:pointer}
+.seg button[aria-selected="true"]{background:var(--card);color:var(--ink);box-shadow:0 1px 3px rgba(0,0,0,.08)}
+label{display:block;font-weight:600;font-size:13.5px;margin:0 0 6px}
+.f{margin-bottom:14px}
+.in{position:relative}
+input{width:100%;padding:12px 14px;border:1px solid var(--line);border-radius:12px;font:15px Saira,sans-serif;color:var(--ink);background:#fff;outline:none;transition:border-color .15s,box-shadow .15s}
+input:focus{border-color:var(--sage-ink);box-shadow:0 0 0 3px var(--sage)}
+input[aria-invalid="true"]{border-color:var(--bad)}
+.eye{position:absolute;right:8px;top:50%;transform:translateY(-50%);border:0;background:none;color:var(--muted);font:600 12.5px Saira,sans-serif;padding:6px 8px;cursor:pointer;border-radius:8px}
+.hint{font-size:12.5px;color:var(--soft);margin-top:5px}
+.go{width:100%;margin-top:6px;padding:13px 16px;border:0;border-radius:14px;background:var(--ink);color:#fff;font:600 15px Saira,sans-serif;cursor:pointer;transition:transform .15s,box-shadow .15s,opacity .15s}
+.go:hover{transform:translateY(-1px);box-shadow:0 8px 18px -10px rgba(0,0,0,.45)}
+.go:disabled{opacity:.6;cursor:wait;transform:none}
+.go:focus-visible,.seg button:focus-visible,.eye:focus-visible{outline:2px solid var(--sage-ink);outline-offset:2px}
+.swap{font-size:13.5px;color:var(--muted);margin:16px 0 0;text-align:center}
+.swap a{color:var(--sage-ink);font-weight:600}
+.msg{display:none;margin-bottom:14px;padding:10px 14px;border-radius:12px;font-size:13.5px}
+.msg.bad{display:block;background:var(--bad-bg);color:var(--bad)}
+.msg.ok{display:block;background:var(--sage);color:var(--sage-ink)}
+footer{text-align:center;color:var(--soft);font-size:12.5px;padding:20px 16px 28px}
+@media (max-width:520px){.top{padding:18px 16px}.card{padding:24px 20px 20px;border-radius:20px}h1{font-size:24px}}
+
+/* the Baik logo (assets/logo/baik-logo_caps-black.png): its shape used as a mask, filled with currentColor, so it takes any ink */
+.baik-logo{display:inline-block;vertical-align:middle;height:1em;aspect-ratio:118.13/45.82;background:currentColor;
+ -webkit-mask:url("assets/logo/baik-logo_caps-black.png") center/108% 120.7% no-repeat;mask:url("assets/logo/baik-logo_caps-black.png") center/108% 120.7% no-repeat;}
+.logo .baik-logo{height:30px;}

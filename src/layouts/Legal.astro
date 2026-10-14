@@ -1,0 +1,67 @@
+---
+/* A plain reading layout for the two documents people check before they trust a
+   product with their email and their money. Deliberately quiet: no animation, no
+   third-party script, nothing that could fail between the reader and the text. */
+import Head from "./Head.astro";
+const { title, updated, lede } = Astro.props;
+---
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>{title} · Baik</title>
+<meta name="description" content={lede} />
+<meta name="theme-color" content="#F3F3F3">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Saira:wght@400;500;600;700&display=swap" rel="stylesheet">
+<Head />
+<style is:global>
+  :root { --ink:#1E2124; --paper:#F3F3F3; --soft:#6E6E6E; --line:rgba(30,33,36,.12); }
+  * { box-sizing:border-box; }
+  html,body { margin:0; }
+  body {
+    background:var(--paper); color:var(--ink);
+    font-family:Saira,system-ui,-apple-system,"Segoe UI",sans-serif;
+    font-size:16px; line-height:1.65; -webkit-font-smoothing:antialiased;
+  }
+  .wrap { max-width:46rem; margin:0 auto; padding:40px 16px 96px; }
+  header.top { border-bottom:1px solid var(--line); }
+  header.top .in { max-width:46rem; margin:0 auto; padding:18px 16px; }
+  header.top a { color:var(--ink); text-decoration:none; font-weight:700; letter-spacing:-.01em; }
+  h1 { font-size:clamp(1.9rem,6vw,2.6rem); line-height:1.15; letter-spacing:-.02em; margin:0 0 .4rem; }
+  .k { font-size:.8rem; text-transform:uppercase; letter-spacing:.14em; color:var(--soft); margin-bottom:.6rem; }
+  .upd { color:var(--soft); font-size:.9rem; margin:0 0 2.5rem; }
+  h2 { font-size:1.2rem; letter-spacing:-.01em; margin:2.5rem 0 .6rem; }
+  h3 { font-size:1rem; margin:1.6rem 0 .4rem; }
+  p, li { color:#2c3033; }
+  ul { padding-left:1.2rem; }
+  li { margin:.3rem 0; }
+  a { color:var(--ink); }
+  table { width:100%; border-collapse:collapse; margin:1rem 0; font-size:.95rem; }
+  th, td { text-align:left; padding:.6rem .5rem; border-bottom:1px solid var(--line); vertical-align:top; }
+  th { font-weight:600; }
+  .note { border:1px solid var(--line); border-radius:12px; padding:1rem 1.1rem; background:#fff; margin:1.4rem 0; }
+  footer { border-top:1px solid var(--line); margin-top:3rem; }
+  footer .in { max-width:46rem; margin:0 auto; padding:20px 16px; color:var(--soft); font-size:.9rem; display:flex; gap:1rem; flex-wrap:wrap; }
+  footer a { color:var(--soft); }
+  @media (max-width:520px){ .wrap{ padding:28px 16px 72px; } }
+</style>
+</head>
+<body>
+<header class="top"><div class="in"><a href="/">Baik</a></div></header>
+<main class="wrap">
+  <div class="k">{title}</div>
+  <h1>{title}</h1>
+  <p class="upd">Last updated {updated}</p>
+  <slot />
+</main>
+<footer><div class="in">
+  <span>© Baik</span>
+  <a href="/privacy">Privacy</a>
+  <a href="/terms">Terms</a>
+  <a href="/">Home</a>
+</div></footer>
+</body>
+</html>

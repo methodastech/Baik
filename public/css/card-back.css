@@ -1,0 +1,30 @@
+
+:root{--bg:#E9EAEC;--ink:#1F2226;--mut:#6E7379;--line:#D3D6DA;}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:14px/1.5 'Space Grotesk',system-ui,sans-serif}
+header{padding:34px 40px 4px;display:flex;align-items:baseline;gap:18px;flex-wrap:wrap}
+h1{font-size:22px;margin:0;font-weight:700;letter-spacing:-.01em}
+.sub{color:var(--mut);font-size:13px}
+.spec{padding:0 40px 14px;color:var(--mut);font:12px/1.7 'JetBrains Mono',ui-monospace,monospace;letter-spacing:.02em}
+.ctl{display:flex;gap:18px;align-items:center;padding:0 40px 10px;font-size:12px;color:var(--mut);flex-wrap:wrap}
+.ctl label{display:flex;align-items:center;gap:7px}
+.ctl input[type=text]{border:1px solid var(--line);border-radius:8px;padding:5px 9px;font:12px 'JetBrains Mono',monospace;width:150px;background:#fff;color:var(--ink)}
+.ctl input[type=text].w{width:250px}
+.row{display:flex;gap:44px;padding:20px 40px 70px;flex-wrap:wrap;align-items:flex-start}
+.card{position:relative;width:340px}
+.card svg{width:100%;height:auto;display:block;border-radius:22px;box-shadow:0 22px 44px rgba(20,22,26,.22),0 3px 8px rgba(20,22,26,.12)}
+.card .acts{display:flex;gap:8px;justify-content:center;margin-top:14px}
+.card button{border:1px solid var(--line);background:#fff;color:var(--ink);border-radius:999px;font:12px system-ui;padding:6px 12px;cursor:pointer}
+.card button.ok{background:var(--ink);color:#fff;border-color:var(--ink)}
+h2.sec{font:600 13px 'Space Grotesk',sans-serif;margin:0;padding:18px 40px 6px;letter-spacing:.02em}h2.sec span{font-weight:400;color:var(--mut);margin-left:10px}
+.corners{display:flex;gap:14px;padding:6px 40px 4px;flex-wrap:wrap}
+.cn{width:150px;cursor:pointer;border:2px solid transparent;border-radius:14px;padding:6px;background:#F5F6F7;text-align:center}
+.cn.on{border-color:var(--ink)}
+.cn svg{width:100%;height:auto;display:block;border-radius:8px}
+.cn b{display:block;font-size:12px;margin-top:6px}.cn svg{max-height:180px}
+.cn i{font-style:normal;font:10px 'JetBrains Mono',monospace;color:var(--mut);letter-spacing:.08em}
+.set{padding:4px 40px 26px}
+.set h3{font:600 15px 'Space Grotesk',sans-serif;margin:14px 0 12px;display:flex;align-items:baseline;gap:10px}
+.set h3 i{font:11px 'JetBrains Mono',monospace;color:var(--mut);font-style:normal;letter-spacing:.08em}
+.pair{display:flex;gap:28px;flex-wrap:wrap}
+.card .cap{text-align:center;color:var(--mut);font:11px 'JetBrains Mono',monospace;letter-spacing:.12em;text-transform:uppercase;margin-top:8px}

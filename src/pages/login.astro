@@ -1,0 +1,200 @@
+---
+import Head from "../layouts/Head.astro";
+---
+<!doctype html>
+<html lang="en">
+<head>
+<link rel="stylesheet" href="/css/login.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Sign in · Baik</title>
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#F3F3F3">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Saira:wght@400;500;600;700&family=JetBrains+Mono:wght@500&family=Amiri:wght@400;700&display=swap" rel="stylesheet">
+<Head />
+</head>
+<body>
+<header class="top"><a class="logo" href="/login"><span class="baik-logo" role="img" aria-label="Baik"></span></a></header>
+<main>
+  <section class="card" aria-labelledby="h">
+    <div class="bis" lang="ar">بِسْمِ ٱللَّٰهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ</div>
+    <div class="k" id="kicker">Welcome back</div>
+    <h1 id="h">Sign in to Baik</h1>
+    <p class="p" id="lede">Sign in to open the dua catalogue, your saved cards and your notes.</p>
+    <div class="seg" id="seg" role="tablist" aria-label="Sign in or create account">
+      <button type="button" role="tab" id="tIn" aria-selected="true">Sign in</button>
+      <button type="button" role="tab" id="tUp" aria-selected="false">Create account</button>
+    </div>
+    <div class="msg" id="msg" role="alert"></div>
+    <form id="form" novalidate>
+      <div class="f" id="nameRow" hidden>
+        <label for="name">Your name</label>
+        <input id="name" name="name" autocomplete="name" maxlength="60">
+      </div>
+      <div class="f">
+        <label for="email">Email</label>
+        <input id="email" name="email" type="email" autocomplete="email" inputmode="email" maxlength="254" required>
+      </div>
+      <div class="f" id="pwRow">
+        <label for="pw">Password</label>
+        <div class="in">
+          <input id="pw" name="password" type="password" autocomplete="current-password" minlength="8" maxlength="128" required>
+          <button type="button" class="eye" id="eye" aria-controls="pw" aria-pressed="false">Show</button>
+        </div>
+        <div class="hint" id="pwHint" hidden>At least 8 characters.</div>
+      </div>
+      <button class="go" id="go" type="submit">Sign in</button>
+    </form>
+    <p class="swap" id="legalRow" hidden>By creating an account you agree to our <a href="/terms">Terms</a> and <a href="/privacy">Privacy Policy</a>.</p>
+    <p class="swap" id="forgotRow"><a href="#" id="forgotA">Forgot your password?</a></p>
+    <p class="swap" id="swap">New to Baik? <a href="#" id="swapA">Create an account</a></p>
+  </section>
+</main>
+<footer>© Baik · The right dua for what you are facing · <a href="/privacy">Privacy</a> · <a href="/terms">Terms</a></footer>
+<script is:inline>
+(function () {
+  var $ = function (id) { return document.getElementById(id); };
+  var q = new URLSearchParams(location.search), next = q.get('next') || '/khayr';
+  if (!/^\/(?!\/)/.test(next) || next.indexOf('/login') === 0 || next.indexOf('/api') === 0) next = '/khayr';
+  var up = false, busy = false, which = 'in';
+
+  function say(text, ok) { var m = $('msg'); m.textContent = text || ''; m.className = 'msg' + (text ? ok ? ' ok' : ' bad' : ''); }
+  /* say() writes text only, on purpose. When the answer needs an action the
+     person can take, this one renders the single link that offers it. */
+  function sayResend(text, email) {
+    var m = $('msg');
+    m.className = 'msg bad';
+    m.textContent = text + ' ';
+    var a = document.createElement('a');
+    a.href = '#'; a.textContent = 'Send it again';
+    a.addEventListener('click', function (e) { e.preventDefault(); resend(email, a); });
+    m.appendChild(a);
+  }
+  function resend(email, link) {
+    if (link) { link.textContent = 'Sending…'; link.style.pointerEvents = 'none'; }
+    fetch('/api/auth/resend', {
+      method: 'POST', credentials: 'same-origin',
+      headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email: email })
+    }).then(function (r) { return r.json().catch(function () { return {}; }); })
+      .then(function (d) { say(d.message || 'If that address is waiting to be confirmed, a new link is on its way.', true); })
+      .catch(function () { say('Could not reach Baik. Check your connection and try again.'); });
+  }
+  $('forgotA').addEventListener('click', function (e) { e.preventDefault(); setMode('forgot'); });
+
+  /* Three states share one card: sign in, create account, and asking for a reset
+     link. The reset step hides the password and the tabs rather than opening a
+     second page, so the email already typed carries straight over. */
+  function mode(u) { setMode(u ? 'up' : 'in'); }
+  function setMode(kind) {
+    which = kind; up = kind === 'up';
+    var forgot = kind === 'forgot';
+    say('');
+    $('seg').hidden = forgot;
+    $('tIn').setAttribute('aria-selected', kind === 'in'); $('tUp').setAttribute('aria-selected', up);
+    $('kicker').textContent = forgot ? 'Reset password' : up ? 'Create account' : 'Welcome back';
+    $('h').textContent = forgot ? 'Forgot your password?' : up ? 'Create your Baik account' : 'Sign in to Baik';
+    $('lede').textContent = forgot
+      ? 'Type the email on your account. We will send a link to set a new password.'
+      : up ? 'Free to join. Your saved cards and notes follow you once you are signed in.'
+           : 'Sign in to open the dua catalogue, your saved cards and your notes.';
+    $('nameRow').hidden = !up;
+    $('pwRow').hidden = forgot;
+    $('pwHint').hidden = !up;
+    $('forgotRow').hidden = up || forgot;
+    $('legalRow').hidden = !up;
+    $('pw').required = !forgot;
+    $('pw').autocomplete = up ? 'new-password' : 'current-password';
+    $('go').textContent = forgot ? 'Send reset link' : up ? 'Create account' : 'Sign in';
+    $('swap').innerHTML = forgot
+      ? 'Remembered it? <a href="#" id="swapA">Back to sign in</a>'
+      : up ? 'Already have an account? <a href="#" id="swapA">Sign in</a>'
+           : 'New to Baik? <a href="#" id="swapA">Create an account</a>';
+    $('swapA').addEventListener('click', function (e) { e.preventDefault(); setMode(forgot ? 'in' : up ? 'in' : 'up'); });
+    (up ? $('name') : $('email')).focus();
+  }
+  $('tIn').addEventListener('click', function () { mode(false); });
+  $('tUp').addEventListener('click', function () { mode(true); });
+  $('swapA').addEventListener('click', function (e) { e.preventDefault(); mode(true); });
+  $('eye').addEventListener('click', function () {
+    var show = $('pw').type === 'password'; $('pw').type = show ? 'text' : 'password';
+    this.textContent = show ? 'Hide' : 'Show'; this.setAttribute('aria-pressed', show);
+  });
+  if (q.get('mode') === 'signup') mode(true);
+  if (q.get('out') === '1') say('You are signed out.', true);
+  var confirmed = q.get('confirm');
+  if (confirmed === 'ok') {
+    say('Your email is confirmed. Sign in to open the deck.', true);
+    if (q.get('email')) $('email').value = q.get('email');
+  } else if (confirmed === 'expired') {
+    sayResend('That confirmation link has expired or has already been used.', '');
+  }
+
+  function invalid(id, text) { $(id).setAttribute('aria-invalid', 'true'); $(id).focus(); say(text); return false; }
+  function check() {
+    ['name', 'email', 'pw'].forEach(function (id) { $(id).removeAttribute('aria-invalid'); });
+    if (up && !$('name').value.trim()) return invalid('name', 'Please enter your name.');
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test($('email').value.trim())) return invalid('email', 'Please enter a valid email address.');
+    if (which !== 'forgot' && $('pw').value.length < 8) return invalid('pw', up ? 'Your password needs at least 8 characters.' : 'Please enter your password.');
+    return true;
+  }
+
+  $('form').addEventListener('submit', function (e) {
+    e.preventDefault();
+    if (busy) return;
+
+    if (which === 'forgot') {
+      var addr = $('email').value.trim();
+      if (!/^[^s@]+@[^s@]+.[^s@]+$/.test(addr)) return invalid('email', 'Please enter a valid email address.');
+      busy = true; say(''); $('go').disabled = true; $('go').textContent = 'Sending…';
+      fetch('/api/auth/forgot', {
+        method: 'POST', credentials: 'same-origin',
+        headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email: addr })
+      }).then(function (r) { return r.json().catch(function () { return {}; }); })
+        .then(function (d) { say(d.message || 'If that address has an account, a link is on its way.', true); })
+        .catch(function () { say('Could not reach Baik. Check your connection and try again.'); })
+        .then(function () { busy = false; $('go').disabled = false; $('go').textContent = 'Send reset link'; });
+      return;
+    }
+
+    if (!check()) return;
+    busy = true; say(''); $('go').disabled = true; $('go').textContent = up ? 'Creating account…' : 'Signing in…';
+    var body = { email: $('email').value.trim(), password: $('pw').value };
+    if (up) body.name = $('name').value.trim();
+    fetch('/api/auth/' + (up ? 'register' : 'login'), {
+      method: 'POST', credentials: 'same-origin', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body)
+    }).then(function (r) {
+      return r.json().catch(function () { return {}; }).then(function (d) { return { ok: r.ok, status: r.status, d: d }; });
+    }).then(function (x) {
+      if (x.ok) {
+        /* Registering now ends at the inbox, not in the app: the address has to be
+           confirmed before the account can sign in. */
+        if (x.d && x.d.pending) {
+          $('form').hidden = true; $('swap').hidden = true;
+          if (x.d.sent) say(x.d.message, true); else sayResend(x.d.message, x.d.email);
+          return;
+        }
+        // a fresh sign-in opens the app on the card grid (the app keeps its view under baik.view)
+        try { localStorage.setItem('baik.view', JSON.stringify('grid')); } catch (err) {}
+        location.replace(next); return;
+      }
+      // signed up, confirmed nothing yet: offer the link again rather than a dead end
+      if (x.status === 403 && x.d && x.d.error) { sayResend(x.d.error, $('email').value.trim()); return; }
+      // 404 / 405 / 501: this address serves files only (e.g. python -m http.server), with no sign-in behind it
+      if (x.status === 404 || x.status === 405 || x.status === 501 || !x.d || (!x.d.error && !x.ok)) say('Sign-in is not running at this address. On your computer, open Baik at localhost:4280 (started with: node api/dev-server.js).');
+      else say(x.d.error || 'Something went wrong. Please try again.');
+    }).catch(function () {
+      say('Could not reach Baik. Check your connection and try again.');
+    }).then(function () { busy = false; $('go').disabled = false; $('go').textContent = up ? 'Create account' : 'Sign in'; });
+  });
+
+  // already signed in: go straight to the app
+  fetch('/api/auth/me', { credentials: 'same-origin', cache: 'no-store' })
+    .then(function (r) { return r.ok ? r.json() : null; })
+    .then(function (d) { if (d && d.user) location.replace(next); }).catch(function () {});
+})();
+</script>
+
+</body>
+</html>

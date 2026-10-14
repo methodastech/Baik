@@ -4,12 +4,15 @@
   "private": true,
   "description": "Baik email + password accounts (Azure Static Web Apps managed functions)",
   "main": "src/index.js",
-  "engines": { "node": ">=20" },
+  "engines": {
+    "node": ">=20"
+  },
   "scripts": {
     "dev": "node dev-server.js"
   },
   "dependencies": {
     "@azure/data-tables": "^13.3.0",
-    "@azure/functions": "^4.5.0"
+    "@azure/functions": "^4.5.0",
+    "@azure/communication-email": "^1.0.0"
   }
 }

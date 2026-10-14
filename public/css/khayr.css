@@ -1,0 +1,2037 @@
+html.authwait body{visibility:hidden}
+/* the Baik logo (assets/logo/baik-logo_caps-black.png): its shape used as a mask, filled with currentColor, so it takes any ink */
+.baik-logo{display:inline-block;vertical-align:middle;height:1em;aspect-ratio:118.13/45.82;background:currentColor;
+ -webkit-mask:url("assets/logo/baik-logo_caps-black.png") center/108% 120.7% no-repeat;mask:url("assets/logo/baik-logo_caps-black.png") center/108% 120.7% no-repeat;}
+.bkw .baik-logo{height:.82em;vertical-align:baseline;}
+
+/* ONE SCROLL for the card face: the photo, the tags and the reading move together; the title bar
+   above and the source line below stay where they are. .fwrap is the fixed frame that carries the
+   more-below fade; .fscroll inside it is the scroller. */
+.fwrap{flex:1;min-height:0;position:relative;display:flex;flex-direction:column;}
+.fscroll{flex:1;min-height:0;overflow-y:auto;overflow-x:hidden;overscroll-behavior:contain;scrollbar-width:none;display:flex;flex-direction:column;}
+.fscroll::-webkit-scrollbar{width:0;height:0;}
+.fscroll>.zone{flex:none;}
+#deck .fscroll .textbox,#spotCard .fscroll .textbox{flex:none;min-height:auto;overflow:visible;}
+#deck .fscroll .textbox>.vw-fw,#spotCard .fscroll .textbox>.vw-fw{overflow:visible;flex:none;background:none;}
+#deck .fscroll .textbox.more::after,#spotCard .fscroll .textbox.more::after{content:none;}
+.fwrap.more::after{content:'';position:absolute;left:0;right:0;bottom:0;height:56px;pointer-events:none;z-index:4;
+ background:linear-gradient(to top,var(--zone1) 0,var(--zone1) 34%,color-mix(in srgb,var(--zone1) 60%,transparent) 62%,
+   color-mix(in srgb,var(--zone1) 20%,transparent) 82%,rgba(30,33,36,0));}
+.kind-surah .fwrap.more::after{background:linear-gradient(to top,#1E2124 0,#1E2124 34%,rgba(30,33,36,.6) 62%,rgba(30,33,36,.2) 82%,rgba(30,33,36,0));}
+
+
+
+/* ===== Methodas card kit (extracted) ===== */
+/* ---------- theme: concrete example block (Business Strategy violet, taken from :root) ---------- */
+:root{
+  --acc:#1E2124; --acc-soft:#6E6E6E; --acc-deep:#1E2124;
+  --acc-glow:rgba(30,33,36,.5); --acc-faint:rgba(30,33,36,.14); --acc-text:var(--acc-soft);
+  --frame1:#DBDBDB; --frame2:#F3F3F3; --frame3:#F3F3F3; --frame-edge:rgba(30,33,36,.32); --frame-hi:rgba(30,33,36,.16);
+  --zone1:#FFFFFF; --zone2:#F3F3F3; --zone-line:rgba(30,33,36,.12);
+  --art1:#F3F3F3; --art2:#F3F3F3;
+  --txt:#1E2124; --strong:#FFFFFF; --dim:#6E6E6E; --mut:#6E6E6E; --gold:#1E2124; --glyph:rgba(30,33,36,.92);
+  --back-1:#6E6E6E; --back-2:#1E2124; --back-3:#1E2124; --page-dim:#6E6E6E;
+  --bk-ink:#fff;
+  /* The surface a card sits ON. It was white and so is the card, so a dua card had only its
+     hairline border to separate it from the page and the two ran together. --bg is read by the
+     chip rows for their edge fades too, which is why it is a token and not a literal: anything
+     that has to blend into the surface asks for it, and the phone frame redefines it below. */
+  --bg:#EAEBED;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Saira','Helvetica Neue',Helvetica,Arial,sans-serif;color:#1E2124;background:var(--bg);-webkit-font-smoothing:antialiased;}
+
+/* ---------- size vars: sz-cutT (tarot folio) ---------- */
+.sz-cutT{--cw:334px;--ch:573px;--arth:108px;--pad:10px;--fname:14px;--ftype:13px;--flead:13.5px;--fstep:13.5px;--fflav:14.5px;--icon:118px;--pip:25px;--gap:5px;}
+
+/* ---------- flip mechanics ---------- */
+.scene{perspective:2200px;}
+.card{--flip:0deg;position:relative;width:var(--cw);height:var(--ch);transform-style:preserve-3d;transform:rotateY(var(--flip));transition:transform .85s cubic-bezier(.2,.7,.2,1);cursor:pointer;}
+.card.flipped{--flip:180deg;}
+.face{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;overflow:hidden;}
+.face.front{padding:var(--pad);display:flex;flex-direction:column;}
+/* backface-visibility does not inherit. A face hides its own turned-away side, but any
+   descendant the engine promotes to its own layer — the art brief, whose paragraph is a
+   scroll container — is culled against its own value, which is the initial `visible`.
+   In Firefox that let the front's brief print through the back of a flipped card,
+   mirrored. Say it on the descendants too, since that is where the leak was. */
+.face *{backface-visibility:hidden;-webkit-backface-visibility:hidden;}
+/* And do not leave a face's disappearance to backface culling alone: state outright which
+   side is turned away. The swap belongs at the edge-on instant, where a card has no width
+   and nothing can be seen changing — and that instant is not halfway through the turn.
+   cubic-bezier(.2,.7,.2,1) front-loads the rotation: it is half round after 14.4% of the
+   duration, so .85s x .144 = .123s. Timing the swap to half the duration instead leaves the
+   front hanging there, mirrored, for a quarter of a second before the back arrives. */
+.face{transition:visibility 0s linear .123s;}
+.card .face.back{visibility:hidden;}
+.card.flipped .face.back{visibility:visible;}
+.card.flipped .face.front{visibility:hidden;}
+
+/* ---------- front zones ---------- */
+.zone{position:relative;}
+.titlebar{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 15px;margin-bottom:var(--gap);}
+.titlebar .name{font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:var(--fname);line-height:1.04;letter-spacing:-.012em;color:var(--strong);}
+/* set + number and the tokens both sit in the FOOTER, so the top of the card opens on its
+   title and the body is left to the dua itself */
+/* one line: set at the left, tokens in the middle, reference at the right. The reference drops
+   its "Qur'an ·" prefix here because the surah name already says what it is, which is what buys
+   the room to keep all three on a single row. The tooltip still carries the full form. */
+.gfoot{flex-wrap:nowrap;gap:5px;letter-spacing:.075em;font-size:9.5px;padding-left:11px;padding-right:11px;}
+/* the reference never shrinks: it is the thing being cited. If a row runs long the set label
+   gives way first, and it still carries its full name on hover. */
+.gfoot .gset{flex:0 1 auto;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;cursor:help;}
+.gfoot .catbadges{gap:6px;flex:none;}
+.gfoot .catg{width:16px;height:16px;}
+.gfoot .gsrc{flex:none;margin-left:auto;text-align:right;cursor:help;color:var(--mut);white-space:nowrap;}
+.pip{flex:none;display:flex;align-items:center;justify-content:center;min-width:var(--pip);height:var(--pip);}
+.pip .pipn{font-family:'JetBrains Mono',monospace;font-weight:700;font-size:12.5px;letter-spacing:.02em;
+ color:var(--strong);font-style:normal;}
+.artwin{position:relative;flex:none;aspect-ratio:16/9;margin-bottom:var(--gap);overflow:hidden;
+  background:#F3F3F3;
+  box-shadow:none;}
+.artwin .artinner{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;}
+.artwin .pat{position:absolute;inset:0;z-index:1;opacity:.6;}
+.artwin .vig{display:none;}
+.artwin .bigicon{position:relative;z-index:2;height:92%;aspect-ratio:1;filter:none;}
+.artwin .corner{display:none;position:absolute;z-index:3;width:13px;height:13px;border:1.5px solid var(--acc-text);opacity:.7;}
+.artwin .corner.tl{left:9px;top:9px;border-right:none;border-bottom:none;}.artwin .corner.tr{right:9px;top:9px;border-left:none;border-bottom:none;}
+.artwin .corner.bl{left:9px;bottom:9px;border-right:none;border-top:none;}.artwin .corner.br{right:9px;bottom:9px;border-left:none;border-top:none;}
+.typeline{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:8px 15px;margin-bottom:var(--gap);}
+.typeline .t{font-weight:600;font-size:calc(var(--ftype) + 0.5px);letter-spacing:.04em;color:var(--txt);text-transform:uppercase;white-space:nowrap;}
+.typeline .t b{color:var(--acc-text);}
+.typeline .setsym{width:calc(var(--ftype) + 8px);height:calc(var(--ftype) + 8px);flex:none;}
+.tend{display:flex;align-items:center;gap:10px;}
+.pt-type{display:none;}
+.textbox{flex:1;display:flex;flex-direction:column;padding:13px 15px 10px;}
+.lead{font-size:var(--flead);line-height:1.38;color:var(--txt);}
+.lead b{color:var(--strong);font-weight:600;}.lead .m{color:var(--acc-text);font-weight:600;}
+.steps{margin-top:10px;display:flex;flex-direction:column;gap:7px;}
+.steps .st{display:block;}
+.steps .st .b{width:calc(var(--fstep) - 1px);height:calc(var(--fstep) - 1px);display:inline-flex;align-items:center;justify-content:center;vertical-align:-1px;margin-right:8px;background:#1E2124;transform:rotate(45deg);border-radius:2px;box-shadow:none;}
+.steps .st .b i{transform:rotate(-45deg);font-style:normal;font-weight:700;font-size:calc(var(--fstep) - 5.5px);color:#1E2124;}
+.steps .st .lbl{display:inline;font-size:var(--fstep);font-weight:600;color:var(--strong);}
+.steps .st .lbl em{font-style:normal;font-weight:500;color:var(--dim);}
+.flavdiv{margin:auto 0 9px;height:1px;background:#DBDBDB;}
+.flavor{font-family:'Saira',sans-serif;font-style:italic;font-size:var(--fflav);line-height:1.36;color:var(--dim);}
+/* dual view: framework text visible by default, client text hidden (body.client swaps them) */
+.textbox>.vw-fw{display:flex;flex-direction:column;flex:1;}.vw-cl{display:none;}
+.ptbox{display:none;} /* folio hides the corner type box; rule kept for safety */
+.ct-d{width:5px;height:5px;flex:none;transform:rotate(45deg);background:var(--acc);box-shadow:none;}
+.ct-l{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:9px;letter-spacing:.2em;text-indent:.2em;color:var(--strong);line-height:1;}
+.gfoot{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:9px 14px 6px;font-family:'JetBrains Mono',monospace;font-size:9.5px;letter-spacing:.12em;color:var(--dim);text-transform:uppercase;}
+.gfoot .gcore{display:inline-flex;align-items:center;gap:6px;}
+.gfoot .gcore .ct-l{font-size:8.5px;}
+/* No rule above the foot. The textbox takes flex:1, so on a short card the divider was pushed
+   clear of the text it was meant to divide and sat alone in a band of white — a stray line a
+   few pixels under the fold's own hairline. The foot is already set apart by its register:
+   mono, uppercase, tracked, dim. It does not need a second one. */
+
+/* ---------- sz-cutT zone overrides ---------- */
+.sz-cutT .titlebar{padding:7px 14px 5px;}
+.sz-cutT .titlebar .name{line-height:1.08;}
+.sz-cutT .artwin{aspect-ratio:auto;height:var(--arth);}
+.sz-cutT .textbox{padding:11px 14px 9px;}
+.sz-cutT .lead{line-height:1.28;margin-bottom:2px;}
+.sz-cutT .steps{margin-top:6px;gap:4px;}
+.sz-cutT .steps .st{gap:8px;align-items:start;}
+.sz-cutT .steps .st .lbl{line-height:1.2;}
+.sz-cutT .flavor{line-height:1.28;}
+.sz-cutT .flavdiv{margin:12px 0 9px;}
+
+/* ---------- cut-faceted ---------- */
+/* 18px, not 14: the fused panel inside is 8px and sits 10px in, and nested corners only run
+   parallel when the outer radius is the inner radius plus the gutter. At 14 the two curves
+   splayed apart at every corner, which is what made the double line read as a mistake. */
+.cut-faceted .face.front{border-radius:18px;background:#FFFFFF;box-shadow:none;}
+.cut-faceted .face.front::before{content:none;}
+.cut-faceted .zone{background:#FFFFFF;border:1px solid var(--zone-line);box-shadow:none;border-radius:8px;overflow:hidden;}
+.cut-faceted .artwin{border-radius:10px;}
+.cut-faceted .face.back{border-radius:18px;}
+
+/* ---------- cut-folio (rides on cut-faceted): one fused panel with hairline dividers ---------- */
+.cut-folio .titlebar{padding:6px 15px;margin-bottom:0;border-radius:8px 8px 0 0;}
+.cut-folio .textbox .ptbox{display:none;}
+.cut-folio .artwin{margin-bottom:0;border-radius:0;border:1px solid var(--zone-line);border-top:none;border-bottom:none;}
+.cut-folio .typeline{margin-bottom:0;padding:11px 15px 10px;border-bottom:1px solid var(--zone-line);border-radius:0;}
+.cut-folio .textbox{margin-top:0;border-top:none;padding:15px 15px 16px;border-radius:0 0 8px 8px;}
+
+/* ---------- premium print pass ---------- */
+.zone.titlebar .pip{position:relative;filter:none;}
+.zone.titlebar .pip::after{content:none;}
+.zone.artwin{position:relative;}
+.zone.artwin::after{content:'';position:absolute;inset:0;z-index:2;pointer-events:none;box-shadow:inset 0 0 0 1px rgba(30,33,36,.08);}
+.face.back .face.back .bk-mk{filter:none;}
+.face.back{padding:var(--pad);display:flex;flex-direction:column;}
+.bk-pat{position:absolute;inset:0;opacity:.62;pointer-events:none;}
+.bk-orn{position:absolute;inset:0;pointer-events:none;opacity:.75;background:color-mix(in srgb,var(--acc-soft) 13%,transparent);-webkit-mask-image:var(--lattice);mask-image:var(--lattice);-webkit-mask-size:64px 64px;mask-size:64px 64px;-webkit-mask-repeat:repeat;mask-repeat:repeat;}
+.bk-edge{position:absolute;inset:13px;border:1px solid color-mix(in srgb,var(--acc-soft) 30%,transparent);border-radius:10px;pointer-events:none;box-shadow:none;}
+.bk-edge::after{content:'';position:absolute;inset:5px;border:1px solid color-mix(in srgb,var(--acc-soft) 13%,transparent);border-radius:7px;}
+.bk-seals{position:absolute;inset:13px;pointer-events:none;background-image:var(--seal),var(--seal),var(--seal),var(--seal);background-repeat:no-repeat;background-size:16px 16px;background-position:-8px -8px,calc(100% + 8px) -8px,-8px calc(100% + 8px),calc(100% + 8px) calc(100% + 8px);opacity:.55;}
+.face.back>.bk-top{position:relative;inset:auto;z-index:2;flex:0 0 auto;text-align:center;padding:18px 18px 0;}
+.bk-eyebrow{font-family:'JetBrains Mono',monospace;font-size:8px;letter-spacing:.2em;text-transform:uppercase;color:var(--acc-text);opacity:.85;}
+.bk-cardname{font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:16px;line-height:1.15;color:var(--strong);margin-top:7px;}
+
+.bk-k{font-family:'JetBrains Mono',monospace;font-size:7.6px;letter-spacing:.16em;text-transform:uppercase;color:var(--acc-text);margin:0 0 5px;opacity:.9;}
+.bk-p{font-family:'Saira',sans-serif;font-size:11.4px;line-height:1.5;color:var(--txt);margin:0 0 12px;text-shadow:0 1px 8px rgba(30,33,36,0.1);}
+.bk-p.last{margin-bottom:0;}
+.bk-cats{display:flex;align-items:center;justify-content:center;gap:8px;margin-top:11px;}
+.bk-catnames{font-family:'Saira',sans-serif;font-size:10px;color:var(--dim);}
+.bk-k{font-family:'JetBrains Mono',monospace;font-size:7.6px;letter-spacing:.16em;text-transform:uppercase;color:var(--acc-text);margin:0 0 5px;opacity:.9;}
+.bk-p{font-family:'Saira',sans-serif;font-size:11.8px;line-height:1.5;color:var(--txt);margin:0 0 13px;text-shadow:0 1px 8px rgba(30,33,36,0.1);}
+.face.back>.bk-brand{position:absolute;left:0;right:0;top:50%;bottom:auto;height:auto;transform:translateY(-50%);z-index:3;display:flex;justify-content:center;}
+.bk-tag2{font-family:'Saira',sans-serif;font-size:10.5px;color:rgba(30,33,36,.5);}
+.face.back>.bk-footrow{position:absolute;left:0;right:0;bottom:8px;z-index:2;display:flex;align-items:center;justify-content:space-between;gap:8px;padding:0 16px;}
+.bk-code{font-family:'JetBrains Mono',monospace;font-size:9.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--mut);}
+.bkw-sm .bkw{font-size:26px;}
+/* the category icon rides the type line on both faces, so the kind of dua is always visible */
+.catbadges{display:flex;align-items:center;gap:7px;flex:none;}
+/* FRONT: the icon alone, carrying the category colour. No container, so it sits on the card
+   face like printed art rather than like a UI button. */
+.catg{width:22px;height:22px;flex:none;display:block;cursor:help;}
+.catg svg{width:100%;height:100%;display:block;}
+.catg svg *{fill:var(--cb)!important;stroke:none!important;}
+/* BACK: the same icon on a disc rather than a heavy sphere. Enough lift to read as a token,
+   not so much that it sits on the card like a button. */
+.catb{width:23px;height:23px;flex:none;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:help;
+ background:var(--cb);
+ box-shadow:none;}
+.catb svg{width:14px;height:14px;display:block;}
+.catb svg *{fill:#fff!important;stroke:none!important;}
+.tend-ic{width:19px;height:19px;display:block;color:var(--acc-text);}
+.tend-ic svg{width:100%;height:100%;display:block;}
+.bk-arab{display:grid;place-items:center;color:#1E2124;}
+.bkw{font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:54px;letter-spacing:-.02em;line-height:1;color:#1E2124;white-space:nowrap;}
+.bkw-i{position:relative;}
+.bkw-dot{position:absolute;left:50%;top:.14em;width:.17em;height:.17em;background:currentColor;transform:translateX(-50%) rotate(45deg);border-radius:1px;}
+.bk-arab .bkw{filter:none;}
+
+
+/* ---------- back ---------- */
+.face.back{transform:rotateY(180deg);overflow:hidden;
+  background:#F3F3F3;
+  border:1px solid var(--frame-edge);box-shadow:none;}
+.bk-pat{position:absolute;inset:0;opacity:.92;}
+.face.back{--bkr:18px;}
+.bk-edge{position:absolute;inset:14px;border:1px solid color-mix(in srgb,var(--acc-soft) 30%,transparent);border-radius:10px;pointer-events:none;box-shadow:none;}
+.bk-top{position:absolute;top:16px;left:0;right:0;text-align:center;}
+.bk-eyebrow{font-family:'JetBrains Mono',monospace;font-size:8.5px;letter-spacing:.3em;color:var(--acc-soft);text-transform:uppercase;}
+.bk-cardname{font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:var(--fname);letter-spacing:-.012em;line-height:1.04;color:var(--strong);margin-top:6px;padding:0 26px;}
+.bk-core{position:absolute;inset:0;}
+.bk-brand{position:absolute;bottom:13%;left:0;right:0;display:flex;flex-direction:column;align-items:center;}
+.bk-mk{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:auto;max-width:70%;aspect-ratio:1;filter:none;}
+.bk-mk.bk-glyph{display:grid;place-items:center;}
+.bk-mk.bk-glyph::before,.bk-mk.bk-glyph::after{content:none;}
+.bk-mk.bk-glyph>svg{position:relative;z-index:1;width:60%;height:60%;filter:none;}
+/* the glyph medallion re-scopes its vars so glyph art always reads white on the back */
+.bk-glyph{--acc:rgba(30,33,36,.18);--acc-soft:rgba(30,33,36,.66);--acc-deep:rgba(30,33,36,.66);--acc-glow:transparent;--acc-faint:transparent;--glyph:rgba(30,33,36,.94);--bk-knock:rgba(30,33,36,.72);}
+.bk-wm{font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:14px;letter-spacing:.42em;text-indent:.42em;color:rgba(30,33,36,.86);}
+.bk-os{position:relative;font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:13px;letter-spacing:.04em;color:#1E2124;background:var(--acc);border-radius:6px;padding:4px 8px 3px;text-indent:0;box-shadow:none;}
+.bk-os::before{content:"";position:absolute;top:-5px;left:-5px;width:12px;height:12px;background:#fff;clip-path:polygon(50% 0,61% 39%,100% 50%,61% 61%,50% 100%,39% 61%,0 50%,39% 39%);}
+.bk-rule{display:none;}
+.bk-tag{font-family:'Saira',sans-serif;font-size:11.5px;letter-spacing:.02em;color:rgba(30,33,36,.5);margin-top:7px;}
+.bk-foot{position:absolute;bottom:18px;left:0;right:0;display:flex;justify-content:center;gap:13px;font-family:'JetBrains Mono',monospace;font-size:9.5px;letter-spacing:.14em;color:rgba(30,33,36,.62);text-transform:uppercase;}
+.bk-foot span{position:relative;}.bk-foot span:not(:last-child)::after{content:"";position:absolute;right:-7px;top:3px;width:2px;height:2px;border-radius:50%;background:rgba(30,33,36,.4);}
+
+/* ===== Khayr theming: default = Protection emerald; per-set overrides ===== */
+:root{
+  /* Palantir: white page, near-black ink, one neutral grey scale, no glow, no tint.
+     Sampled from palantir.com computed styles: #FFFFFF page, #1E2124 ink, #F3F3F3 panel,
+     #DBDBDB hairline, #6E6E6E muted, #6E6E6E faint, #1E2124 deep. */
+  --acc:#1E2124; --acc-soft:#6E6E6E; --acc-deep:#1E2124;
+  --acc-glow:transparent; --acc-faint:rgba(30,33,36,.05); --acc-text:#1E2124;
+  --frame1:#FFFFFF; --frame2:#F3F3F3; --frame3:#F3F3F3; --frame-edge:#DBDBDB; --frame-hi:rgba(30,33,36,0);
+  --zone1:#FFFFFF; --zone2:#F3F3F3; --zone-line:#DBDBDB;
+  --art1:#F3F3F3; --art2:#F3F3F3;
+  --txt:#1E2124; --strong:#1E2124; --dim:#6E6E6E; --mut:#6E6E6E; --gold:#1E2124; --glyph:rgba(30,33,36,.9);
+  --bk-ink:#1E2124; --pip-ink:#FFFFFF; --arSize:26px; --arFont:'Scheherazade New','Amiri','Noto Naskh Arabic','Geeza Pro','Al Bayan','Arabic Typesetting','Traditional Arabic',serif; --arLh:2.15; --lattice:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2264%22%20height%3D%2264%22%20viewBox%3D%220%200%2064%2064%22%3E%3Cg%20fill%3D%22none%22%20stroke%3D%22%23000%22%20stroke-width%3D%221%22%20stroke-linejoin%3D%22round%22%3E%3Cpolygon%20points%3D%2243.55%2C36.78%2035.96%2C35.96%2036.78%2C43.55%2032.00%2C37.60%2027.22%2C43.55%2028.04%2C35.96%2020.45%2C36.78%2026.40%2C32.00%2020.45%2C27.22%2028.04%2C28.04%2027.22%2C20.45%2032.00%2C26.40%2036.78%2C20.45%2035.96%2C28.04%2043.55%2C27.22%2037.60%2C32.00%22%2F%3E%3Cpolygon%20points%3D%2211.55%2C4.78%203.96%2C3.96%204.78%2C11.55%200.00%2C5.60%20-4.78%2C11.55%20-3.96%2C3.96%20-11.55%2C4.78%20-5.60%2C0.00%20-11.55%2C-4.78%20-3.96%2C-3.96%20-4.78%2C-11.55%20-0.00%2C-5.60%204.78%2C-11.55%203.96%2C-3.96%2011.55%2C-4.78%205.60%2C-0.00%22%2F%3E%3Cpolygon%20points%3D%2275.55%2C4.78%2067.96%2C3.96%2068.78%2C11.55%2064.00%2C5.60%2059.22%2C11.55%2060.04%2C3.96%2052.45%2C4.78%2058.40%2C0.00%2052.45%2C-4.78%2060.04%2C-3.96%2059.22%2C-11.55%2064.00%2C-5.60%2068.78%2C-11.55%2067.96%2C-3.96%2075.55%2C-4.78%2069.60%2C-0.00%22%2F%3E%3Cpolygon%20points%3D%2211.55%2C68.78%203.96%2C67.96%204.78%2C75.55%200.00%2C69.60%20-4.78%2C75.55%20-3.96%2C67.96%20-11.55%2C68.78%20-5.60%2C64.00%20-11.55%2C59.22%20-3.96%2C60.04%20-4.78%2C52.45%20-0.00%2C58.40%204.78%2C52.45%203.96%2C60.04%2011.55%2C59.22%205.60%2C64.00%22%2F%3E%3Cpolygon%20points%3D%2275.55%2C68.78%2067.96%2C67.96%2068.78%2C75.55%2064.00%2C69.60%2059.22%2C75.55%2060.04%2C67.96%2052.45%2C68.78%2058.40%2C64.00%2052.45%2C59.22%2060.04%2C60.04%2059.22%2C52.45%2064.00%2C58.40%2068.78%2C52.45%2067.96%2C60.04%2075.55%2C59.22%2069.60%2C64.00%22%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E"); --seal:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2216%22%20height%3D%2216%22%20viewBox%3D%220%200%2016%2016%22%3E%3Cg%20fill%3D%22none%22%20stroke%3D%22%23000%22%20stroke-width%3D%221.1%22%3E%3Crect%20x%3D%223.2%22%20y%3D%223.2%22%20width%3D%229.6%22%20height%3D%229.6%22%2F%3E%3Crect%20x%3D%223.2%22%20y%3D%223.2%22%20width%3D%229.6%22%20height%3D%229.6%22%20transform%3D%22rotate%2845%208%208%29%22%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E"); --chStep:606px; --ph:#6E6E6E;
+}
+/* The sets no longer carry a hue. They are told apart by name and by one step on the
+   grey scale, the way Palantir separates things without colour-coding them. */
+.suit-genz{--acc:#1E2124;--acc-deep:#1E2124;}
+.suit-travel{--acc:#6E6E6E;--acc-deep:#6E6E6E;}
+.suit-rezeki{--acc:#6E6E6E;--acc-deep:#6E6E6E;}
+.face.back{background:#F3F3F3;}
+
+/* the art window holds a written brief until the real image exists */
+/* the brief sizes to its own text; the floor just keeps the art area consistent card to card */
+.sz-cutT .artbrief{height:auto;min-height:102px;}
+.artbrief{display:flex;}
+/* real artwork, when a card has it: the image fills the window, edge to edge */
+/* the picture sits on the art window's own ground, not on white. The white was there to fill
+   the letterbox of an off-ratio image, but it also showed as a hairline around every picture
+   once the card was scaled to a fractional size, and it put a bright slab on the dark stock. */
+.artwin.artimg img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;object-position:center;background:transparent;display:block;}
+.abr{position:relative;z-index:2;flex:1;min-width:0;display:none;flex-direction:column;gap:5px;
+ padding:9px 11px 10px;margin:6px;border-radius:8px;color:var(--ph);background:color-mix(in srgb,var(--art2) 82%,transparent);}
+.abr-k{display:flex;align-items:center;gap:6px;font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.13em;text-transform:uppercase;color:var(--ph);flex:none;}
+.abr-ic{width:13px;height:13px;flex:none;display:block;opacity:.9;color:var(--ph);}
+.abr-ic svg{width:100%;height:100%;display:block;}
+/* the brief never shows a scrollbar: it is a note about a picture, not a document */
+.abr p{font-family:'Saira',sans-serif;font-size:10.2px;line-height:1.42;color:var(--ph);overflow:auto;scrollbar-width:none;-ms-overflow-style:none;min-height:0;}
+.abr p::-webkit-scrollbar{width:0;height:0;}
+/* the written brief is production direction, not something a reader should meet.
+   Dev mode (?dev=1) shows it; everyone else gets the art window itself. */
+/* A card with no artwork shows its brief: the point of a placeholder is to say what is still
+   missing and what it has to become. It is the glyph that is conditional, not the brief.
+   `.has-img` is set per card once real art lands, so the deck can fill in one image at a time.
+   `body.public` previews the reader-facing look with every brief hidden. */
+.abr{display:flex;}
+.awglyph{display:none;}
+.has-img .abr,body.public .abr{display:none;}
+.has-img .awglyph,body.public .awglyph{display:flex;}
+body.dev .abr{display:flex;}
+body.dev .awglyph{display:none;}
+.awglyph{z-index:2;pointer-events:none;}
+.awglyph svg{height:64%;aspect-ratio:1;opacity:.9;
+ filter:none;}
+body.public .sz-cutT .artbrief,.has-img .artbrief{min-height:0;height:var(--arth);}
+/* ===== Khayr additions inside the textbox: the dua itself ===== */
+/* the use of the dua: its own section, held apart from the dua itself */
+/* one band carries the category label and what the dua is for, instead of two stacked zones */
+.tluse{display:block;}
+.tluse .tl-row{display:flex;align-items:center;justify-content:space-between;gap:10px;}
+.tluse .uset{font-family:'Saira',sans-serif;font-size:12.4px;line-height:1.4;color:var(--txt);margin-top:0;}
+/* the column gap does the separating now that no border does: wide enough that two tags read
+   as two, tight enough that both still fit one line on a card at grid width */
+.ctags{display:flex;flex-wrap:wrap;align-items:center;gap:4px 15px;margin:0 0 9px;}
+/* the guide card: sections, not an ayat. It wears its group's hue quietly: a tinted face,
+   a ruled titlebar, the mark large on its own field, the section labels in the hue. */
+.kind-panduan .artwin{display:none;}
+.kind-panduan.cut-faceted .face.front{background:color-mix(in srgb,var(--gc,#4A4E8C) 5%,#FFFFFF);}
+.kind-panduan .zone.titlebar{border-top:3px solid var(--gc,#4A4E8C);border-radius:4px 4px 0 0;}
+.gd-viz{display:flex;align-items:center;gap:11px;margin:2px 0 12px;padding:13px 14px;
+ border-radius:9px;background:color-mix(in srgb,var(--gc,#4A4E8C) 8%,#FFFFFF);color:var(--gc,#4A4E8C);}
+.gd-viz svg{width:30px;height:30px;flex:none;}
+.gd-viz .gv-k{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.16em;
+ text-transform:uppercase;}
+.gd-k{font-family:'JetBrains Mono',monospace;font-size:8.6px;letter-spacing:.15em;
+ text-transform:uppercase;color:var(--gc,#4A4E8C);margin:12px 0 4px;}
+.gd-k:first-child{margin-top:2px;}
+.gd-p{font-family:'Saira',sans-serif;font-size:12.2px;line-height:1.55;color:var(--txt);}
+.gd-slots{margin-top:13px;padding-top:9px;border-top:1px solid var(--zone-line);}
+.gd-slot{display:flex;gap:7px;align-items:baseline;margin-bottom:4px;}
+.gd-slot code{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--mut);
+ border:1px dashed var(--zone-line);border-radius:4px;padding:1px 5px;flex:none;}
+.gd-slot span{font-size:11px;line-height:1.45;color:var(--mut);}
+.gd-note{margin-top:11px;padding:8px 10px;border-left:2px solid var(--gc,#4A4E8C);
+ background:var(--zone2);font-size:11.4px;line-height:1.5;color:var(--dim);}
+.gd-rev{margin-top:12px;font-family:'JetBrains Mono',monospace;font-size:8.4px;
+ letter-spacing:.14em;text-transform:uppercase;color:var(--mut);}
+/* Tags are wayfinding, not controls. As filled pills they wore the same shape as the situation
+   chips in the masthead — rounded, tinted, icon and word — and those DO filter the deck, so the
+   card was offering a button that does nothing. Two of them also ran the full width of the card
+   and wrapped to a second line, pushing the dua down before the reader had learned anything.
+   The box comes off. A mark and a word in the category's hue, set apart by space rather than
+   fenced in by a border. Nothing is lost but the chrome. */
+.ctag{display:inline-flex;align-items:center;gap:6px;
+ font-family:'Saira',sans-serif;font-size:11px;font-weight:600;letter-spacing:.005em;
+ text-transform:none;color:var(--c);white-space:nowrap;}
+/* 13px is not arbitrary: the marks fill about 61% of their 24-grid, so a 13px box draws them
+   ~7.9px tall, which is the cap height of the 11px label beside them. The mark sits level. */
+.ctag .ico{width:13px;height:13px;flex:none;color:var(--c);
+ --cb:currentColor;--acc:currentColor;--acc-soft:currentColor;--acc-text:currentColor;--glyph:currentColor;}
+/* The brand hues are pitched for paper: #B25B27 on near-black is about 2.4:1, which is why
+   the surah cards used to drop the colour and go white. But then the same category read orange
+   on a dua card and grey on a surah card, and the hue is how a reader learns the shelf — so it
+   has to survive both stocks.
+   Lifting the hue toward white rather than replacing it keeps the identity and buys the
+   contrast: 55% hue on white puts every category past 7:1 on the surah stock while staying
+   unmistakably its own colour. --c is left alone so only the rendered colour changes; the mark
+   follows because its svg fills with currentColor. */
+.kind-surah .ctag,.kind-surah .ctag .ico{color:color-mix(in srgb,var(--c) 55%,#FFFFFF);}
+/* waqf (pause) marks are part of the Uthmani text. They are tinted so a reader can see where to
+   stop or continue, and each one carries its own meaning on hover. */
+.waqf{color:var(--gold);font-size:.86em;padding:0 .04em;cursor:help;}
+/* tajwid trial: one card colours its rule sites the way a coloured tajwid mushaf does.
+   Each colour is one rule, each site explains itself on hover, and the legend under the
+   ayat names only the rules that actually appear in it. */
+.tj{cursor:help;}
+.tj-gh{color:#C2185B;}.tj-ib{color:#7B1FA2;}.tj-il{color:#B71C1C;}.tj-iq{color:#1565C0;}
+.tj-ik{color:#E65100;}.tj-ql{color:#2E7D32;}.tj-md{color:#00838F;}
+.kind-surah .tj-gh{color:#F48FB1;}.kind-surah .tj-ib{color:#CE93D8;}.kind-surah .tj-il{color:#EF9A9A;}
+.kind-surah .tj-iq{color:#90CAF9;}.kind-surah .tj-ik{color:#FFB74D;}.kind-surah .tj-ql{color:#A5D6A7;}
+.kind-surah .tj-md{color:#80DEEA;}
+/* a source that knows its ayat is a door, and dresses like one */
+.gsrc[data-vk]{cursor:pointer;color:inherit;text-decoration:underline dotted;text-underline-offset:3px;}
+.gsrc[data-vk]:hover{color:var(--strong);}
+/* Set like a mushaf page: large, open leading so the harakat and the pause marks never collide,
+   generous word spacing, and the font's own Arabic shaping left switched on. */
+.qar{direction:rtl;text-align:center;font-family:var(--arFont,'Scheherazade New','Amiri','Noto Naskh Arabic','Geeza Pro','Al Bayan','Arabic Typesetting','Traditional Arabic',serif);font-weight:500;font-size:var(--arSize);
+ line-height:var(--arLh,2.15);color:var(--strong);margin:8px 0 4px;flex:none;word-spacing:.06em;
+ text-rendering:optimizeLegibility;font-feature-settings:'calt' 1,'liga' 1,'rlig' 1,'mark' 1,'mkmk' 1;
+ -webkit-font-smoothing:antialiased;}
+/* The Latin reading line and the meaning are justified. Centring tied them to the Arabic but
+   left the eye hunting for the start of every line; ranging left fixed that and left a ragged
+   right edge against the panel's own straight one. Justified, both edges answer the border.
+   The Arabic keeps its centring, which is how a mushaf sets it.
+   No hyphenation on the transliteration: breaking rabbana across a line would invent a word
+   boundary that is not in the Arabic. The measure is narrow, so the last line stays ranged
+   left rather than being stretched. */
+.qtr{text-align:justify;text-align-last:left;font-size:11.5px;line-height:1.4;color:var(--dim);margin-top:4px;}
+.bsm{ text-align:center;font-family:'Scheherazade New','Amiri','Noto Naskh Arabic','Geeza Pro','Al Bayan','Arabic Typesetting','Traditional Arabic',serif;font-size:16px;color:var(--mut);line-height:1;}
+/* the Bismillah opens the text, the way a mushaf sets it as a header above the ayat rather than
+   as a caption under the picture. It scrolls with the dua because it belongs to it. */
+.bsm-top{padding:2px 0 6px;flex:none;}
+.bsm-top .bsm{font-size:15px;color:color-mix(in srgb,var(--strong) 52%,transparent);}
+.sz-cutT .textbox{overflow:hidden;}
+.flavor .src{display:block;font-style:normal;font-family:'JetBrains Mono',monospace;font-size:9.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--mut);margin-top:6px;}
+.textbox .flavor{text-align:justify;text-align-last:left;hyphens:auto;-webkit-hyphens:auto;}
+
+/* ---- ABOUT THIS DUA: the reading now lives on the front, folded until asked for.
+   The back stays a clean deck back; the front carries the knowledge, one tap deep. */
+/* the fold is the last thing in the panel, with clearance beneath it so the
+   more-below cue never lands on the summary row */
+.rd{margin-top:11px;border-top:1px solid var(--zone-line);padding-top:2px;text-align:left;
+ padding-bottom:6px;}
+.rd-slot{height:0;}
+/* while the fold is open the panel scrolls to it, so the reading is never orphaned below */
+.rd[open]{scroll-margin-bottom:12px;}
+.rd summary{list-style:none;display:flex;align-items:center;gap:7px;cursor:pointer;padding:8px 2px 6px;
+ font-family:'JetBrains Mono',monospace;font-size:9.5px;letter-spacing:.15em;text-transform:uppercase;
+ color:var(--mut);transition:color .13s;user-select:none;-webkit-user-select:none;}
+.rd summary::-webkit-details-marker{display:none;}
+.rd summary:hover{color:var(--acc-text);}
+.rd summary svg{width:11px;height:11px;flex:none;transition:transform .2s;}
+.rd[open] summary{color:var(--acc-text);}
+.rd[open] summary svg{transform:rotate(180deg);}
+.rd-b{padding:4px 2px 2px;}
+.rd-k{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.14em;text-transform:uppercase;
+ color:var(--acc-text);margin:8px 0 4px;opacity:.9;}
+.rd-k:first-child{margin-top:2px;}
+.rd-b p{font-size:11.8px;line-height:1.55;color:var(--dim);}
+
+
+/* READING SURFACES · ported verbatim from the Methodas strategy card so the scroll behaves identically.
+   The bars are ABSOLUTE overlays on the panel, not sticky flex items: a sticky element pins inside the
+   scroller's padding and could never reach the true box edge, so text spilled below it.
+   timeline-scope lifts the scroll view's timeline up to the parent's pseudos. */
+#deck .cut-folio .textbox,#spotCard .cut-folio .textbox{min-height:0;padding:0;position:relative;timeline-scope:--vwhint;}
+#deck .textbox>.vw-fw,#spotCard .textbox>.vw-fw{overflow-y:auto;overflow-x:hidden;min-height:0;overscroll-behavior:contain;scrollbar-width:none;padding:12px 15px 13px;scroll-timeline:--vwhint block;
+  background:
+    linear-gradient(var(--zone1) 22%,rgba(30,33,36,0)) top/100% 38px no-repeat local,
+    linear-gradient(rgba(30,33,36,0),var(--zone1) 78%) bottom/100% 38px no-repeat local;}
+#deck .textbox>.vw-fw::-webkit-scrollbar,#spotCard .textbox>.vw-fw::-webkit-scrollbar{width:0;height:0;}
+/* the strategy card closes its scroll view with accent hairlines; in Khayr's blue sets those
+   read as a stray blue rule across the card, so only the neutral edge fades above are kept. */
+/* MORE-BELOW cue. The fades above use background-attachment:local, so they travel with the
+   content and never sit at the visible edge. Without this, the meaning simply vanishes under
+   the fold with nothing to say it is there. `.more` is set only while content remains. */
+#deck .cut-folio .textbox.more::after,#spotCard .cut-folio .textbox.more::after{
+ content:'';position:absolute;left:0;right:0;bottom:0;height:56px;pointer-events:none;z-index:4;
+ background:linear-gradient(to top,var(--zone1) 0,var(--zone1) 34%,
+   color-mix(in srgb,var(--zone1) 60%,transparent) 62%,
+   color-mix(in srgb,var(--zone1) 20%,transparent) 82%,rgba(30,33,36,0));}
+
+
+/* ---- CARD BACK: a deck back ------------------------------------------------------------
+   What makes a back read as a deck rather than as a dark panel: one pattern that runs edge to
+   edge and locks at the seams, a defined field inset from the trim, a medallion that gives the
+   mark a seat, and light that falls off toward the corners. The reading the front cannot fit
+   sits inside that field rather than floating on top of it. */
+.face.back{--rosette:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22400%22%20height%3D%22400%22%20viewBox%3D%220%200%20400%20400%22%3E%3Cpath%20d%3D%22M200.0%20142.0%20L258.0%20200.0%20L200.0%20258.0%20L142.0%20200.0%20Z%22%20fill%3D%22none%22%20stroke%3D%22%23000%22%20stroke-opacity%3D%220.55%22%20stroke-width%3D%221.7%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M241.0%20159.0%20L241.0%20241.0%20L159.0%20241.0%20L159.0%20159.0%20Z%22%20fill%3D%22none%22%20stroke%3D%22%23000%22%20stroke-opacity%3D%220.55%22%20stroke-width%3D%221.7%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M200.0%20104.0%20L296.0%20200.0%20L200.0%20296.0%20L104.0%20200.0%20Z%22%20fill%3D%22none%22%20stroke%3D%22%23000%22%20stroke-opacity%3D%220.30%22%20stroke-width%3D%221.3%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M267.9%20132.1%20L267.9%20267.9%20L132.1%20267.9%20L132.1%20132.1%20Z%22%20fill%3D%22none%22%20stroke%3D%22%23000%22%20stroke-opacity%3D%220.30%22%20stroke-width%3D%221.3%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M200.0%20138.0%20L200.0%20108.0%22%20stroke%3D%22%23000%22%20stroke-opacity%3D%220.26%22%20stroke-width%3D%221.3%22%20stroke-linecap%3D%22round%22%2F%3E%3Cpath%20d%3D%22M223.7%20142.7%20L235.2%20115.0%22%20stroke%3D%22%23000%22%20stroke-opacity%3D%220.14%22%20stroke-width%3D%221.3%22%20stroke-linecap%3D%22round%22%2F%3E%3Cpath%20d%3D%22M243.8%20156.2%20L265.1%20134.9%22%20stroke%3D%22%23000%22%20stroke-opacity%3D%220.26%22%20stroke-width%3D%221.3%22%20stroke-linecap%3D%22round%22%2F%3E%3Cpath%20d%3D%22M257.3%20176.3%20L285.0%20164.8%22%20stroke%3D%22%23000%22%20stroke-opacity%3D%220.14%22%20stroke-width%3D%221.3%22%20stroke-linecap%3D%22round%22%2F%3E%3Cpath%20d%3D%22M262.0%20200.0%20L292.0%20200.0%22%20stroke%3D%22%23000%22%20stroke-opacity%3D%220.26%22%20stroke-width%3D%221.3%22%20stroke-linecap%3D%22round%22%2F%3E%3Cpath%20d%3D%22M257.3%20223.7%20L285.0%20235.2%22%20stroke%3D%22%23000%22%20stroke-opacity%3D%220.14%22%20stroke-width%3D%221.3%22%20stroke-linecap%3D%22round%22%2F%3E%3Cpath%20d%3D%22M243.8%20243.8%20L265.1%20265.1%22%20stroke%3D%22%23000%22%20stroke-opacity%3D%220.26%22%20stroke-width%3D%221.3%22%20stroke-linecap%3D%22round%22%2F%3E%3Cpath%20d%3D%22M223.7%20257.3%20L235.2%20285.0%22%20stroke%3D%22%23000%22%20stroke-opacity%3D%220.14%22%20stroke-width%3D%221.3%22%20stroke-linecap%3D%22round%22%2F%3E%3Cpath%20d%3D%22M200.0%20262.0%20L200.0%20292.0%22%20stroke%3D%22%23000%22%20stroke-opacity%3D%220.26%22%20stroke-width%3D%221.3%22%20stroke-linecap%3D%22round%22%2F%3E%3Cpath%20d%3D%22M176.3%20257.3%20L164.8%20285.0%22%20stroke%3D%22%23000%22%20stroke-opacity%3D%220.14%22%20stroke-width%3D%221.3%22%20stroke-linecap%3D%22round%22%2F%3E%3Cpath%20d%3D%22M156.2%20243.8%20L134.9%20265.1%22%20stroke%3D%22%23000%22%20stroke-opacity%3D%220.26%22%20stroke-width%3D%221.3%22%20stroke-linecap%3D%22round%22%2F%3E%3Cpath%20d%3D%22M142.7%20223.7%20L115.0%20235.2%22%20stroke%3D%22%23000%22%20stroke-opacity%3D%220.14%22%20stroke-width%3D%221.3%22%20stroke-linecap%3D%22round%22%2F%3E%3Cpath%20d%3D%22M138.0%20200.0%20L108.0%20200.0%22%20stroke%3D%22%23000%22%20stroke-opacity%3D%220.26%22%20stroke-width%3D%221.3%22%20stroke-linecap%3D%22round%22%2F%3E%3Cpath%20d%3D%22M142.7%20176.3%20L115.0%20164.8%22%20stroke%3D%22%23000%22%20stroke-opacity%3D%220.14%22%20stroke-width%3D%221.3%22%20stroke-linecap%3D%22round%22%2F%3E%3Cpath%20d%3D%22M156.2%20156.2%20L134.9%20134.9%22%20stroke%3D%22%23000%22%20stroke-opacity%3D%220.26%22%20stroke-width%3D%221.3%22%20stroke-linecap%3D%22round%22%2F%3E%3Cpath%20d%3D%22M176.3%20142.7%20L164.8%20115.0%22%20stroke%3D%22%23000%22%20stroke-opacity%3D%220.14%22%20stroke-width%3D%221.3%22%20stroke-linecap%3D%22round%22%2F%3E%3Cpath%20d%3D%22M219.9%20100.0%20L225.8%2070.5%22%20stroke%3D%22%23000%22%20stroke-opacity%3D%220.16%22%20stroke-width%3D%221.1%22%20stroke-linecap%3D%22round%22%2F%3E%3Cpath%20d%3D%22M256.7%20115.2%20L273.3%2090.2%22%20stroke%3D%22%23000%22%20stroke-opacity%3D%220.16%22%20stroke-width%3D%221.1%22%20stroke-linecap%3D%22round%22%2F%3E%3Cpath%20d%3D%22M284.8%20143.3%20L309.8%20126.7%22%20stroke%3D%22%23000%22%20stroke-opacity%3D%220.16%22%20stroke-width%3D%221.1%22%20stroke-linecap%3D%22round%22%2F%3E%3Cpath%20d%3D%22M300.0%20180.1%20L329.5%20174.2%22%20stroke%3D%22%23000%22%20stroke-opacity%3D%220.16%22%20stroke-width%3D%221.1%22%20stroke-linecap%3D%22round%22%2F%3E%3Cpath%20d%3D%22M300.0%20219.9%20L329.5%20225.8%22%20stroke%3D%22%23000%22%20stroke-opacity%3D%220.16%22%20stroke-width%3D%221.1%22%20stroke-linecap%3D%22round%22%2F%3E%3Cpath%20d%3D%22M284.8%20256.7%20L309.8%20273.3%22%20stroke%3D%22%23000%22%20stroke-opacity%3D%220.16%22%20stroke-width%3D%221.1%22%20stroke-linecap%3D%22round%22%2F%3E%3Cpath%20d%3D%22M256.7%20284.8%20L273.3%20309.8%22%20stroke%3D%22%23000%22%20stroke-opacity%3D%220.16%22%20stroke-width%3D%221.1%22%20stroke-linecap%3D%22round%22%2F%3E%3Cpath%20d%3D%22M219.9%20300.0%20L225.8%20329.5%22%20stroke%3D%22%23000%22%20stroke-opacity%3D%220.16%22%20stroke-width%3D%221.1%22%20stroke-linecap%3D%22round%22%2F%3E%3Cpath%20d%3D%22M180.1%20300.0%20L174.2%20329.5%22%20stroke%3D%22%23000%22%20stroke-opacity%3D%220.16%22%20stroke-width%3D%221.1%22%20stroke-linecap%3D%22round%22%2F%3E%3Cpath%20d%3D%22M143.3%20284.8%20L126.7%20309.8%22%20stroke%3D%22%23000%22%20stroke-opacity%3D%220.16%22%20stroke-width%3D%221.1%22%20stroke-linecap%3D%22round%22%2F%3E%3Cpath%20d%3D%22M115.2%20256.7%20L90.2%20273.3%22%20stroke%3D%22%23000%22%20stroke-opacity%3D%220.16%22%20stroke-width%3D%221.1%22%20stroke-linecap%3D%22round%22%2F%3E%3Cpath%20d%3D%22M100.0%20219.9%20L70.5%20225.8%22%20stroke%3D%22%23000%22%20stroke-opacity%3D%220.16%22%20stroke-width%3D%221.1%22%20stroke-linecap%3D%22round%22%2F%3E%3Cpath%20d%3D%22M100.0%20180.1%20L70.5%20174.2%22%20stroke%3D%22%23000%22%20stroke-opacity%3D%220.16%22%20stroke-width%3D%221.1%22%20stroke-linecap%3D%22round%22%2F%3E%3Cpath%20d%3D%22M115.2%20143.3%20L90.2%20126.7%22%20stroke%3D%22%23000%22%20stroke-opacity%3D%220.16%22%20stroke-width%3D%221.1%22%20stroke-linecap%3D%22round%22%2F%3E%3Cpath%20d%3D%22M143.3%20115.2%20L126.7%2090.2%22%20stroke%3D%22%23000%22%20stroke-opacity%3D%220.16%22%20stroke-width%3D%221.1%22%20stroke-linecap%3D%22round%22%2F%3E%3Cpath%20d%3D%22M180.1%20100.0%20L174.2%2070.5%22%20stroke%3D%22%23000%22%20stroke-opacity%3D%220.16%22%20stroke-width%3D%221.1%22%20stroke-linecap%3D%22round%22%2F%3E%3Cpath%20d%3D%22M200.0%2060.0%20L200.0%2042.0%22%20stroke%3D%22%23000%22%20stroke-opacity%3D%220.09%22%20stroke-width%3D%221.0%22%20stroke-linecap%3D%22round%22%2F%3E%3Cpath%20d%3D%22M227.3%2062.7%20L230.8%2045.0%22%20stroke%3D%22%23000%22%20stroke-opacity%3D%220.09%22%20stroke-width%3D%221.0%22%20stroke-linecap%3D%22round%22%2F%3E%3Cpath%20d%3D%22M253.6%2070.7%20L260.5%2054.0%22%20stroke%3D%22%23000%22%20stroke-opacity%3D%220.09%22%20stroke-width%3D%221.0%22%20stroke-linecap%3D%22round%22%2F%3E%3Cpath%20d%3D%22M277.8%2083.6%20L287.8%2068.6%22%20stroke%3D%22%23000%22%20stroke-opacity%3D%220.09%22%20stroke-width%3D%221.0%22%20stroke-linecap%3D%22round%22%2F%3E%3Cpath%20d%3D%22M299.0%20101.0%20L311.7%2088.3%22%20stroke%3D%22%23000%22%20stroke-opacity%3D%220.09%22%20stroke-width%3D%221.0%22%20stroke-linecap%3D%22round%22%2F%3E%3Cpath%20d%3D%22M316.4%20122.2%20L331.4%20112.2%22%20stroke%3D%22%23000%22%20stroke-opacity%3D%220.09%22%20stroke-width%3D%221.0%22%20stroke-linecap%3D%22round%22%2F%3E%3Cpath%20d%3D%22M329.3%20146.4%20L346.0%20139.5%22%20stroke%3D%22%23000%22%20stroke-opacity%3D%220.09%22%20stroke-width%3D%221.0%22%20stroke-linecap%3D%22round%22%2F%3E%3Cpath%20d%3D%22M337.3%20172.7%20L355.0%20169.2%22%20stroke%3D%22%23000%22%20stroke-opacity%3D%220.09%22%20stroke-width%3D%221.0%22%20stroke-linecap%3D%22round%22%2F%3E%3Cpath%20d%3D%22M340.0%20200.0%20L358.0%20200.0%22%20stroke%3D%22%23000%22%20stroke-opacity%3D%220.09%22%20stroke-width%3D%221.0%22%20stroke-linecap%3D%22round%22%2F%3E%3Cpath%20d%3D%22M337.3%20227.3%20L355.0%20230.8%22%20stroke%3D%22%23000%22%20stroke-opacity%3D%220.09%22%20stroke-width%3D%221.0%22%20stroke-linecap%3D%22round%22%2F%3E%3Cpath%20d%3D%22M329.3%20253.6%20L346.0%20260.5%22%20stroke%3D%22%23000%22%20stroke-opacity%3D%220.09%22%20stroke-width%3D%221.0%22%20stroke-linecap%3D%22round%22%2F%3E%3Cpath%20d%3D%22M316.4%20277.8%20L331.4%20287.8%22%20stroke%3D%22%23000%22%20stroke-opacity%3D%220.09%22%20stroke-width%3D%221.0%22%20stroke-linecap%3D%22round%22%2F%3E%3Cpath%20d%3D%22M299.0%20299.0%20L311.7%20311.7%22%20stroke%3D%22%23000%22%20stroke-opacity%3D%220.09%22%20stroke-width%3D%221.0%22%20stroke-linecap%3D%22round%22%2F%3E%3Cpath%20d%3D%22M277.8%20316.4%20L287.8%20331.4%22%20stroke%3D%22%23000%22%20stroke-opacity%3D%220.09%22%20stroke-width%3D%221.0%22%20stroke-linecap%3D%22round%22%2F%3E%3Cpath%20d%3D%22M253.6%20329.3%20L260.5%20346.0%22%20stroke%3D%22%23000%22%20stroke-opacity%3D%220.09%22%20stroke-width%3D%221.0%22%20stroke-linecap%3D%22round%22%2F%3E%3Cpath%20d%3D%22M227.3%20337.3%20L230.8%20355.0%22%20stroke%3D%22%23000%22%20stroke-opacity%3D%220.09%22%20stroke-width%3D%221.0%22%20stroke-linecap%3D%22round%22%2F%3E%3Cpath%20d%3D%22M200.0%20340.0%20L200.0%20358.0%22%20stroke%3D%22%23000%22%20stroke-opacity%3D%220.09%22%20stroke-width%3D%221.0%22%20stroke-linecap%3D%22round%22%2F%3E%3Cpath%20d%3D%22M172.7%20337.3%20L169.2%20355.0%22%20stroke%3D%22%23000%22%20stroke-opacity%3D%220.09%22%20stroke-width%3D%221.0%22%20stroke-linecap%3D%22round%22%2F%3E%3Cpath%20d%3D%22M146.4%20329.3%20L139.5%20346.0%22%20stroke%3D%22%23000%22%20stroke-opacity%3D%220.09%22%20stroke-width%3D%221.0%22%20stroke-linecap%3D%22round%22%2F%3E%3Cpath%20d%3D%22M122.2%20316.4%20L112.2%20331.4%22%20stroke%3D%22%23000%22%20stroke-opacity%3D%220.09%22%20stroke-width%3D%221.0%22%20stroke-linecap%3D%22round%22%2F%3E%3Cpath%20d%3D%22M101.0%20299.0%20L88.3%20311.7%22%20stroke%3D%22%23000%22%20stroke-opacity%3D%220.09%22%20stroke-width%3D%221.0%22%20stroke-linecap%3D%22round%22%2F%3E%3Cpath%20d%3D%22M83.6%20277.8%20L68.6%20287.8%22%20stroke%3D%22%23000%22%20stroke-opacity%3D%220.09%22%20stroke-width%3D%221.0%22%20stroke-linecap%3D%22round%22%2F%3E%3Cpath%20d%3D%22M70.7%20253.6%20L54.0%20260.5%22%20stroke%3D%22%23000%22%20stroke-opacity%3D%220.09%22%20stroke-width%3D%221.0%22%20stroke-linecap%3D%22round%22%2F%3E%3Cpath%20d%3D%22M62.7%20227.3%20L45.0%20230.8%22%20stroke%3D%22%23000%22%20stroke-opacity%3D%220.09%22%20stroke-width%3D%221.0%22%20stroke-linecap%3D%22round%22%2F%3E%3Cpath%20d%3D%22M60.0%20200.0%20L42.0%20200.0%22%20stroke%3D%22%23000%22%20stroke-opacity%3D%220.09%22%20stroke-width%3D%221.0%22%20stroke-linecap%3D%22round%22%2F%3E%3Cpath%20d%3D%22M62.7%20172.7%20L45.0%20169.2%22%20stroke%3D%22%23000%22%20stroke-opacity%3D%220.09%22%20stroke-width%3D%221.0%22%20stroke-linecap%3D%22round%22%2F%3E%3Cpath%20d%3D%22M70.7%20146.4%20L54.0%20139.5%22%20stroke%3D%22%23000%22%20stroke-opacity%3D%220.09%22%20stroke-width%3D%221.0%22%20stroke-linecap%3D%22round%22%2F%3E%3Cpath%20d%3D%22M83.6%20122.2%20L68.6%20112.2%22%20stroke%3D%22%23000%22%20stroke-opacity%3D%220.09%22%20stroke-width%3D%221.0%22%20stroke-linecap%3D%22round%22%2F%3E%3Cpath%20d%3D%22M101.0%20101.0%20L88.3%2088.3%22%20stroke%3D%22%23000%22%20stroke-opacity%3D%220.09%22%20stroke-width%3D%221.0%22%20stroke-linecap%3D%22round%22%2F%3E%3Cpath%20d%3D%22M122.2%2083.6%20L112.2%2068.6%22%20stroke%3D%22%23000%22%20stroke-opacity%3D%220.09%22%20stroke-width%3D%221.0%22%20stroke-linecap%3D%22round%22%2F%3E%3Cpath%20d%3D%22M146.4%2070.7%20L139.5%2054.0%22%20stroke%3D%22%23000%22%20stroke-opacity%3D%220.09%22%20stroke-width%3D%221.0%22%20stroke-linecap%3D%22round%22%2F%3E%3Cpath%20d%3D%22M172.7%2062.7%20L169.2%2045.0%22%20stroke%3D%22%23000%22%20stroke-opacity%3D%220.09%22%20stroke-width%3D%221.0%22%20stroke-linecap%3D%22round%22%2F%3E%3Ccircle%20cx%3D%22200%22%20cy%3D%22200%22%20r%3D%2240%22%20fill%3D%22none%22%20stroke%3D%22%23000%22%20stroke-opacity%3D%220.34%22%20stroke-width%3D%221.3%22%2F%3E%3Ccircle%20cx%3D%22200%22%20cy%3D%22200%22%20r%3D%2258%22%20fill%3D%22none%22%20stroke%3D%22%23000%22%20stroke-opacity%3D%220.16%22%20stroke-width%3D%221.0%22%2F%3E%3Ccircle%20cx%3D%22200%22%20cy%3D%22200%22%20r%3D%2296%22%20fill%3D%22none%22%20stroke%3D%22%23000%22%20stroke-opacity%3D%220.13%22%20stroke-width%3D%221.0%22%2F%3E%3Ccircle%20cx%3D%22200%22%20cy%3D%22200%22%20r%3D%22136%22%20fill%3D%22none%22%20stroke%3D%22%23000%22%20stroke-opacity%3D%220.10%22%20stroke-width%3D%221.0%22%2F%3E%3Ccircle%20cx%3D%22200%22%20cy%3D%22200%22%20r%3D%22164%22%20fill%3D%22none%22%20stroke%3D%22%23000%22%20stroke-opacity%3D%220.06%22%20stroke-width%3D%221.0%22%2F%3E%3C%2Fsvg%3E");}
+/* the field: an inset panel, so the pattern reads as printed stock with a trim margin */
+.bk-field{position:absolute;inset:9px;border-radius:13px;pointer-events:none;z-index:1;
+ background:none;
+ box-shadow:inset 0 0 0 1px var(--zone-line);}
+/* One motif, radiating from the centre where the mark sits, rather than a tessellation tiled
+   across the whole face. Petals in three rings step down in weight as they travel outward and
+   dissolve before the trim, so the eye starts at Baik and moves out. Modern in that it is mostly
+   negative space: no strapwork, no interlace, no repeat. */
+.bk-orn{position:absolute;inset:9px;border-radius:13px;pointer-events:none;z-index:1;opacity:1;
+ background:radial-gradient(circle,color-mix(in srgb,var(--acc-soft) 72%,transparent) 0%,
+  color-mix(in srgb,var(--acc-soft) 46%,transparent) 36%,color-mix(in srgb,var(--acc-soft) 28%,transparent) 72%);
+ -webkit-mask-image:var(--rosette);mask-image:var(--rosette);
+ -webkit-mask-size:118% auto;mask-size:118% auto;
+ -webkit-mask-position:center;mask-position:center;
+ -webkit-mask-repeat:no-repeat;mask-repeat:no-repeat;}
+/* a second pass of the same motif, larger and fainter, so the radiation has depth without
+   adding a single new shape */
+.bk-orn2{position:absolute;inset:9px;border-radius:13px;pointer-events:none;z-index:1;
+ background:color-mix(in srgb,var(--acc-soft) 9%,transparent);
+ -webkit-mask-image:var(--rosette);mask-image:var(--rosette);
+ -webkit-mask-size:196% auto;mask-size:196% auto;
+ -webkit-mask-position:center;mask-position:center;
+ -webkit-mask-repeat:no-repeat;mask-repeat:no-repeat;}
+/* medallion: concentric rings under the mark, so Baik sits in something instead of on nothing */
+.bk-medal{position:absolute;left:50%;top:50%;width:186px;height:186px;margin:-93px 0 0 -93px;z-index:2;pointer-events:none;
+ border-radius:50%;
+ background:
+  radial-gradient(circle,transparent 0 37%,#DBDBDB 37% 38.2%,transparent 39%),
+  radial-gradient(circle,transparent 0 45%,#DBDBDB 45% 45.9%,transparent 46%),
+  radial-gradient(circle,transparent 0 49%,#DBDBDB 49% 49.7%,transparent 50%);}
+.bk-medal::before{content:'';position:absolute;inset:24%;border-radius:50%;
+ background:none;}
+/* light falls off to the corners, the way a printed back does under a lamp */
+.bk-vig{position:absolute;inset:0;z-index:2;pointer-events:none;border-radius:inherit;
+ background:none;}
+/* The light behind the star. A halo seated on the medallion, brightest where the mark sits
+   and gone before the trim, painted under the rosette so its lines pick up against the lit
+   ground instead of being washed by it. On charcoal stock the light is warm white; on paper
+   you cannot go lighter than the page, so it is the deck's gold at a whisper, which reads as
+   warmth in the stock rather than as a colour.
+   The whisper was set at 14%, which is not a whisper: over #F3F3F3 that lands on #EDE8DB, 18
+   points of red over blue, and the eye reads a cream disc sitting on a grey card rather than
+   warm paper. 5% lands on #F1EFEB — 6 points of spread, which is about the difference between
+   two warm whites and stays a quality of the stock instead of becoming a shape. The charcoal
+   stock is untouched: white on near-black has no such problem and keeps its 30%. */
+.bk-glow{--g:#C9A54A;--g0:5%;--g1:2.5%;--g2:1%;display:block;position:absolute;left:50%;top:50%;
+ width:min(124%,480px);aspect-ratio:1;transform:translate(-50%,-50%);border-radius:50%;
+ pointer-events:none;z-index:1;
+ background:radial-gradient(circle,
+  color-mix(in srgb,var(--g) var(--g0),transparent) 0%,
+  color-mix(in srgb,var(--g) var(--g1),transparent) 26%,
+  color-mix(in srgb,var(--g) var(--g2),transparent) 46%,
+  transparent 64%);}
+.kind-surah .bk-glow{--g:#FFFFFF;--g0:30%;--g1:15%;--g2:6%;}
+/* the reading sits on its own quiet plate so it never fights the pattern behind it. The plate
+   hugs its text: pinned to the bottom with a ceiling, rather than a fixed slab that leaves an
+   empty panel over the pattern on the shorter cards. */
+.face.back>.bk-footrow{bottom:15px;padding:0 22px;}
+.face.back>.bk-top{padding:24px 22px 0;}
+
+
+/* The back used to bubble each icon. One quiet plate behind the whole row reads as part of the
+   card instead of buttons dropped onto it, and the icons stay the bare coloured marks the front
+   uses, so both faces say the same thing the same way. */
+.bk-cats{display:inline-flex;align-items:center;justify-content:center;gap:9px;margin-top:12px;
+ padding:5px 12px 5px 10px;border-radius:999px;
+ background:color-mix(in srgb,#FFFFFF 46%,transparent);
+ box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--acc-soft) 14%,transparent);
+ -webkit-backdrop-filter:blur(3px);backdrop-filter:blur(3px);}
+.bk-cats .catg{width:18px;height:18px;}
+.bk-cats .catbadges{gap:7px;}
+.bk-catnames{font-size:10.5px;color:var(--txt);opacity:.92;}
+/* the pill is a wash of white, which on the charcoal backs left grey marks sitting on a
+   grey ground and reading as smudges. Dark stock gets the same contrast the other way up:
+   a dark ground, and marks in white rather than in the category grey. */
+.kind-surah .bk-cats{background:color-mix(in srgb,#FFFFFF 9%,transparent);
+ box-shadow:inset 0 0 0 1px rgba(255,255,255,.18);}
+.kind-surah .bk-cats .catg svg *{fill:rgba(255,255,255,.94)!important;}
+/* the tokens sit with the label that names them, not at the far end of the card. The label
+   gives way before the tokens do: a card with three categories still shows all three. */
+.tluse .tl-row{gap:6px;}
+.tluse .tl-row .t{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.tluse .tl-row .catbadges{flex:none;gap:6px;}
+.tluse .tl-row .catg{width:17px;height:17px;}
+
+
+/* ---- listen ---------------------------------------------------------------------------
+   Audio is a Premium feature, but the button is shown to everyone: hiding it would leave the
+   reader unaware the recitation exists. Locked, it says so on tap and opens the plan instead
+   of doing nothing. The dua itself is never behind this.
+   It sits in the corner of the dua panel, not on the type line: it plays the Arabic, and the
+   type line has no room to spare once the tokens are there. */
+.tl-audio{position:absolute;top:8px;right:9px;z-index:5;display:inline-flex;align-items:center;justify-content:center;
+ width:27px;height:27px;border-radius:50%;cursor:pointer;
+ border:1px solid color-mix(in srgb,var(--acc-soft) 34%,transparent);
+ background:color-mix(in srgb,var(--acc-deep) 30%,transparent);
+ color:var(--acc-text);transition:.16s;}
+.tl-audio svg{width:15px;height:15px;display:block;}
+.tl-audio:hover{background:color-mix(in srgb,var(--acc-soft) 22%,transparent);
+ border-color:color-mix(in srgb,var(--acc-soft) 60%,transparent);color:var(--strong);}
+.tl-audio:active{transform:scale(.93);}
+/* locked: the waves drop away and a small padlock takes their place, so the state reads
+   before the tap rather than after it */
+.tl-audio.aud-locked{color:var(--mut);border-color:color-mix(in srgb,var(--mut) 30%,transparent);
+ background:color-mix(in srgb,#FFFFFF 34%,transparent);}
+.tl-audio.aud-locked .wv1,.tl-audio.aud-locked .wv2{display:none;}
+.tl-audio.aud-locked svg{transform:translateX(-2px);}
+.tl-audio .lk{position:absolute;right:2px;bottom:2px;width:8px;height:7px;border-radius:1.5px;
+ background:var(--gold,#1E2124);box-shadow:0 0 0 1.5px color-mix(in srgb,#FFFFFF 80%,transparent);}
+.tl-audio .lk::before{content:'';position:absolute;left:1.6px;top:-3px;width:4.8px;height:4px;
+ border:1.4px solid var(--gold,#1E2124);border-bottom:none;border-radius:3px 3px 0 0;}
+.tl-audio.playing{color:var(--strong);border-color:color-mix(in srgb,var(--acc-soft) 70%,transparent);
+ background:color-mix(in srgb,var(--acc-soft) 26%,transparent);}
+.tl-audio.playing .wv1,.tl-audio.playing .wv2{animation:wvPulse 1.1s ease-in-out infinite;}
+.tl-audio.playing .wv2{animation-delay:.18s;}
+@keyframes wvPulse{0%,100%{opacity:.35;}50%{opacity:1;}}
+.fab .fa.playing,.spot-bar button.playing{color:var(--gold);border-color:rgba(30,33,36,.55);}
+@media(prefers-reduced-motion:reduce){.tl-audio.playing .wv1,.tl-audio.playing .wv2{animation:none;}}
+
+
+/* ---- SURAH SET: black stock -------------------------------------------------------------
+   The dua sets each take a colour. The surah set takes none: near-black card, gold rule, so a
+   surah card is recognisable face-down and from across a spread. Gold rather than a hue because
+   it is the illumination colour of a mushaf, and because it belongs to no other set. */
+.suit-surah{
+ --acc:#1E2124; --acc-soft:#6E6E6E; --acc-deep:#6E6E6E; --acc-glow:#1E2124;
+ --acc-text:#6E6E6E; --glyph:#6E6E6E;
+ --zone1:#FFFFFF; --zone2:#F3F3F3; --zone-line:#DBDBDB;
+ --art2:#F3F3F3; --strong:#1E2124; --txt:#6E6E6E; --dim:#6E6E6E;}
+.suit-surah{--mut:#6E6E6E; --ph:#6E6E6E; --bk-ink:#1E2124;}
+.suit-surah .face{background:#FFFFFF;}
+/* ---- the black card: kind = surah -------------------------------------------------
+   A dua is a white card, a surah is a black one. Same card, inverted, so the two kinds
+   are told apart across a whole grid without reading a word. Every surface token flips
+   and the hairlines become light-on-dark at the same weight. */
+.kind-surah{--pip-ink:#1E2124;--zone1:#1E2124;--zone2:#1E2124;--zone-line:rgba(255,255,255,.20);
+ --art1:#2B2F33;--art2:#2B2F33;--frame1:#1E2124;--frame2:#1E2124;--frame3:#1E2124;
+ --frame-edge:rgba(255,255,255,.22);--txt:#FFFFFF;--strong:#FFFFFF;--dim:#DBDBDB;
+ --mut:#AAAAAA;--ph:#AAAAAA;--acc-text:#FFFFFF;--acc:#FFFFFF;--acc-soft:#FFFFFF;--glyph:#FFFFFF;}
+.card.kind-surah.cut-faceted .face.front,.card.kind-surah .face.back{background:#1E2124;}
+.kind-surah.cut-faceted .zone{background:#1E2124;border-color:rgba(255,255,255,.20);}
+.kind-surah .artwin,.kind-surah .artbrief{background:#2B2F33;}
+.kind-surah .flavdiv{background:rgba(255,255,255,.20);}
+.kind-surah .gfoot{color:#AAAAAA;}
+/* the wordmark carries the deck's ink colour, which on a surah card is the same near-black
+   the back is printed on: the mark was there all along, invisible against its own ground.
+   On the dark stock it reverses out, the way it would on a real card. The dot rides on
+   currentColor, so it turns with it. */
+.kind-surah .face.back .bkw{color:#FFFFFF;}
+.kind-surah .abr-k,.kind-surah .abr p{color:#AAAAAA;}
+.kind-surah .pip svg text{fill:#1E2124;}
+/* the fade at the foot of the text has to fade to the card's own colour, not to white */
+.kind-surah .textbox.more::after{background:linear-gradient(to top,#1E2124 0,#1E2124 34%,
+ rgba(30,33,36,.6) 62%,rgba(30,33,36,.2) 82%,rgba(30,33,36,0));}
+.suit-surah .face.back{background:#F3F3F3;}
+/* the surah number is the card's identity, so the pip carries it instead of a position index */
+.pip-surah text{font-size:11px;}
+.sno-line{font-family:'JetBrains Mono',monospace;font-size:7.6px;letter-spacing:.16em;text-transform:uppercase;color:var(--acc-text);opacity:.9;}
+
+
+/* Read aloud is a card action, so it reads as a button along the bottom of the card rather than
+   an icon floating over the Arabic. Inside the card, above the footer, full width. */
+.cardact{position:relative;z-index:4;flex:none;padding:0 12px 8px;}
+.cardact .tl-audio{position:static;width:100%;height:32px;border-radius:9px;gap:8px;
+ font-family:'Saira',sans-serif;font-size:12px;font-weight:600;}
+.cardact .tl-audio svg{width:15px;height:15px;flex:none;}
+.cardact .tl-audio .lk{position:static;margin-left:2px;box-shadow:none;}
+
+/* With the brief showing, the picture window is a plain field: no pattern, no watermark glyph,
+   nothing that reads as artwork when there is none yet. Real art brings its own everything. */
+.artbrief .pat{display:none;}
+.artbrief .awglyph{display:none;}
+.has-img .pat{display:block;}
+
+
+/* Every card function sits in a row under its card. The old cluster only appeared on hover,
+   which meant a touch reader could never reach it at all. Read aloud is last, at the very
+   bottom, because it is the one you reach for after reading rather than before. */
+.deckacts{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;width:var(--cw,334px);margin:9px auto 0;}
+.deckacts .dact{grid-column:span 1;display:inline-flex;align-items:center;justify-content:center;gap:6px;
+ height:30px;padding:0 8px;border-radius:9px;cursor:pointer;
+ border:1px solid rgba(30,33,36,.14);background:rgba(30,33,36,.045);color:#6E6E6E;
+ font-family:'Saira',sans-serif;font-size:11.5px;font-weight:600;transition:.15s;}
+.deckacts .dact svg{width:14px;height:14px;flex:none;}
+.deckacts .dact:hover{background:rgba(30,33,36,.1);color:#1E2124;border-color:rgba(30,33,36,.26);}
+.deckacts .dact:active{transform:scale(.97);}
+.deckacts .dact.saved{color:var(--gold,#1E2124);border-color:color-mix(in srgb,var(--gold,#1E2124) 45%,transparent);}
+/* The tasbih takes the whole first line and stands taller than the rest: it is tapped over
+   and over, often one-handed, so it is the one control on the card sized for a thumb rather
+   than for a pointer. The fill behind the number is the count, not decoration. */
+.deckacts .tas{grid-column:1 / -1;display:grid;grid-template-columns:1fr 42px;gap:6px;margin-bottom:2px;}
+.deckacts .tasb,.deckacts .tasr{position:relative;overflow:hidden;height:46px;border-radius:11px;cursor:pointer;
+ border:1px solid color-mix(in srgb,#8A6A12 42%,transparent);background:color-mix(in srgb,#8A6A12 7%,#FFFFFF);
+ color:#8A6A12;font-family:'Saira',sans-serif;font-weight:700;transition:.15s;
+ display:inline-flex;align-items:center;justify-content:center;}
+.deckacts .tasb:hover,.deckacts .tasr:hover{background:color-mix(in srgb,#8A6A12 13%,#FFFFFF);}
+.deckacts .tasb:active{transform:scale(.985);}
+.deckacts .tasr svg{width:17px;height:17px;}
+.deckacts .tasfill{position:absolute;left:0;top:0;bottom:0;z-index:0;pointer-events:none;
+ background:color-mix(in srgb,#8A6A12 20%,transparent);transition:width .18s ease;}
+.deckacts .tasn{position:relative;z-index:1;font-family:'JetBrains Mono',monospace;font-size:16px;
+ font-weight:700;letter-spacing:.04em;}
+.deckacts .tas.done .tasb{background:color-mix(in srgb,#8A6A12 17%,#FFFFFF);
+ border-color:color-mix(in srgb,#8A6A12 70%,transparent);}
+.deckacts .tas.done .tasfill{background:color-mix(in srgb,#8A6A12 26%,transparent);}
+/* a zikir with no transmitted count has no proportion to show, so there is no bar: an empty
+   track that never fills reads as a broken target rather than as an open tally */
+.deckacts .tas.free .tasfill{display:none;}
+@media(prefers-reduced-motion:reduce){.deckacts .tasfill{transition:none;}}
+/* Zikir wears the gold on the card too, so a card meant to be repeated is distinct in the
+   spread from one meant to be read once. */
+.kind-zikir.cut-faceted .face.front{background:color-mix(in srgb,#8A6A12 4%,#FFFFFF);}
+.kind-zikir .zone.titlebar{border-top:3px solid #8A6A12;border-radius:4px 4px 0 0;}
+/* Listen and its repeat share the last line: Listen takes two thirds, repeat the last third */
+.deckacts .da{grid-column:1 / 3;}
+.deckacts .dr{grid-column:3 / -1;}
+.deckacts .da.playing{color:var(--gold,#1E2124);border-color:color-mix(in srgb,var(--gold,#1E2124) 55%,transparent);}
+/* the repeat control carries its own setting on its face, so the row says what Listen will
+   do before it is pressed rather than after */
+.deckacts .dr.on{color:var(--gold,#1E2124);border-color:color-mix(in srgb,var(--gold,#1E2124) 55%,transparent);}
+.deckacts .dr .rn{font-family:'JetBrains Mono',monospace;font-size:10.5px;font-weight:700;letter-spacing:.02em;}
+/* the say-back silence is not dead air: the button says whose turn it is */
+.deckacts .da.saying{color:var(--gold,#1E2124);border-style:dashed;
+ border-color:color-mix(in srgb,var(--gold,#1E2124) 45%,transparent);}
+.deckacts .dact[disabled]{opacity:.45;cursor:default;}
+@media(max-width:420px){.deckacts .dact span{font-size:11px;}}
+
+
+/* ---- DESIGN REFINEMENT PASS -------------------------------------------------------------
+   The card was reading as three stacked panels with an internal note shouting over the top of
+   them. Three corrections: the placeholder speaks at a whisper, the picture area reads as a
+   reserved frame rather than a text block, and the zones sit in one composition. */
+
+/* 1. The brief is a note about a missing picture, not a feature of the card. It takes the
+   card's own accent at low strength instead of a system green that belongs to no theme. */
+/* the band sits over the foot of this box, so the note has to stop short of it */
+.artbrief .abr{background:none;margin:0;padding:14px 15px 14px;}
+.artbrief .abr-k{font-size:7.4px;letter-spacing:.2em;opacity:.5;
+ color:color-mix(in srgb,var(--acc-text) 70%,transparent);}
+.artbrief .abr-k svg,.artbrief .abr-k .abr-ic{display:none;}
+.artbrief .abr p{font-size:9.6px;line-height:1.5;font-style:italic;
+ color:color-mix(in srgb,var(--dim) 82%,transparent);}
+
+/* 2. The art window carries no frame of its own: no inset hairline, no corner ticks. The zone
+   edge already says where the picture goes, and a second box around it only crowded the card. */
+
+/* 4. The action row: quieter, so the card leads and the controls follow it. */
+.deckacts{gap:5px;margin-top:8px;}
+.deckacts .dact{height:29px;border-radius:8px;font-size:11px;font-weight:600;
+ border-color:rgba(30,33,36,.09);background:rgba(30,33,36,.028);color:#6E6E6E;}
+.deckacts .dact svg{width:13px;height:13px;opacity:.85;}
+.deckacts .dact:hover{background:rgba(30,33,36,.075);color:#6E6E6E;border-color:rgba(30,33,36,.2);}
+.deckacts .da{margin-top:1px;}
+
+
+/* ---- system view ---- */
+.sysview{max-width:1080px;margin:0 auto;padding:4px 2px 40px;}
+.sy-stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:10px;margin-bottom:26px;}
+.sy-stat{border:1px solid rgba(30,33,36,.1);border-radius:12px;padding:14px 16px;background:rgba(30,33,36,.028);}
+.sy-stat b{display:block;font-family:'Space Grotesk',sans-serif;font-size:26px;font-weight:700;color:#6E6E6E;line-height:1;}
+.sy-stat span{display:block;margin-top:5px;font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:#6E6E6E;}
+.sy-sec{margin-bottom:26px;}
+.sy-sec h3{display:flex;align-items:baseline;gap:10px;font-family:'Space Grotesk',sans-serif;font-size:14px;font-weight:600;color:#6E6E6E;margin:0 0 11px;}
+.sy-note{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--gold,#1E2124);}
+.sy-kinds{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:9px;}
+.sy-kind{display:flex;align-items:center;gap:10px;padding:12px 14px;border-radius:11px;cursor:pointer;text-align:left;
+ border:1px solid color-mix(in srgb,var(--cb) 26%,transparent);background:color-mix(in srgb,var(--cb) 7%,transparent);color:#6E6E6E;}
+.sy-kind b{flex:1;font-family:'Saira',sans-serif;font-size:13px;font-weight:600;}
+.sy-kind em{font-style:normal;font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:16px;color:#1E2124;}
+.sy-ic{width:22px;height:22px;flex:none;}
+.sy-ic svg{width:100%;height:100%;}
+.sy-ic svg *{stroke:var(--cb)!important;stroke-width:5px;}
+.sy-ic svg [fill]:not([fill='none']){fill:var(--cb)!important;}
+.sy-sets{display:flex;flex-direction:column;gap:7px;}
+.sy-set{display:flex;align-items:center;gap:11px;padding:10px 13px;border-radius:10px;cursor:pointer;text-align:left;
+ border:1px solid rgba(30,33,36,.09);background:rgba(30,33,36,.025);color:#6E6E6E;}
+.sy-set:hover,.sy-kind:hover,.sy-cat:not([disabled]):hover{background:rgba(30,33,36,.075);border-color:rgba(30,33,36,.22);}
+.sy-sw{width:9px;height:9px;border-radius:3px;transform:rotate(45deg);flex:none;}
+.sy-nm{flex:0 0 170px;font-family:'Saira',sans-serif;font-size:12.5px;font-weight:600;}
+.sy-bar{flex:1;height:6px;border-radius:99px;background:rgba(30,33,36,.07);overflow:hidden;}
+.sy-bar i{display:block;height:100%;border-radius:99px;}
+.sy-set em{font-style:normal;font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:13px;color:#1E2124;min-width:24px;text-align:right;}
+.sy-cats{display:grid;grid-template-columns:repeat(auto-fit,minmax(168px,1fr));gap:8px;}
+.sy-cat{display:flex;align-items:center;gap:9px;padding:11px 12px;border-radius:10px;cursor:pointer;text-align:left;
+ border:1px solid color-mix(in srgb,var(--cb) 24%,transparent);background:color-mix(in srgb,var(--cb) 6%,transparent);color:#6E6E6E;}
+.sy-cat b{flex:1;font-family:'Saira',sans-serif;font-size:12px;font-weight:600;}
+.sy-cat em{font-style:normal;font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:14px;color:#1E2124;}
+/* an empty category is shown, not hidden: the gap is the information */
+.sy-cat.empty{border-style:dashed;border-color:rgba(30,33,36,.26);background:#F3F3F3;color:#6E6E6E;cursor:default;padding:11px 12px;text-align:left;font-size:12px;}
+.sy-cat.empty b{display:inline;font-family:'Saira',sans-serif;font-size:12px;font-weight:600;color:#6E6E6E;margin:0;}
+.sy-kind.empty{padding:12px 14px;text-align:left;font-size:13px;}
+.sy-kind.empty b{display:inline;font-size:13px;margin:0;}
+.sy-intro{margin:2px 0 18px;max-width:640px;}
+.sy-intro .k{display:block;font-family:'JetBrains Mono',monospace;font-size:8.5px;letter-spacing:.16em;text-transform:uppercase;color:#6E6E6E;margin-bottom:5px;}
+.sy-intro b{display:block;font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:16px;color:#1E2124;line-height:1.3;}
+.sy-intro p{margin:6px 0 0;font-family:'Saira',sans-serif;font-size:12.5px;line-height:1.55;color:#6E6E6E;}
+
+/* ---- map view: the sky ----
+   A day sky. Each need is a constellation drawn from its own glyph, its cards the stars.
+   The light in the middle carries no name and no typed Arabic. Three levels, one gesture
+   each: the sky, a constellation, a card. Flat, upright, nothing folds. */
+.sky{margin:0 calc(-1 * clamp(14px,3vw,30px));padding:0 0 10px;}
+.sk-bar{display:flex;align-items:center;justify-content:space-between;gap:10px 16px;flex-wrap:wrap;padding:2px clamp(14px,3vw,30px) 10px;}
+.sk-ctl{margin-left:auto;}
+.sk-ctl button{height:42px;}
+.sk-ctl button.on{background:#1E2124;color:#FFFFFF;}
+.sk-ctl button:hover:not(.on){background:#F3F3F3;color:#1E2124;}
+.sk-cap{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:#6E6E6E;}
+.sk-cap b{color:#1E2124;font-weight:500;}
+.sk-leg{display:inline-flex;align-items:center;gap:6px 14px;font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:#6E6E6E;}
+.sk-leg span{display:inline-flex;align-items:center;gap:6px;}
+.sk-m{display:inline-block;width:8px;height:8px;flex:none;background:#1E2124;border-radius:50%;}
+.sk-m.k-surah{border-radius:1px;transform:rotate(45deg) scale(.86);}
+.sk-m.k-panduan{border-radius:1.5px;background:#FFFFFF;box-shadow:inset 0 0 0 1.6px #1E2124;}
+.sk-m.lit{background:#FFFFFF;box-shadow:0 0 0 1.6px #C9A227,0 0 0 4px rgba(201,162,39,.18);}
+.sk-z{display:inline-flex;border:1px solid rgba(30,33,36,.16);border-radius:999px;overflow:hidden;background:#FFFFFF;}
+.sk-z button{background:none;border:none;color:#6E6E6E;font-family:'JetBrains Mono',monospace;font-size:9.5px;letter-spacing:.1em;text-transform:uppercase;height:36px;padding:0 13px;cursor:pointer;display:inline-flex;align-items:center;gap:6px;}
+.sk-z button.num{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:13px;letter-spacing:0;text-transform:none;}
+.sk-z button+button{border-left:1px solid rgba(30,33,36,.14);}
+.sk-z button:hover{background:rgba(30,33,36,.08);color:#1E2124;}
+.sk-z button.on{background:#1E2124;color:#FFFFFF;}
+.sk-z button[hidden]{display:none;}
+.sk-search{display:inline-flex;align-items:center;gap:8px;flex:1 1 240px;max-width:460px;min-width:180px;height:36px;padding:0 6px 0 12px;border:1px solid rgba(30,33,36,.16);border-radius:999px;background:#FFFFFF;color:#6E6E6E;}
+.sk-search svg{width:13px;height:13px;flex:none;}
+.sk-search input{flex:1;min-width:0;border:none;background:none;font-family:'Saira',sans-serif;font-size:12.5px;color:#1E2124;outline:none;}
+.sk-search input::placeholder{color:#6E6E6E;}
+.sk-search input::-webkit-search-cancel-button{display:none;}
+.sk-search:focus-within{border-color:#1E2124;}
+.sk-search button{width:22px;height:22px;border-radius:50%;border:none;background:rgba(30,33,36,.07);color:#1E2124;cursor:pointer;font-size:13px;line-height:1;}
+.sk-search button[hidden]{display:none;}
+.sk-help{flex-basis:100%;display:flex;flex-wrap:wrap;gap:6px 18px;padding:10px 14px;border:1px solid #DBDBDB;border-radius:11px;background:#FFFFFF;font-family:'Saira',sans-serif;font-size:12px;color:#6E6E6E;}
+.sk-help b{color:#1E2124;font-weight:600;}
+.sk-help .lg,.sk-info .lg{display:inline-flex;align-items:center;gap:6px 12px;flex-wrap:wrap;font-family:'JetBrains Mono',monospace;font-size:8.5px;letter-spacing:.12em;text-transform:uppercase;}
+.sk-info .lg{margin-top:9px;color:#6E6E6E;}
+.sk-info .lg span{display:inline-flex;align-items:center;gap:5px;}
+.sk-help .lg i{margin-left:6px;}
+.sky.night .sk-info .lg{color:#A8A8A8;}
+.sky.night .sk-info .sk-m{background:#ECECEC;}
+.sky.night .sk-info .sk-m.k-panduan{background:transparent;box-shadow:inset 0 0 0 2px #ECECEC;}
+.sky.night .sk-info .sk-m.lit{background:transparent;box-shadow:0 0 0 1.6px #D9B65A,0 0 0 4px rgba(217,182,90,.2);}
+.sk-help[hidden]{display:none;}
+.sk-m.k-surah{border-radius:0;transform:none;background:#1E2124;clip-path:polygon(50% 0,62% 38%,100% 50%,62% 62%,50% 100%,38% 62%,0 50%,38% 38%);width:10px;height:10px;}
+.sk-m.k-panduan{border-radius:50%;background:#FFFFFF;box-shadow:inset 0 0 0 2px #1E2124;}
+.sk-ls button .sk-m.k-panduan{box-shadow:inset 0 0 0 2px var(--c);}
+.sk-ls button .sk-m.k-surah{background:var(--c);}
+.sk-stage{position:relative;height:640px;min-height:520px;border-top:1px solid rgba(30,33,36,.12);border-bottom:1px solid rgba(30,33,36,.12);
+ background:#FFFFFF;overflow:hidden;cursor:grab;touch-action:none;user-select:none;-webkit-user-select:none;}
+.sk-stage.grab{cursor:grabbing;}
+.sk-stage.pick{cursor:pointer;}
+.sk-stage canvas{position:absolute;inset:0;width:100%;height:100%;display:block;}
+.sk-labels{position:absolute;inset:0;pointer-events:none;}
+body.app .sky{margin:0 -10px;}
+body.app .sk-stage{height:560px!important;min-height:0;}
+/* The galaxy is sized to run to the bottom edge of the window and nothing sits under it, so
+   the page's usual bottom padding showed as a band of white below the night sky. The one
+   view that reaches the edge does not pay for the gutter. The app frame keeps its padding:
+   there the stage is a fixed height and the page carries on beneath it. */
+.main:has(.sk-stage){padding-bottom:0;}
+.sky:has(.sk-stage){padding-bottom:0;}
+/* a constellation's name sits under its shape */
+.sk-lab{position:absolute;transform:translate(-50%,0);display:inline-flex;flex-direction:column;align-items:center;gap:2px;pointer-events:auto;cursor:pointer;
+ background:none;border:none;padding:2px 6px;margin:0;font-family:'Saira',sans-serif;font-weight:600;color:#1E2124;white-space:nowrap;
+ text-shadow:0 0 4px #FFFFFF,0 0 8px #FFFFFF;transition:opacity .2s;will-change:left,top;}
+.sk-lab em{font-style:normal;font-family:'JetBrains Mono',monospace;font-size:8.5px;letter-spacing:.12em;text-transform:uppercase;color:#6E6E6E;}
+.sk-lab.rise em{color:#B8862B;}
+.sk-lab.empty{color:#6E6E6E;font-weight:500;}
+.sk-lab:hover{color:var(--c);}
+/* a star's name, shown inside a lit constellation */
+.sk-cl{position:absolute;transform:translate(0,-50%);background:none;border:none;padding:1px 5px;margin:0;border-radius:3px;
+ font-family:'Saira',sans-serif;font-size:11.5px;color:#1E2124;white-space:nowrap;pointer-events:auto;cursor:pointer;opacity:0;
+ text-shadow:0 0 3px #FFFFFF,0 0 6px #FFFFFF;transition:opacity .25s;display:inline-flex;align-items:center;gap:6px;}
+.sk-cl i{font-style:normal;font-family:'JetBrains Mono',monospace;font-size:8px;letter-spacing:.08em;color:#6E6E6E;min-width:14px;}
+.sk-cl:hover{background:rgba(255,255,255,.92);color:var(--c);}
+.sk-cl.dim{color:#6E6E6E;}
+.sk-cl.lit i{color:#B8862B;}
+/* the info card, top left */
+.sk-info{position:absolute;left:14px;top:14px;max-width:280px;padding:11px 14px 12px;border-radius:12px;background:rgba(255,255,255,.88);
+ border:1px solid rgba(30,33,36,.14);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);pointer-events:none;transition:opacity .2s;}
+.sk-info .k{font-family:'JetBrains Mono',monospace;font-size:8.5px;letter-spacing:.16em;text-transform:uppercase;color:#6E6E6E;display:block;margin-bottom:5px;}
+.sk-info b{display:block;font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:14px;color:#1E2124;line-height:1.3;}
+.sk-info p{margin:5px 0 0;font-family:'Saira',sans-serif;font-size:11.5px;line-height:1.5;color:#6E6E6E;}
+.sk-info .n{margin-top:8px;font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:#1E2124;}
+/* the focus pill: which constellation is lit, and the way back */
+.sk-focus{position:absolute;left:50%;top:14px;transform:translateX(-50%);display:none;align-items:center;gap:10px;padding:6px 8px 6px 14px;border-radius:999px;
+ background:#FFFFFF;border:1px solid var(--c,#1E2124);box-shadow:0 6px 20px rgba(30,33,36,.08);font-family:'Saira',sans-serif;font-size:12px;font-weight:600;color:#1E2124;white-space:nowrap;z-index:6;}
+.sk-focus.on{display:inline-flex;}
+.sk-focus i{width:8px;height:8px;border-radius:50%;background:var(--c);flex:none;}
+.sk-focus em{font-style:normal;font-family:'JetBrains Mono',monospace;font-size:8.5px;letter-spacing:.1em;text-transform:uppercase;color:#6E6E6E;}
+.sk-focus button.arr{width:26px;padding:0;font-family:'Space Grotesk',sans-serif;font-size:16px;letter-spacing:0;text-transform:none;line-height:1;}
+.sk-focus button{border:none;background:rgba(30,33,36,.06);height:26px;border-radius:999px;padding:0 10px;cursor:pointer;color:#1E2124;font-family:'JetBrains Mono',monospace;font-size:8.5px;letter-spacing:.1em;text-transform:uppercase;}
+.sk-focus button:hover{background:#1E2124;color:#FFFFFF;}
+/* the rail: every constellation, one tap away, whatever the zoom */
+.sk-rail{position:absolute;left:0;right:0;bottom:56px;display:flex;gap:6px;padding:0 14px;overflow-x:auto;scrollbar-width:none;-ms-overflow-style:none;pointer-events:auto;z-index:5;}
+.sk-rail::-webkit-scrollbar{display:none;}
+.sk-rail button{flex:none;display:inline-flex;align-items:center;gap:7px;height:34px;padding:0 13px 0 10px;border-radius:999px;border:1px solid rgba(30,33,36,.14);background:rgba(255,255,255,.9);
+ font-family:'Saira',sans-serif;font-size:12.5px;font-weight:600;color:#1E2124;cursor:pointer;white-space:nowrap;backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);}
+.sk-rail button i{width:7px;height:7px;border-radius:50%;background:var(--c);flex:none;}
+.sk-rail button em{font-style:normal;font-family:'JetBrains Mono',monospace;font-size:8.5px;color:#6E6E6E;letter-spacing:.08em;}
+.sk-rail button.empty{color:#6E6E6E;font-weight:500;border-style:dashed;}
+.sk-rail button.empty i{background:#FFFFFF;box-shadow:inset 0 0 0 1.4px #6E6E6E;}
+.sk-rail button.on{border-color:var(--c);box-shadow:0 0 0 3px color-mix(in srgb,var(--c) 14%,transparent);}
+.sk-rail button:hover{border-color:var(--c);}
+/* the horizon strip is drawn on the canvas; this is only its click target */
+.sk-hz{position:absolute;left:0;right:0;bottom:0;height:46px;pointer-events:auto;cursor:pointer;background:none;border:none;}
+/* a star's tooltip */
+.sk-tip{position:absolute;z-index:7;max-width:250px;padding:9px 12px 10px;border-radius:10px;background:#FFFFFF;border:1px solid rgba(30,33,36,.16);
+ box-shadow:0 8px 24px rgba(30,33,36,.10);pointer-events:none;opacity:0;transform:translateY(4px);transition:opacity .12s,transform .12s;}
+.sk-tip.on{opacity:1;transform:none;}
+.sk-tip .k{font-family:'JetBrains Mono',monospace;font-size:8.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--c,#6E6E6E);display:block;margin-bottom:3px;}
+.sk-tip b{display:block;font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:13px;color:#1E2124;line-height:1.3;}
+.sk-tip p{margin:4px 0 0;font-family:'Saira',sans-serif;font-size:11px;line-height:1.45;color:#6E6E6E;}
+.sk-tip .s{display:block;margin-top:6px;font-family:'JetBrains Mono',monospace;font-size:8.5px;letter-spacing:.08em;color:#6E6E6E;}
+.sk-tip .o{margin-top:6px;font-family:'JetBrains Mono',monospace;font-size:8.5px;letter-spacing:.12em;text-transform:uppercase;color:#1E2124;}
+/* the list twin: the same sky as a page you can read */
+.sk-list{padding:6px clamp(14px,3vw,30px) 20px;display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px;}
+.sk-ls{border:1px solid rgba(30,33,36,.12);border-radius:12px;padding:12px 14px;background:#FFFFFF;}
+.sk-ls h3{display:flex;align-items:center;gap:8px;margin:0 0 8px;font-family:'Space Grotesk',sans-serif;font-size:13px;font-weight:600;color:#1E2124;}
+.sk-ls h3 i{width:8px;height:8px;border-radius:50%;background:var(--c);flex:none;}
+.sk-ls h3 em{font-style:normal;font-family:'JetBrains Mono',monospace;font-size:8.5px;letter-spacing:.12em;text-transform:uppercase;color:#6E6E6E;margin-left:auto;}
+.sk-ls.empty{border-style:dashed;background:#F3F3F3;}
+.sk-ls.empty p{margin:0;font-family:'Saira',sans-serif;font-size:11.5px;color:#6E6E6E;}
+.sk-ls button{display:flex;align-items:center;gap:8px;width:100%;border:none;background:none;padding:6px 4px;text-align:left;cursor:pointer;border-radius:6px;
+ font-family:'Saira',sans-serif;font-size:12px;color:#1E2124;}
+.sk-ls button:hover{background:#F3F3F3;}
+.sk-ls button.dim{color:#6E6E6E;}
+.sk-ls button .sk-m{background:var(--c);}
+.sk-ls button .sk-m.k-panduan{background:#FFFFFF;box-shadow:inset 0 0 0 1.6px var(--c);}
+.sk-ls button small{margin-left:auto;font-family:'JetBrains Mono',monospace;font-size:8px;letter-spacing:.1em;text-transform:uppercase;color:#B8862B;}
+@media(max-width:560px){
+ .sk-cap,.sk-leg{display:none;}
+ .sk-info{max-width:210px;padding:8px 10px 9px;left:10px;top:10px;}
+ .sk-info p,.sk-info b{display:none;}
+ .sk-info .n{margin-top:0;white-space:nowrap;}
+ .sk-focus{top:10px;max-width:calc(100% - 20px);font-size:11.5px;}
+ .sk-stage{min-height:480px;}
+ .sk-z button{padding:0 10px;}
+}
+body.app .sk-info{max-width:210px;padding:8px 10px 9px;left:10px;top:10px;}
+body.app .sk-info p,body.app .sk-info b,body.app .sk-cap,body.app .sk-leg{display:none;}
+body.app .sk-info .n{margin-top:0;white-space:nowrap;}
+/* ---- the night: the map stage is the one dark surface in the app, on Zieel's instruction.
+   White particles, one light, hue only when a need is lit. Chrome above it stays white. ---- */
+.sky.night .sk-stage{background:#07080A;border-color:#07080A;}
+.sky.night .sk-lab{color:#ECECEC;text-shadow:0 0 6px rgba(7,8,10,.9),0 0 14px rgba(7,8,10,.9);font-weight:500;}
+.sky.night .sk-lab em{color:#8E8E8E;}
+.sky.night .sk-lab.rise em{color:#D9B65A;}
+.sky.night .sk-lab.empty{color:#8E8E8E;}
+.sky.night .sk-lab:hover{color:#FFFFFF;}
+.sky.night .sk-cl{color:#ECECEC;text-shadow:0 0 5px rgba(7,8,10,.95),0 0 12px rgba(7,8,10,.95);font-weight:400;}
+.sky.night .sk-cl i{color:#8E8E8E;}
+.sky.night .sk-cl.lit i{color:#D9B65A;}
+.sky.night .sk-cl.dim{color:#8E8E8E;}
+.sky.night .sk-cl:hover{background:rgba(255,255,255,.1);color:#FFFFFF;}
+.sky.night .sk-info{background:rgba(12,13,16,.72);border-color:rgba(255,255,255,.12);}
+.sky.night .sk-info .k{color:#8E8E8E;}
+.sky.night .sk-info b{color:#F2F2F2;}
+.sky.night .sk-info p{color:#A8A8A8;}
+.sky.night .sk-info .n{color:#ECECEC;}
+.sky.night .sk-focus{background:rgba(12,13,16,.86);border-color:rgba(255,255,255,.22);color:#F2F2F2;box-shadow:0 8px 30px rgba(0,0,0,.5);}
+.sky.night .sk-focus em{color:#A8A8A8;}
+.sky.night .sk-focus button{background:rgba(255,255,255,.1);color:#F2F2F2;}
+.sky.night .sk-focus button:hover{background:#FFFFFF;color:#07080A;}
+.sky.night .sk-rail button{background:rgba(255,255,255,.06);border-color:rgba(255,255,255,.12);color:#ECECEC;}
+.sky.night .sk-rail button em{color:#8E8E8E;}
+.sky.night .sk-rail button.empty{color:#8E8E8E;}
+.sky.night .sk-rail button.empty i{background:transparent;box-shadow:inset 0 0 0 1.4px #8E8E8E;}
+.sky.night .sk-rail button:hover{border-color:rgba(255,255,255,.4);}
+.sky.night .sk-rail button.on{border-color:var(--c);box-shadow:0 0 0 3px color-mix(in srgb,var(--c) 22%,transparent);}
+.sky.night .sk-tip{background:#101216;border-color:rgba(255,255,255,.14);box-shadow:0 12px 30px rgba(0,0,0,.5);}
+.sky.night .sk-tip b{color:#F2F2F2;}
+.sky.night .sk-tip p{color:#A8A8A8;}
+.sky.night .sk-tip .s{color:#8E8E8E;}
+.sky.night .sk-tip .o{color:#ECECEC;}
+/* reference-style labels: a dot, the name, the count. A deck label carries its number. */
+.sky.night .sk-lab{transform:translate(-50%,-50%);flex-direction:row;gap:7px;padding:4px 9px 4px 7px;border-radius:999px;background:rgba(10,11,14,.72);border:1px solid rgba(255,255,255,.1);text-shadow:none;font-size:11px;}
+.sky.night .sk-lab i{width:6px;height:6px;border-radius:50%;background:#E2E6F4;flex:none;}
+.sky.night .sk-lab.on{border-color:var(--c);box-shadow:0 0 0 3px color-mix(in srgb,var(--c) 22%,transparent);}
+.sky.night .sk-lab.on i{background:var(--c);}
+.sky.night .sk-lab:hover i{background:var(--c);}
+.sky.night .sk-lab.empty i{background:transparent;box-shadow:inset 0 0 0 1.2px #8E8E8E;}
+.sky.night .sk-lab em{margin-left:0;}
+.sky.night .sk-lab.layer{pointer-events:none;background:rgba(10,11,14,.78);border-color:rgba(255,255,255,.16);font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:12.5px;color:#FFFFFF;padding:5px 11px 5px 8px;}
+.sky.night .sk-lab.layer .on{font-family:'JetBrains Mono',monospace;font-size:8.5px;letter-spacing:.14em;color:#D9B65A;}
+/* the panel lists a lit need's cards */
+.sk-info.list{pointer-events:auto;max-width:300px;max-height:min(58%,520px);overflow:auto;scrollbar-width:none;}
+.sk-info.list::-webkit-scrollbar{display:none;}
+.sk-info ul{list-style:none;margin:8px 0 0;padding:0;display:flex;flex-direction:column;gap:2px;}
+.sk-info li button{display:flex;align-items:center;gap:8px;width:100%;border:none;background:none;padding:6px 6px;text-align:left;cursor:pointer;border-radius:8px;font-family:'Saira',sans-serif;font-size:12px;color:#1E2124;}
+.sk-info li button span{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.sk-info li button em{font-style:normal;font-family:'JetBrains Mono',monospace;font-size:8.5px;letter-spacing:.1em;color:#6E6E6E;}
+.sk-info li button.dim{color:#6E6E6E;}
+.sky.night .sk-info li button{color:#ECECEC;}
+.sky.night .sk-info li button:hover{background:rgba(255,255,255,.08);}
+.sky.night .sk-info li button.dim{color:#8E8E8E;}
+.sky.night .sk-info li button .sk-m{background:#ECECEC;}
+.sky.night .sk-info li button .sk-m.k-panduan{background:transparent;box-shadow:inset 0 0 0 2px #ECECEC;}
+@media(max-width:560px){.sk-info.list{top:60px;max-width:min(84%,320px);max-height:42%;}}
+@media(prefers-reduced-motion:reduce){.sk-lab,.sk-cl,.sk-tip,.sk-info{transition:none;}}
+.sy-cat.empty em{font-family:'JetBrains Mono',monospace;font-size:8.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--gold,#1E2124);opacity:.75;font-weight:400;}
+.sy-cat.empty .sy-ic{opacity:.55;}
+.sy-kind.empty{opacity:.5;}
+.sy-src{display:flex;flex-direction:column;gap:6px;}
+.sy-row{display:flex;align-items:baseline;gap:12px;padding:10px 13px;border-radius:9px;background:rgba(30,33,36,.025);border:1px solid rgba(30,33,36,.07);}
+.sy-row b{flex:0 0 150px;font-family:'Saira',sans-serif;font-size:12px;font-weight:600;color:#6E6E6E;}
+.sy-row span{font-family:'JetBrains Mono',monospace;font-size:10.5px;color:#6E6E6E;}
+.sy-row.warn{border-color:color-mix(in srgb,var(--gold,#1E2124) 34%,transparent);background:color-mix(in srgb,var(--gold,#1E2124) 7%,transparent);}
+.sy-row.warn span{color:var(--gold,#1E2124);}
+@media(max-width:620px){.sy-nm{flex:0 0 110px;font-size:11.5px;}.sy-row b{flex:0 0 110px;}}
+
+/* ===== Khayr shell (Methodas stage concept) ===== */
+html{background:#FFFFFF;}
+body{padding:0;min-height:100vh;}
+.top{position:sticky;top:0;z-index:60;display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;padding:13px clamp(14px,3vw,30px);background:rgba(255,255,255,.86);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-bottom:1px solid rgba(30,33,36,.08);}
+.wm{display:flex;align-items:center;gap:10px;}
+.wm-en .bkw{font-size:26px;color:var(--gold);}
+.wm-tag{font-family:'JetBrains Mono',monospace;font-size:9.5px;letter-spacing:.14em;text-transform:uppercase;color:#6E6E6E;}
+.top-r{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-left:auto;}
+/* the wrapper only exists so the narrow bar can scroll its wide controls without
+   taking the overflow menu with them; on a wide bar it is not a box at all */
+.top-scroll{display:contents;}
+.search{flex:1 1 260px;min-width:170px;display:flex;align-items:center;gap:9px;background:#FFFFFF;border:1px solid #E2E2DF;border-radius:11px;padding:8px 12px;transition:border-color .15s,box-shadow .15s;}
+.search:hover{border-color:rgba(30,33,36,.4);}
+.search:focus-within{border-color:#1E2124;box-shadow:0 0 0 3px rgba(30,33,36,.07);}
+.search:focus-within{border-color:rgba(30,33,36,.45);}
+.search input{flex:1;background:none;border:none;outline:none;color:#1E2124;font-size:13.5px;font-family:'Saira',sans-serif;}
+.search input::placeholder{color:#6E6E6E;}
+.search input::-webkit-search-cancel-button{display:none;}
+.qx{flex:none;width:20px;height:20px;border-radius:50%;border:none;background:#F3F3F3;color:#1E2124;
+ font-size:14px;line-height:1;cursor:pointer;display:grid;place-items:center;transition:.13s;}
+.qx:hover{background:rgba(30,33,36,.22);color:#1E2124;}
+.lang{display:flex;border:1px solid rgba(30,33,36,.16);border-radius:10px;overflow:hidden;}
+.lang button,.lang a{background:none;border:none;color:#6E6E6E;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.1em;padding:8px 11px;text-decoration:none;display:inline-flex;align-items:center;}
+.lang button.on{background:rgba(30,33,36,.14);color:#1E2124;}
+.lang a:hover{background:rgba(30,33,36,.08);color:#1E2124;}
+.codexlink{display:inline-flex;align-items:center;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:#6E6E6E;text-decoration:none;border:1px solid rgba(30,33,36,.16);border-radius:10px;padding:9px 14px;transition:.15s}
+.codexlink:hover{color:#1E2124;border-color:rgba(30,33,36,.45);background:rgba(30,33,36,.1)}
+.gbtn{background:#1E2124;color:#FFFFFF;border:none;border-radius:11px;padding:9px 15px;font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:12.5px;}
+.abtn{display:flex;border:1px solid rgba(30,33,36,.16);border-radius:10px;overflow:hidden;}
+.abtn button{background:none;border:none;color:#6E6E6E;font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:12px;padding:8px 10px;}
+.abtn button:hover{background:rgba(30,33,36,.1);color:#1E2124;}
+.abtn .arf{font-family:'Scheherazade New',serif;font-size:17px;line-height:1;padding:6px 20px 8px 11px;position:relative;}
+/* the size control used to be two blind buttons. It now says where you are: four ticks that
+   fill with the step, the point size in mono, the end buttons dim at the limits, and the
+   script button carries a chevron so it reads as a menu rather than a third size step. */
+.abtn>#arPlus,.abtn>.ar-lv,.abtn>.arf{border-left:1px solid rgba(30,33,36,.14);}
+.abtn .ar-lv{display:inline-flex;align-items:center;gap:7px;padding:0 9px;height:100%;cursor:default;user-select:none;}
+.abtn .ar-lv i{display:flex;align-items:flex-end;gap:2px;height:11px;}
+.abtn .ar-lv i b{display:block;width:3px;border-radius:1px;background:rgba(30,33,36,.16);transition:background .15s;}
+.abtn .ar-lv i b:nth-child(1){height:5px}.abtn .ar-lv i b:nth-child(2){height:7px}
+.abtn .ar-lv i b:nth-child(3){height:9px}.abtn .ar-lv i b:nth-child(4){height:11px}
+.abtn .ar-lv i b.on{background:#1E2124;}
+.abtn .ar-lv em{font-style:normal;font-family:'JetBrains Mono',monospace;font-size:9.5px;letter-spacing:.08em;color:#6E6E6E;min-width:2ch;text-align:center;}
+.abtn button[disabled]{opacity:.3;pointer-events:none;}
+.abtn button:active{background:rgba(30,33,36,.16);}
+.abtn .arf::after{content:'';position:absolute;right:8px;top:50%;width:5px;height:5px;border-right:1.4px solid currentColor;border-bottom:1.4px solid currentColor;transform:translateY(-70%) rotate(45deg);opacity:.55;}
+.abtn .arf[aria-expanded="true"]{background:rgba(30,33,36,.1);color:#1E2124;}
+
+/* language flags */
+.lang .fl{width:15px;height:auto;margin-right:6px;border-radius:2px;display:block;flex:none;box-shadow:0 0 0 1px rgba(30,33,36,.18);}
+.lang button{display:inline-flex;align-items:center;}
+/* account button: a quiet circle; the initial moves in when someone is signed in */
+/* the saved star: bookmarked cards live here, one tap from anywhere */
+.savbtn{position:relative;height:36px;width:36px;border-radius:999px;border:1px solid rgba(30,33,36,.18);background:rgba(30,33,36,.05);color:#1E2124;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;padding:0;transition:.15s;}
+.savbtn svg{width:16px;height:16px;}
+.savbtn:hover{background:rgba(30,33,36,.12);}
+.savbtn.has svg{fill:#C9A227;stroke:#C9A227;}
+.savbtn em{position:absolute;top:-4px;right:-4px;min-width:16px;height:16px;padding:0 4px;border-radius:999px;background:#1E2124;color:#FFFFFF;font-style:normal;font-family:'JetBrains Mono',monospace;font-size:8.5px;line-height:16px;text-align:center;}
+.savbtn em[hidden]{display:none;}
+:is(.top-r,.top-scroll)>.savbtn{height:36px;width:36px;}
+.avbtn{height:36px;padding:0 13px 0 5px;border-radius:999px;border:1px solid rgba(30,33,36,.18);background:rgba(30,33,36,.05);
+ color:#6E6E6E;display:inline-flex;align-items:center;gap:8px;cursor:pointer;transition:.15s;flex:none;
+ font-family:'Saira',sans-serif;font-size:12.5px;font-weight:600;}
+.avbtn #acAv{width:26px;height:26px;border-radius:50%;flex:none;display:grid;place-items:center;background:rgba(30,33,36,.1);}
+.avbtn.in #acAv{background:#6E6E6E;}
+.avbtn.prem #acAv{background:#1E2124;}
+.avlbl{white-space:nowrap;}
+@media(max-width:900px){.avlbl{display:none;}.avbtn{padding:0 5px;}}
+.avbtn:hover{background:rgba(30,33,36,.1);color:#1E2124;}
+.avbtn svg{width:15px;height:15px;}
+.avbtn .init{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:13px;color:#F3F3F3;}
+
+
+/* grid | deck switch rides the finder row */
+.viewtog{display:flex;border:1px solid #E2E2DF;border-radius:11px;overflow:hidden;flex:none;background:#FFFFFF;transition:border-color .15s;}
+.viewtog:hover{border-color:rgba(30,33,36,.4);}
+.viewtog button{width:40px;border:none;background:none;color:#6E6E6E;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:.13s;}
+.viewtog button svg{width:16px;height:16px;}
+.viewtog button:hover:not(.on){background:#F6F6F4;color:#1E2124;}
+.fbtn:hover{border-color:rgba(30,33,36,.4);}
+.fbtn:active,.viewtog button:active,#sitRow .chip:active,.sk-ctl button:active{transform:scale(.985);}
+.fbtn,.viewtog button,#sitRow .chip{transition:background .15s,border-color .15s,color .15s,transform .12s;}
+.fbtn:focus-visible,.viewtog button:focus-visible,#sitRow .chip:focus-visible{outline:none;box-shadow:0 0 0 3px rgba(30,33,36,.08);}
+.fbtn>svg:first-child{width:15px;height:15px;}
+.viewtog button:hover{color:#1E2124;background:#F3F3F3;}
+.viewtog button.on{background:#1E2124;color:#FFFFFF;}
+
+/* ---- DECK MODE: one card on the table, the rest of the deck under it ---- */
+.deckstage{display:flex;flex-direction:column;align-items:center;gap:18px;padding-top:8px;}
+.dkwrap{position:relative;}
+.dkwrap::before,.dkwrap::after{content:'';position:absolute;inset:0;border-radius:14px;z-index:-1;
+ background:#F3F3F3;border:1px solid #DBDBDB;}
+.dkwrap::before{transform:rotate(-3.4deg) translateY(7px);}
+.dkwrap::after{transform:rotate(2.6deg) translateY(4px);}
+.dknav{display:flex;align-items:center;gap:12px;}
+.dknav button{display:inline-flex;align-items:center;gap:8px;border:1px solid rgba(30,33,36,.18);background:rgba(30,33,36,.05);
+ border-radius:11px;padding:9px 14px;color:#1E2124;font-family:'Saira',sans-serif;font-size:12.5px;font-weight:600;cursor:pointer;transition:.14s;}
+.dknav button:hover{background:rgba(30,33,36,.11);}
+.dknav button svg{width:13px;height:13px;}
+.dknav .dkdraw{border-color:rgba(30,33,36,.4);background:rgba(30,33,36,.08);color:var(--gold);}
+.dknav .dkdraw:hover{background:rgba(30,33,36,.15);}
+.dkcount{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.13em;color:#6E6E6E;text-transform:uppercase;}
+
+/* ---- TABLE MODE: a felt surface where saved cards lie where you left them ---- */
+.tablestage{position:relative;height:74vh;min-height:520px;border-radius:18px;overflow:hidden;
+ background:#F3F3F3;
+ border:1px solid #DBDBDB;box-shadow:none;}
+.tspot{position:absolute;touch-action:none;}
+.tspot .scene{zoom:.56;}
+.tspot{cursor:grab;}
+.tspot.drag{cursor:grabbing;}
+.tspot.drag .card{box-shadow:none;outline:2px solid #1E2124;outline-offset:2px;}
+.thint{position:absolute;left:16px;bottom:12px;z-index:5;font-family:'JetBrains Mono',monospace;font-size:9px;
+ letter-spacing:.13em;text-transform:uppercase;color:rgba(30,33,36,.5);pointer-events:none;}
+.tablestage .fab{display:none;}
+/* first visit only: the deck says what it does */
+.coach{position:absolute;left:50%;bottom:-14px;transform:translateX(-50%);z-index:9;white-space:nowrap;
+ background:#1E2124;color:#F3F3F3;border-radius:999px;padding:7px 14px;font-family:'Saira',sans-serif;
+ font-size:12px;font-weight:700;box-shadow:0 12px 30px -8px rgba(30,33,36,0.1);animation:coachIn .5s cubic-bezier(.16,1,.3,1) both;}
+.coach::after{content:'';position:absolute;top:-5px;left:50%;margin-left:-5px;width:10px;height:10px;
+ background:#1E2124;transform:rotate(45deg);}
+@keyframes coachIn{from{opacity:0;transform:translateX(-50%) translateY(8px);}to{opacity:1;transform:translateX(-50%) translateY(0);}}
+@media(prefers-reduced-motion:reduce){.coach{animation:none;}}
+
+/* problem cubes: real pieces you set on the table. Three faces, lit from above left,
+   turning a little when the hand comes near and settling when chosen. */
+.cubes{display:flex;flex-wrap:wrap;gap:16px;justify-content:center;perspective:700px;}
+.pcube{--cc:#6E6E6E;position:relative;width:74px;height:74px;border:none;background:none;padding:0;cursor:pointer;
+ transform-style:preserve-3d;transition:transform .34s cubic-bezier(.2,.7,.2,1);
+ transform:rotateX(-18deg) rotateY(24deg);}
+.pcube:hover{transform:rotateX(-14deg) rotateY(38deg) translateY(-3px);}
+.pcube.on{transform:rotateX(-16deg) rotateY(28deg) translateY(-5px);}
+.pcube i{position:absolute;inset:0;display:block;border-radius:9px;}
+/* front face carries the name */
+.pcube .f{transform:translateZ(24px);display:flex;align-items:center;justify-content:center;text-align:center;
+ padding:6px;font-family:'Saira',sans-serif;font-size:10.5px;font-weight:700;line-height:1.15;color:#6E6E6E;font-style:normal;
+ background:#F3F3F3;
+ box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--cc) 34%,transparent),inset 0 1px 0 rgba(30,33,36,.14);}
+/* right face in shadow, top face catching the light */
+.pcube .r{width:48px;transform:rotateY(90deg) translateZ(50px);
+ background:#FFFFFF;
+ box-shadow:inset 0 0 0 1px rgba(30,33,36,.05);}
+.pcube .t{height:48px;transform:rotateX(90deg) translateZ(24px);
+ background:#DBDBDB;
+ box-shadow:inset 0 0 0 1px rgba(30,33,36,.12);}
+.pcube::after{content:'';position:absolute;left:6px;right:2px;bottom:-9px;height:12px;border-radius:50%;z-index:-1;
+ background:none;
+ transform:translateZ(-24px);transition:opacity .3s;}
+.pcube.on .f{color:#1E2124;background:#DBDBDB;
+ box-shadow:inset 0 0 0 1px var(--gold);}
+.pcube.on .t{background:#6E6E6E;}
+@media(prefers-reduced-motion:reduce){.pcube,.pcube:hover,.pcube.on{transition:none;transform:rotateX(-18deg) rotateY(24deg);}}
+
+/* ---- ACCOUNT + PAY overlays share the premium sheet's skin ---- */
+.ac,.pay{position:fixed;inset:0;z-index:430;display:none;align-items:center;justify-content:center;padding:22px 16px;
+ background:rgba(255,255,255,.82);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);}
+.ac.on,.pay.on{display:flex;}
+.ac-in,.pay-in{position:relative;width:min(560px,100%);max-height:88vh;overflow:auto;border-radius:20px;padding:28px 26px 24px;-webkit-overflow-scrolling:touch;
+ background:#FFFFFF;border:1px solid #DBDBDB;box-shadow:0 24px 60px -24px rgba(30,33,36,.28);}
+.pay-in{width:min(460px,100%);}
+.ac-k{font-family:'JetBrains Mono',monospace;font-size:9.5px;letter-spacing:.18em;text-transform:uppercase;color:#1E2124;}
+.ac-h{font-family:'Space Grotesk',sans-serif;font-size:21px;font-weight:700;color:#1E2124;margin:8px 0 0;letter-spacing:-.01em;}
+.ac-p{font-family:'Saira',sans-serif;font-size:12.5px;line-height:1.55;color:#6E6E6E;margin-top:8px;}
+.ac-tabs{display:flex;gap:6px;margin:18px 0 0;border-bottom:1px solid rgba(30,33,36,.1);padding-bottom:0;flex-wrap:wrap;}
+.ac-tab{display:inline-flex;align-items:center;gap:7px;border:none;background:none;color:#6E6E6E;font-family:'Saira',sans-serif;
+ font-size:12.5px;font-weight:600;padding:9px 11px;cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px;transition:.13s;}
+.ac-tab svg{width:14px;height:14px;}
+.ac-tab:hover{color:#1E2124;}
+.ac-tab.on{color:#1E2124;border-bottom-color:var(--gold);}
+.ac-sec{padding-top:16px;}
+.ac-field{margin-top:12px;}
+.ac-field label{display:block;font-family:'JetBrains Mono',monospace;font-size:8.5px;letter-spacing:.14em;text-transform:uppercase;color:#6E6E6E;margin-bottom:6px;}
+.ac-field input{width:100%;background:rgba(30,33,36,.05);border:1px solid rgba(30,33,36,.16);border-radius:11px;
+ padding:11px 13px;color:#1E2124;font-family:'Saira',sans-serif;font-size:13.5px;outline:none;transition:border-color .14s;}
+.ac-field input:focus{border-color:rgba(30,33,36,.5);}
+.ac-btn{width:100%;margin-top:16px;border:none;border-radius:11px;padding:12px 16px;cursor:pointer;
+ background:#1E2124;color:#FFFFFF;font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:13.5px;transition:.15s;}
+.ac-btn:hover{filter:brightness(1.08);}
+.ac-alt{display:flex;gap:8px;margin-top:12px;}
+.ac-alt button{flex:1;display:inline-flex;align-items:center;justify-content:center;gap:8px;border:1px solid rgba(30,33,36,.16);
+ background:rgba(30,33,36,.04);border-radius:11px;padding:10px;color:#1E2124;font-family:'Saira',sans-serif;font-size:12.5px;font-weight:600;cursor:pointer;transition:.14s;}
+.ac-alt button:hover{background:rgba(30,33,36,.09);}
+.ac-alt svg{width:14px;height:14px;}
+.ac-seg{display:flex;gap:4px;margin-top:16px;padding:4px;border-radius:12px;background:rgba(30,33,36,.05);}
+.ac-segb{flex:1;border:none;background:none;border-radius:9px;padding:9px;cursor:pointer;
+ font-family:'Saira',sans-serif;font-size:12.5px;font-weight:600;color:#6E6E6E;transition:.14s;}
+.ac-segb:hover{color:#1E2124;}
+.ac-segb.on{background:rgba(30,33,36,.12);color:#1E2124;}
+.ac-or{display:flex;align-items:center;gap:10px;margin:14px 0 2px;
+ font-family:'JetBrains Mono',monospace;font-size:8.5px;letter-spacing:.16em;text-transform:uppercase;color:#6E6E6E;}
+.ac-or::before,.ac-or::after{content:'';flex:1;height:1px;background:rgba(30,33,36,.1);}
+.ac-sw{margin-top:14px;text-align:center;font-size:12px;color:#6E6E6E;}
+.ac-sw button{background:none;border:none;color:#1E2124;font-weight:600;cursor:pointer;font-size:12px;}
+.ac-note{margin-top:14px;font-family:'JetBrains Mono',monospace;font-size:8.5px;letter-spacing:.1em;text-transform:uppercase;color:#6E6E6E;text-align:center;}
+.ac-head{display:flex;align-items:center;gap:13px;margin-top:4px;}
+.ac-ava{width:46px;height:46px;border-radius:50%;flex:none;display:grid;place-items:center;
+ background:#6E6E6E;color:#FFFFFF;font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:19px;}
+.ac-ava.prem{background:#1E2124;}
+.ac-who b{display:block;font-family:'Space Grotesk',sans-serif;font-size:16px;color:#1E2124;}
+.ac-who span{display:block;font-size:12px;color:#6E6E6E;margin-top:2px;}
+.ac-badge{display:inline-block;margin-left:8px;background:var(--gold);color:#FFFFFF;border-radius:5px;padding:2px 7px;
+ font-family:'JetBrains Mono',monospace;font-size:8px;letter-spacing:.1em;text-transform:uppercase;font-weight:700;vertical-align:2px;}
+.ac-row{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:11px 2px;border-bottom:1px solid rgba(30,33,36,.07);font-size:13px;color:#6E6E6E;}
+.ac-row b{font-weight:600;color:#1E2124;}
+.ac-row .sub{display:block;font-size:11px;color:#6E6E6E;margin-top:2px;}
+.ac-row button,.ac-act{border:1px solid rgba(30,33,36,.16);background:rgba(30,33,36,.04);border-radius:9px;
+ padding:7px 12px;color:#1E2124;font-family:'Saira',sans-serif;font-size:12px;font-weight:600;cursor:pointer;transition:.13s;flex:none;}
+.ac-row button:hover,.ac-act:hover{background:rgba(30,33,36,.09);}
+.ac-danger{color:#6E6E6E;border-color:rgba(30,33,36,.3);}
+.ac-danger:hover{background:rgba(30,33,36,.12);}
+.ac-empty{padding:26px 10px;text-align:center;color:#6E6E6E;font-size:13px;}
+.ac-sub-k{font-family:'JetBrains Mono',monospace;font-size:8.5px;letter-spacing:.15em;text-transform:uppercase;
+ color:#6E6E6E;margin:18px 0 4px;padding-top:12px;border-top:1px solid rgba(30,33,36,.08);}
+.ac-cols{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:14px;}
+.ac-col{display:inline-flex;align-items:center;gap:7px;border:1px solid rgba(30,33,36,.16);background:rgba(30,33,36,.04);
+ border-radius:999px;padding:7px 13px;color:#1E2124;font-family:'Saira',sans-serif;font-size:12px;font-weight:600;cursor:pointer;transition:.13s;}
+.ac-col:hover{background:rgba(30,33,36,.09);}
+.ac-col span{font-family:'JetBrains Mono',monospace;font-size:9.5px;color:#1E2124;}
+.ac-newcol{border-style:dashed;color:#6E6E6E;}
+.ac-row.sv{align-items:flex-start;}
+.ac-row .svm{min-width:0;flex:1;}
+.ac-row .svb{display:flex;gap:6px;flex:none;flex-wrap:wrap;justify-content:flex-end;}
+.ac-row .cl{font-style:normal;color:#1E2124;}
+.ac-row .nt{display:block;font-size:11.5px;line-height:1.45;color:#6E6E6E;margin-top:5px;padding-left:9px;
+ border-left:1px solid rgba(30,33,36,.3);}
+.ac-note-edit{padding:2px 2px 14px;}
+.ac-note-edit textarea{width:100%;min-height:78px;resize:vertical;background:rgba(30,33,36,.05);
+ border:1px solid rgba(30,33,36,.3);border-radius:11px;padding:11px 13px;color:#1E2124;
+ font-family:'Saira',sans-serif;font-size:13px;line-height:1.5;outline:none;}
+.ac-note-act{display:flex;gap:7px;margin-top:8px;}
+.ac-note-act button{border:1px solid rgba(30,33,36,.16);background:rgba(30,33,36,.04);border-radius:9px;
+ padding:7px 13px;color:#1E2124;font-family:'Saira',sans-serif;font-size:12px;font-weight:600;cursor:pointer;}
+.ac-note-act button:hover{background:rgba(30,33,36,.09);}
+.tx{display:grid;grid-template-columns:auto 1fr auto;gap:4px 12px;padding:11px 2px;border-bottom:1px solid rgba(30,33,36,.07);align-items:baseline;}
+.tx .d{font-family:'JetBrains Mono',monospace;font-size:9.5px;color:#6E6E6E;letter-spacing:.06em;}
+.tx .it b{font-size:13px;font-weight:600;color:#1E2124;display:block;}
+.tx .it span{font-size:11px;color:#6E6E6E;}
+.tx .amt{text-align:right;font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:13.5px;color:#1E2124;}
+.tx .st{grid-column:3;text-align:right;font-family:'JetBrains Mono',monospace;font-size:8px;letter-spacing:.1em;text-transform:uppercase;}
+.tx .st.ok{color:#1E2124;}.tx .st.rf{color:#6E6E6E;}
+.paym{display:flex;flex-direction:column;gap:8px;margin-top:14px;}
+.paym label{display:flex;align-items:center;gap:11px;border:1px solid rgba(30,33,36,.14);border-radius:12px;
+ padding:12px 14px;cursor:pointer;color:#1E2124;font-size:13px;font-weight:600;transition:.13s;}
+.paym label:hover{background:rgba(30,33,36,.05);}
+.paym input{accent-color:#1E2124;}
+.paym label.on{border-color:rgba(30,33,36,.55);background:rgba(30,33,36,.08);}
+.paym .pm-ic{width:30px;height:20px;border-radius:4px;flex:none;display:grid;place-items:center;
+ background:rgba(30,33,36,.09);font-family:'JetBrains Mono',monospace;font-size:7px;letter-spacing:.04em;color:#6E6E6E;}
+.pay-sum{margin-top:14px;display:flex;justify-content:space-between;align-items:baseline;padding:12px 2px;border-top:1px solid rgba(30,33,36,.1);}
+.pay-sum b{font-family:'Space Grotesk',sans-serif;font-size:19px;color:#1E2124;}
+@media(max-width:520px){
+ .ac,.pay{padding:0;align-items:flex-end;}
+ .ac-in,.pay-in{width:100%;max-height:92vh;border-radius:20px 20px 0 0;padding:22px 16px 20px;}
+ .ac-tabs{gap:2px;overflow-x:auto;flex-wrap:nowrap;scrollbar-width:none;}
+ .ac-tabs::-webkit-scrollbar{display:none;}
+ .ac-tab{padding:9px 8px;font-size:12px;flex:none;}
+ .ac-head{gap:10px;}
+ .ac-ava{width:40px;height:40px;font-size:17px;}
+ .ac-row{flex-wrap:wrap;}
+ .ac-alt{flex-direction:column;}
+ .tx{grid-template-columns:1fr auto;}
+ .tx .d{grid-column:1/-1;}
+ .pw-x{top:10px;right:10px;}
+}
+
+.ovf{position:relative;flex:none;}
+.ovf-b{width:36px;height:36px;border-radius:11px;border:1px solid rgba(30,33,36,.16);background:rgba(30,33,36,.05);
+ color:#6E6E6E;display:inline-flex;align-items:center;justify-content:center;cursor:pointer;transition:.15s;}
+.ovf-b svg{width:16px;height:16px;}
+.ovf-b:hover,.ovf-b[aria-expanded="true"]{background:rgba(30,33,36,.11);color:#1E2124;}
+.ovf-m{position:absolute;top:calc(100% + 8px);right:0;z-index:80;min-width:210px;border-radius:13px;padding:6px;
+ background:#F3F3F3;border:1px solid rgba(30,33,36,.24);
+ box-shadow:0 24px 60px -18px rgba(30,33,36,0.1);}
+.ovf-m[hidden]{display:none;}
+.ovf-m a,.ovf-m button{display:flex;align-items:center;gap:10px;padding:10px 11px;border-radius:9px;text-decoration:none;
+ color:#6E6E6E;font-family:'Saira',sans-serif;font-size:12.5px;font-weight:600;transition:.13s;white-space:nowrap;}
+.ovf-m button{width:100%;border:none;background:none;cursor:pointer;text-align:left;}
+.ovf-m a svg,.ovf-m button svg{width:15px;height:15px;flex:none;opacity:.85;}
+.ovf-m a:hover,.ovf-m button:hover{background:rgba(30,33,36,.07);color:#1E2124;}
+.ovf-d{height:1px;margin:5px 4px;background:rgba(30,33,36,.09);}
+.ovf-k{padding:7px 11px 3px;font-family:'JetBrains Mono',monospace;font-size:8.5px;letter-spacing:.16em;text-transform:uppercase;color:#6E6E6E;}
+body.app .ovf-m .adm{display:none;}
+/* ---------- the Brand Method admin strip. Web view only; the app header stays sticky beneath it. ---------- */
+.bmws{background:#F3F3F3;color:#1E2124;border-bottom:1px solid #F3F3F3;}
+.bmws-in{display:flex;align-items:center;justify-content:space-between;padding:8px clamp(14px,3vw,30px);gap:12px;flex-wrap:wrap;}
+.bmws-crumb{display:flex;flex-direction:column;line-height:1.3;white-space:nowrap;}
+.bmws-crumb b{font-size:12.5px;font-weight:700;color:#1E2124;letter-spacing:.01em;}
+.bmws-crumb span{font-family:'JetBrains Mono',monospace;font-size:8.5px;letter-spacing:.16em;text-transform:uppercase;color:#6E6E6E;}
+.bmws-tabs{display:flex;align-items:center;border:1px solid rgba(30,33,36,.22);border-radius:11px;overflow:auto;max-width:100%;margin-left:auto;padding:3px;gap:3px;background:rgba(30,33,36,.04);}
+.bmws-tabs a{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:#6E6E6E;text-decoration:none;padding:6px 12px;border-radius:8px;white-space:nowrap;display:inline-flex;align-items:center;gap:7px;transition:background .25s,color .25s;}
+.bmws-tabs a i{font-style:normal;color:#6E6E6E;font-size:9px;font-weight:700;}
+.bmws-tabs a:hover{background:rgba(30,33,36,.09);color:#1E2124;}
+.bmws-tabs a.on{background:#1E2124;color:#FFFFFF;font-weight:700;}
+.bmws-tabs a.on i{color:rgba(255,255,255,.66);}
+body.app .bmws{display:none;}
+/* ---------- the next-prayer chip: the times, glanceable from the masthead ---------- */
+.npchip{display:inline-flex;align-items:center;gap:7px;border:1px solid rgba(30,33,36,.35);background:rgba(30,33,36,.08);color:#1E2124;border-radius:999px;padding:6px 12px;cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;transition:background .25s;}
+.npchip svg{width:13px;height:13px;flex:none;opacity:.9;}
+.npchip .np-c{color:#1E2124;font-weight:700;}
+.npchip:hover{background:rgba(30,33,36,.16);}
+.npchip[hidden]{display:none;}
+@media (max-width:640px){.npchip .np-n{display:none;}.npchip{padding:6px 10px;}}
+.bar{padding:14px clamp(14px,3vw,30px) 0;display:flex;flex-direction:column;gap:10px;}
+
+/* ---- finder: the search field and the tag panel are one instrument -------------------
+   Search narrows by words; the panel beside it narrows by ticked tags, the way a manga
+   index does it. Active tags then sit under the field as removable chips, so the state
+   is always visible without opening the panel. */
+.finder{position:relative;display:flex;gap:8px;max-width:760px;flex-wrap:wrap;}
+.fbtn{flex:none;display:inline-flex;align-items:center;gap:7px;height:44px;box-sizing:border-box;border:1px solid #E2E2DF;background:#FFFFFF;color:#1E2124;border-radius:11px;padding:0 13px;font-family:'Saira',sans-serif;font-size:12.5px;font-weight:600;cursor:pointer;transition:.15s;}
+.fbtn svg{width:13px;height:13px;}
+.fbtn .chev{width:11px;height:11px;transition:transform .2s;}
+.fbtn:hover{background:rgba(30,33,36,.1);color:#1E2124;}
+.fbtn[aria-expanded="true"]{background:rgba(30,33,36,.12);color:#1E2124;border-color:rgba(30,33,36,.45);}
+.fbtn[aria-expanded="true"] .chev{transform:rotate(180deg);}
+.fcount{background:var(--gold);color:#F3F3F3;border-radius:999px;padding:0 6px;font-size:10.5px;font-weight:700;line-height:16px;}
+/* the panel drops from the finder: three even columns, one per axis, footer pinned.
+   Every option is the same quiet row (tick, dot, name, count) so the eye scans one
+   ruled column per axis, the way a library index reads. */
+.fpanel{position:absolute;top:calc(100% + 8px);left:0;right:0;z-index:70;border-radius:16px;
+ background:#F3F3F3;border:1px solid rgba(30,33,36,.26);
+ box-shadow:0 30px 80px -20px rgba(30,33,36,0.1),inset 0 1px 0 rgba(30,33,36,.05);
+ display:flex;flex-direction:column;max-height:min(480px,64vh);}
+.fpanel[hidden]{display:none;}
+.fpanel-groups{display:grid;grid-template-columns:repeat(3,1fr);gap:0;
+ overflow-y:auto;overscroll-behavior:contain;padding:16px 6px 12px 16px;scrollbar-width:thin;}
+.fgroup{padding:0 16px 4px 0;min-width:0;}
+.fgroup+.fgroup{border-left:1px solid rgba(30,33,36,.07);padding-left:16px;}
+.fg-k{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.15em;text-transform:uppercase;color:#6E6E6E;
+ padding-bottom:9px;margin-bottom:8px;border-bottom:1px solid rgba(30,33,36,.08);}
+.fg-k em{font-style:normal;color:#6E6E6E;letter-spacing:.08em;float:right;}
+.fopts{display:flex;flex-direction:column;gap:2px;}
+/* a tag option: tick box, colour dot, name, count held right against a dotted leader gap */
+.fopt{display:flex;align-items:center;width:100%;gap:9px;border:none;background:none;border-radius:8px;
+ padding:7px 8px;font-family:'Saira',sans-serif;font-size:12.5px;font-weight:600;color:#6E6E6E;cursor:pointer;
+ text-align:left;transition:background .12s,color .12s;}
+.fopt:hover{background:rgba(30,33,36,.06);color:#1E2124;}
+/* the Recent dropdown, and the Arabic script menu */
+.rcd{position:relative;flex:none;order:5;}
+.rcd .fbtn .cv{width:12px;height:12px;opacity:.6;}
+.rcd .fbtn small{font-family:'JetBrains Mono',monospace;font-size:9.5px;color:#FFFFFF;background:#1E2124;
+ border-radius:3px;padding:2px 4px;}
+.rcd-m,.arf-m{position:absolute;top:calc(100% + 6px);z-index:80;min-width:250px;background:#FFFFFF;
+ border:1px solid #DBDBDB;border-radius:12px;padding:5px;
+ box-shadow:0 1px 2px rgba(30,33,36,.05),0 10px 24px -14px rgba(30,33,36,.16);}
+.rcd-m{left:0;}
+.arf-m{right:0;min-width:230px;}
+.rcd-m[hidden],.arf-m[hidden]{display:none;}
+.rcd-m button,.arf-m button{display:flex;align-items:center;gap:9px;width:100%;border:none;background:none;
+ border-radius:8px;padding:8px 9px;cursor:pointer;text-align:left;font-family:'Saira',sans-serif;
+ font-size:12.5px;color:#1E2124;transition:background .13s;}
+.rcd-m button:hover,.arf-m button:hover{background:#F3F3F3;}
+.rcd-m .cno{font-family:'JetBrains Mono',monospace;font-size:9.5px;color:#FFFFFF;background:#1E2124;
+ border-radius:3px;padding:2px 4px;flex:none;}
+.rcd-m .cno.is-surah{background:#3E4FA3;}
+.rcd-m .cnm{font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.arf-m .sm-s{flex:none;width:38px;font-size:19px;color:#1E2124;text-align:center;}
+.arf-m .sm-t{display:flex;flex-direction:column;min-width:0;}
+.arf-m .sm-t small{color:#6E6E6E;font-size:11px;}
+.arf-m button.on{background:#F3F3F3;}
+.arf-m button.on .sm-t b{color:#2E7D5B;}
+/* the menu and card-action icons carry the same hues as the deck's marks */
+#qibBtn svg{color:#2B6E93;}
+#qptBtn svg{color:#3E4FA3;}
+.ovf-m a[href="Codex.html"] svg{color:#1D7276;}
+.ovf-m a[href="Site.html"] svg{color:#2E7D5B;}
+.deckacts .dz svg{color:#1E2124;}
+.deckacts .ds svg{color:#B07A1C;}
+.deckacts .dsh svg{color:#2B6E93;}
+.deckacts .da svg{color:#2E7D5B;}
+.ovf-plat{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:7px 12px 9px;}
+.ovf-plat>span:first-child{font-family:'Saira',sans-serif;font-size:12.5px;color:#6E6E6E;}
+.ovf-plat .plat{display:inline-flex;}
+/* an isometric mark is cropped to its own edges where a flat glyph fills about 61% of its
+   box, so 16px would draw it noticeably larger than the glyphs it sits beside in other rows.
+   20px measures the same on the page. */
+.fopt .ico.iso{width:20px;height:20px;}
+.fopt .ico.iso svg{width:100%;height:100%;display:block;}
+.fopt .ico{flex:none;width:16px;height:16px;display:block;
+ --cb:currentColor;--acc:currentColor;--acc-soft:currentColor;--acc-text:currentColor;--glyph:currentColor;}
+.fopt .ico svg{width:100%;height:100%;display:block;}
+.fopt.dim .ico{opacity:.34;filter:grayscale(1);}
+.sec-h .sw svg{width:100%;height:100%;display:block;}
+.fopt .tk{flex:none;width:15px;height:15px;border-radius:4.5px;border:1.5px solid rgba(30,33,36,.28);
+ display:inline-flex;align-items:center;justify-content:center;color:transparent;transition:.13s;}
+.fopt .tk svg{width:9px;height:9px;}
+.fopt.on{color:#1E2124;background:rgba(30,33,36,.08);}
+.fopt.on:hover{background:rgba(30,33,36,.13);}
+.fopt.on .tk{background:var(--acc,#1E2124);border-color:var(--acc,#1E2124);color:#F3F3F3;}
+.fopt .dot{width:9px;height:9px;border-radius:3px;transform:rotate(45deg);flex:none;}
+.fopt .nm{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.fopt small{flex:none;margin-left:auto;padding-left:10px;font-family:'JetBrains Mono',monospace;font-size:9.5px;
+ font-weight:500;color:#6E6E6E;}
+.fopt.on small{color:#6E6E6E;}
+.fopt.dim{opacity:.38;cursor:default;}
+.fopt.dim:hover{background:none;}
+.fpanel-foot{flex:none;display:flex;justify-content:space-between;gap:8px;padding:11px 16px;
+ border-top:1px solid rgba(30,33,36,.09);background:#F3F3F3;border-radius:0 0 16px 16px;}
+.fp-clear,.fp-done{border:1px solid rgba(30,33,36,.16);background:none;border-radius:9px;padding:7px 14px;
+ font-family:'Saira',sans-serif;font-size:12px;font-weight:600;color:#6E6E6E;cursor:pointer;transition:.13s;}
+.fp-clear:hover{color:#1E2124;background:rgba(30,33,36,.08);}
+.fp-done{background:#1E2124;border-color:#1E2124;color:#F3F3F3;}
+.fp-done:hover{background:#6E6E6E;border-color:#6E6E6E;}
+/* active tags, visible without the panel. Each removes itself; the last one clears the row. */
+.ftags{display:flex;flex-wrap:wrap;align-items:center;gap:6px;}
+/* said once, to someone who has never been here, then never again */
+.firstrun{margin:0;display:flex;align-items:center;gap:13px;
+ border:0;border-bottom:1px solid #DBDBDB;background:#F3F3F3;border-radius:0;
+ padding:13px clamp(14px,3vw,30px);}
+.firstrun[hidden]{display:none;}
+.fr-k{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:#6E6E6E;flex:none;}
+.firstrun .dtxt{display:flex;flex-direction:column;gap:1px;min-width:0;flex:1;}
+.firstrun b{font-family:'Space Grotesk',sans-serif;font-weight:600;color:#1E2124;font-size:14px;}
+.firstrun .dsub{color:#6E6E6E;font-size:12px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.firstrun .dsub b{font-family:inherit;font-size:inherit;font-weight:600;color:#1E2124;}
+.firstrun .dx{flex:none;width:26px;height:26px;border-radius:7px;border:1px solid #DBDBDB;background:#FFFFFF;
+ color:#1E2124;font-size:15px;line-height:1;cursor:pointer;transition:.15s;}
+.firstrun .dx:hover{background:#1E2124;border-color:#1E2124;color:#FFFFFF;}
+.ftag{display:inline-flex;align-items:center;gap:7px;border:1px solid rgba(30,33,36,.3);background:rgba(30,33,36,.09);
+ border-radius:999px;padding:5px 7px 5px 11px;font-family:'Saira',sans-serif;font-size:12px;font-weight:600;color:#1E2124;cursor:pointer;transition:.13s;}
+.ftag:hover{background:rgba(30,33,36,.16);}
+.ftag .dot{width:8px;height:8px;border-radius:2.5px;transform:rotate(45deg);flex:none;}
+.ftag .x{width:15px;height:15px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;
+ background:rgba(30,33,36,.12);font-size:11px;line-height:1;color:#6E6E6E;}
+.ftag:hover .x{background:rgba(30,33,36,.22);color:#1E2124;}
+.ftag-clear{border-color:rgba(30,33,36,.16);background:none;color:#6E6E6E;padding:5px 11px;}
+.ftag-clear:hover{background:rgba(30,33,36,.07);color:#1E2124;}
+/* Chip rows scroll sideways with the scrollbar hidden. At phone width 19 of the 28 chips sit
+   off-screen, so without an edge cue most of the categories are simply never found. The wrapper
+   fades whichever edge still has chips beyond it, and the row snaps so chips never half-show. */
+.chiprow{position:relative;}
+.chiprow::before,.chiprow::after{content:'';position:absolute;top:0;bottom:5px;width:34px;pointer-events:none;z-index:2;opacity:0;transition:opacity .18s;}
+.chiprow::before{left:0;background:linear-gradient(to right,var(--bg,#FFFFFF) 12%,rgba(30,33,36,0));}
+.chiprow::after{right:0;background:linear-gradient(to left,var(--bg,#FFFFFF) 12%,rgba(30,33,36,0));}
+.chiprow.more-l::before,.chiprow.more-r::after{opacity:1;}
+.chips{display:flex;gap:7px;overflow-x:auto;padding-bottom:5px;scrollbar-width:none;scroll-snap-type:x proximity;scroll-padding-left:2px;}
+.chips>.chip{scroll-snap-align:start;}
+.chips::-webkit-scrollbar{height:0;}
+.chips::-webkit-scrollbar{display:none;}
+/* Slider controls. The row always scrolled, but on a mouse there was nothing to take hold of:
+   the scrollbar is hidden by design and a trackpad swipe is not something a first-time reader
+   thinks to try, so the chips past the right edge were effectively invisible. The arrows ride
+   on the SAME more-l/more-r state the fades already compute, which means a side with nothing
+   beyond it shows no control at all — no dead button to click. They sit inside the fade, so
+   they never cover a chip the reader could otherwise read. */
+.chiprow .cnav{position:absolute;top:50%;transform:translateY(calc(-50% - 2.5px));z-index:3;
+ width:27px;height:27px;border-radius:50%;border:1px solid #DBDBDB;background:#FFFFFF;
+ display:flex;align-items:center;justify-content:center;padding:0;cursor:pointer;color:#1E2124;
+ opacity:0;pointer-events:none;box-shadow:0 1px 4px rgba(30,33,36,.14);
+ transition:opacity .18s,background .15s,border-color .15s;}
+.chiprow .cnav svg{width:13px;height:13px;display:block;}
+.chiprow .cnav.l{left:0;}
+.chiprow .cnav.r{right:0;}
+.chiprow.more-l .cnav.l,.chiprow.more-r .cnav.r{opacity:1;pointer-events:auto;}
+.chiprow .cnav:hover{background:#F3F3F3;border-color:#1E2124;}
+/* a keyboard user must be able to find the control even on a side the mouse would not show */
+.chiprow .cnav:focus-visible{opacity:1;pointer-events:auto;outline:2px solid #1E2124;outline-offset:2px;}
+.chip{flex:none;display:inline-flex;align-items:center;gap:7px;border:1px solid #DBDBDB;background:#FFFFFF;border-radius:999px;padding:7px 14px;font-size:12.5px;font-weight:600;color:#1E2124;transition:.15s;cursor:pointer;font-family:'Saira',sans-serif;}
+.chip:hover{background:#F3F3F3;border-color:#1E2124;}
+.chip.on{background:#1E2124;border-color:#1E2124;color:#FFFFFF;}
+.chip .dot{width:9px;height:9px;border-radius:3px;transform:rotate(45deg);flex:none;}
+.chip small{opacity:.55;font-weight:600;}
+/* a kind that has no cards yet still shows, so the deck states what it is going to hold */
+.chip.dim{opacity:.4;cursor:default;}
+.chip.dim:hover{background:rgba(30,33,36,.05);border-color:rgba(30,33,36,.15);}
+.chipdiv{flex:none;width:1px;align-self:stretch;margin:2px 4px;background:rgba(30,33,36,.16);}
+/* ---- web / app preview -------------------------------------------------------------
+   Same markup, same card. App mode drops the deck into a phone-sized frame so the layout
+   can be judged at the size it will actually ship at. It is a preview of the layout, not
+   a native build: the real port still needs its own shell. */
+.plat button{min-width:44px;}
+#stage{transition:padding .25s ease;}
+body.app #stage{position:relative;width:392px;height:min(78vh,849px);min-height:560px;margin:24px auto 52px;
+ border:11px solid #F3F3F3;border-radius:46px;background:#FFFFFF;--bg:#FFFFFF;overflow:hidden;
+ box-shadow:0 0 0 2px rgba(30,33,36,.08),0 10px 24px -14px rgba(30,33,36,.16);}
+body.app #stage::before{content:'';position:absolute;top:8px;left:50%;transform:translateX(-50%);
+ width:108px;height:19px;border-radius:0 0 13px 13px;background:#F3F3F3;z-index:60;}
+body.app #stageIn{position:absolute;inset:0;overflow-y:auto;overflow-x:hidden;padding-top:26px;-webkit-overflow-scrolling:touch;}
+body.app #stageIn::-webkit-scrollbar{width:0;}
+body.app .main{padding:0 10px 26px;}
+/* A category on a phone is a shelf, not a column. Stacked vertically, six cards meant six
+   screens of scrolling to learn what one need even contains; run sideways they are one
+   gesture, and the vertical axis is left to do the only job it is good at — moving between
+   needs. Each card snaps to the same left edge as its section header, and the next card
+   peeks past the phone edge so the swipe advertises itself without a hint or an arrow. */
+body.app .grid{display:flex;justify-content:flex-start;align-items:flex-start;gap:14px;
+ overflow-x:auto;scroll-snap-type:x mandatory;scroll-padding:0 10px;
+ padding:10px 10px 14px;margin:0 -10px;
+ scrollbar-width:none;overscroll-behavior-x:contain;-webkit-overflow-scrolling:touch;}
+body.app .grid::-webkit-scrollbar{display:none;}
+/* The card is a printed object with fixed proportions, so on a phone it shrinks by scale
+   rather than by re-typesetting: zoom and not transform, because the shelf has to lay out
+   against the smaller box. At full size one card was taller than the phone — you met the
+   art and the first line and had to scroll to learn there was a dua under it. Scaled, a
+   whole card fits at once, foot and action row included, and the next card shows a proper
+   edge instead of a sliver. */
+body.app .grid>.scene{flex:0 0 auto;scroll-snap-align:start;zoom:.7;}
+body.app .bar{padding:8px 10px;}
+body.app .daily,body.app .firstrun{margin:8px 10px;}
+/* the header sits on the same left edge as the first card of its shelf. It used to carry an
+   extra inset of its own, which read as a mistake once the cards below it started at the
+   phone gutter instead of being centred. */
+body.app .sec-h{padding:0;margin:26px 0 16px;}
+body.app .fab{display:none;}
+/* The App view exists to judge the layout at shipping size. An overlay that renders at
+   desktop width inside it is a lie about the phone, so in this preview the sheets take
+   the same shape they take on a real phone. */
+body.app .ac,body.app .pay,body.app .pw{align-items:flex-end;padding:0;}
+body.app .ac-in,body.app .pay-in,body.app .pw-in{width:min(392px,100%);max-height:80vh;
+ border-radius:20px 20px 0 0;padding:22px 16px 20px;margin:0 auto;}
+body.app .ac-tabs{gap:2px;overflow-x:auto;flex-wrap:nowrap;scrollbar-width:none;}
+body.app .ac-tabs::-webkit-scrollbar{display:none;}
+body.app .ac-tab{padding:9px 8px;font-size:12px;flex:none;}
+body.app .ac-alt{flex-direction:column;}
+body.app .pw-plans{grid-template-columns:1fr;}
+body.app .tx{grid-template-columns:1fr auto;}
+body.app .tx .d{grid-column:1/-1;}
+body.app .spot-in{padding:52px 12px 78px;}
+body.app .spot-nav{top:auto;bottom:14px;transform:none;width:48px;height:48px;
+ background:rgba(30,33,36,.9);border:1px solid rgba(30,33,36,.16);}
+body.app #spotPrev{left:calc(50% - 196px + 12px);}
+body.app #spotNext{right:calc(50% - 196px + 12px);}
+body.app .spot-bar{padding:0 62px;}
+body.app .nudge{right:auto;left:50%;transform:translateX(-50%);width:min(360px,92vw);}
+.rowlab{font-family:'JetBrains Mono',monospace;font-size:9.5px;letter-spacing:.14em;text-transform:uppercase;color:#6E6E6E;}
+.daily{margin:0;display:flex;align-items:center;gap:13px;
+ border:0;border-bottom:1px solid #C9E0D5;background:#EDF6F1;border-radius:0;
+ padding:13px clamp(14px,3vw,30px);cursor:pointer;transition:background .15s;}
+.daily[hidden]{display:none;}
+.daily .dtxt{display:flex;flex-direction:column;gap:1px;min-width:0;flex:1;}
+.daily .dsub{color:#6E6E6E;font-size:12px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.daily .dx{flex:none;width:26px;height:26px;border-radius:7px;border:1px solid #C9E0D5;background:#FFFFFF;
+ color:#2E7D5B;font-size:15px;line-height:1;cursor:pointer;transition:.15s;}
+.daily .dx:hover{background:#2E7D5B;border-color:#2E7D5B;color:#FFFFFF;}
+/* a recent card is a card, not a tag: square shoulders and the number it carries */
+.chip-now{border-color:#2E7D5B;background:#EDF6F1;}
+.chip-now:hover{background:#E2F0E9;border-color:#2E7D5B;}
+/* A FACING chip wears a pale wash of its own shelf's colour, so the row reads as ten
+   needs rather than ten identical white capsules. The renderer knows the category, so it
+   hands the three tints in as custom properties and the cascade keeps hover working. */
+.chip-tint{background:var(--tint-bg);border-color:var(--tint-bd);}
+.chip-tint:hover{background:var(--tint-hv);border-color:var(--tint-bd-on);}
+.chip-card{border-radius:4px 10px 10px 4px;border:1px solid #DBDBDB;border-left:3px solid #1E2124;
+ background:#FFFFFF;padding:6px 13px 6px 9px;gap:9px;color:#1E2124;}
+.chip-card .cno{font-family:'JetBrains Mono',monospace;font-size:9.5px;letter-spacing:.06em;
+ color:#FFFFFF;background:#1E2124;border-radius:3px;padding:2px 4px;flex:none;}
+.chip-card .cnm{font-weight:600;}
+.chip-card.is-surah{border-left-color:#3E4FA3;}
+.chip-card.is-surah .cno{background:#3E4FA3;}
+.chip-card:hover{border-color:#1E2124;background:#F3F3F3;}
+/* 19px, not 15px. The FACING row wears the isometric marks now, and an object with three
+   faces and an inked silhouette needs a little more room than a flat glyph did: at 15px the
+   first-aid cross and the roof of the house both close up. 19px is where every mark in the
+   set still reads, checked by rasterising them all at size rather than by eye on a big screen. */
+.chip-ico .ico{width:19px;height:19px;flex:none;
+ --cb:currentColor;--acc:currentColor;--acc-soft:currentColor;--acc-text:currentColor;--glyph:currentColor;}
+.chip-ico .ico svg{width:100%;height:100%;display:block;}
+/* the iso marks carry their own palette, so they must not take the chip's ink on hover or
+   when the chip goes active — unlike the flat glyphs, which are currentColor throughout */
+.chip-ico .ico.iso{color:inherit;}
+.daily:hover{background:#E2F0E9;}
+.daily .dk{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:#2E7D5B;flex:none;}
+.daily b{font-family:'Space Grotesk',sans-serif;font-weight:600;color:#1E2124;font-size:14px;}
+.daily span{color:#6E6E6E;font-size:12px;}
+.daily .go{color:#2E7D5B;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.1em;flex:none;}
+
+.main{padding:6px clamp(14px,3vw,30px) 80px;}
+.sec-h{display:flex;align-items:center;gap:12px;margin:26px 2px 16px;}
+/* The box is deliberately larger than the 17px type beside it. Matching the numbers is not
+   matching the sizes: a letter fills its em, but these marks are drawn inside a 24-unit grid
+   and none of them touches its edges — the heart spans about 61% of the viewBox, so a 17px
+   box drew it 10.4px tall against a cap height of 11.9px, and it read as undersized. At 20px
+   the heart lands on the cap height and the mark sits level with the word. */
+.sec-h .sw{width:20px;height:20px;flex:none;--acc:currentColor;--acc-text:currentColor;--acc-soft:currentColor;}
+/* The isometric marks are cropped to their own edges, so they fill their box where the flat
+   glyphs filled about 61% of theirs. Matching the drawn heights would put them at 13px, which
+   is right for a letterform and wrong for an object: beside 17px type they read as a picture,
+   not a capital, and want the same presence they have in the FACING chips — a shade under
+   twice the cap height. 23px measures the same on the page as the 20px glyph does. */
+.sec-h .sw.iso{width:23px;height:23px;}
+.sec-h .sw.iso svg{width:100%;height:100%;display:block;}
+.sec-h h2{font-family:'Space Grotesk',sans-serif;font-size:17px;font-weight:600;color:#1E2124;letter-spacing:.01em;}
+.sec-h .cnt{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.12em;color:#6E6E6E;text-transform:uppercase;}
+.sec-h .rule{flex:1;height:1px;background:rgba(30,33,36,.09);}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,334px);justify-content:center;gap:26px;}
+/* On a real phone the web layout gets the same shelf the App preview already has: each need
+   runs sideways, one swipe per card, instead of six screens of vertical scrolling. The card
+   scales less than in the App preview (.86, not .7) — the Arabic stays near its reading size,
+   and the next card still shows a clear edge past the phone so the swipe explains itself. */
+@media(max-width:560px){
+ .grid{display:flex;justify-content:flex-start;align-items:flex-start;gap:12px;
+  overflow-x:auto;scroll-snap-type:x mandatory;scroll-padding:0 10px;
+  padding:6px 10px 14px;margin:0 -10px;
+  scrollbar-width:none;overscroll-behavior-x:contain;-webkit-overflow-scrolling:touch;}
+ .grid::-webkit-scrollbar{display:none;}
+ .grid>.scene{flex:0 0 auto;scroll-snap-align:start;zoom:.86;}
+}
+.nojs{max-width:56ch;margin:60px auto;padding:26px 24px;border-radius:16px;text-align:center;
+ border:1px solid rgba(30,33,36,.24);background:#F3F3F3;}
+.nojs b{display:block;font-family:'Space Grotesk',sans-serif;font-size:18px;color:#1E2124;margin-bottom:10px;}
+.nojs p{font-family:'Saira',sans-serif;font-size:13.5px;line-height:1.6;color:#6E6E6E;}
+.nojs-alt{margin-top:12px;}
+.nojs a{color:var(--gold);}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;
+ clip:rect(0 0 0 0);white-space:nowrap;border:0;}
+/* the skip link stays out of the way until a keyboard reaches it */
+.skip{position:fixed;top:10px;left:50%;transform:translate(-50%,-160%);z-index:500;
+ background:#1E2124;color:#F3F3F3;border-radius:10px;padding:10px 18px;text-decoration:none;
+ font-family:'Saira',sans-serif;font-size:13px;font-weight:700;transition:transform .18s;}
+.skip:focus{transform:translate(-50%,0);}
+.empty{padding:70px 20px;text-align:center;color:#6E6E6E;font-size:14.5px;font-family:'Saira',sans-serif;}
+.empty b{display:block;font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:19px;color:#1E2124;margin-bottom:9px;}
+.empty p{max-width:46ch;margin:0 auto;font-size:13.5px;line-height:1.6;color:#6E6E6E;}
+.empty-a{margin-top:18px;border:1px solid rgba(30,33,36,.35);background:rgba(30,33,36,.08);border-radius:11px;
+ padding:10px 18px;color:#1E2124;font-family:'Saira',sans-serif;font-size:12.5px;font-weight:600;cursor:pointer;transition:.14s;}
+.empty-a:hover{background:rgba(30,33,36,.16);border-color:rgba(30,33,36,.6);color:#1E2124;}
+.ac-empty b{display:block;font-family:'Space Grotesk',sans-serif;font-size:14px;color:#1E2124;margin-bottom:6px;}
+.ac-empty p{font-size:12.5px;line-height:1.55;color:#6E6E6E;max-width:42ch;margin:0 auto;}
+.scene{position:relative;}
+#deck .card{user-select:none;-webkit-user-select:none;}
+.scene .fab{position:absolute;z-index:7;top:10px;right:-12px;display:flex;flex-direction:column;gap:6px;opacity:0;transition:.18s;}
+.scene:hover .fab{opacity:1;right:-14px;}
+.scene:focus-within .fab{opacity:1;right:-14px;}
+/* Touch has no hover: the actions were unreachable, so a card could never be saved on a
+   phone. There they ride inside the card's own corner, always visible. */
+@media(hover:none),(pointer:coarse){
+ .scene .fab{opacity:1;top:8px;right:8px;flex-direction:row;gap:5px;}
+ .scene:hover .fab{right:8px;}
+ .fab button{width:32px;height:32px;background:rgba(30,33,36,.72);border-color:rgba(30,33,36,.24);}
+}
+.fab button{width:30px;height:30px;border-radius:10px;border:1px solid rgba(30,33,36,.2);background:rgba(255,255,255,.92);color:#1E2124;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(6px);}
+.fab button:hover{background:rgba(30,33,36,.16);color:#1E2124;}
+.fab button.saved{color:var(--gold);border-color:rgba(30,33,36,.5);}
+.fab svg{width:14px;height:14px;}
+
+/* spotlight */
+.spot{position:fixed;inset:0;z-index:200;display:none;background:rgba(30,33,36,.42);backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(12px);overflow:auto;}
+.spot.on{display:block;}
+.spot-in{min-height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;padding:24px 14px 20px;position:relative;}
+.spot-zoom{display:grid;place-items:center;}
+.spot-card{transform-origin:center center;}
+/* Seven controls on one row. The old 700px cap put the last one on a line of its own, which
+   read as an afterthought rather than as one set. It still wraps below about a thousand
+   pixels, where wrapping is the right answer. */
+.spot-bar{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;max-width:min(1040px,96vw);}
+/* The overlay lays a 42% black scrim over the page, so these were dark ink on a dark wash
+   inside a barely darker pill — about 4:1, and the border under 2:1. Solid white pills read
+   as controls against the scrim at any brightness behind them, and match the toolbar the
+   deck already uses. */
+.spot-bar button{display:inline-flex;align-items:center;gap:7px;border:1px solid rgba(30,33,36,.14);background:#FFFFFF;border-radius:10px;padding:8px 12px;color:#1E2124;font-size:12px;font-weight:600;font-family:'Saira',sans-serif;
+ box-shadow:0 1px 2px rgba(30,33,36,.10),0 8px 20px -10px rgba(30,33,36,.22);}
+.spot-bar button:hover{background:#F6F6F4;border-color:rgba(30,33,36,.38);}
+.spot-hint{flex:1 1 100%;text-align:center;color:#FFFFFF;opacity:.82;text-shadow:0 1px 2px rgba(30,33,36,.4);font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.12em;text-transform:uppercase;}
+.spot-card .card{box-shadow:0 60px 140px -40px rgba(30,33,36,0.1);}
+.spot-info{width:min(360px,92vw);color:#1E2124;font-family:'Saira',sans-serif;display:flex;flex-direction:column;gap:14px;}
+.si-name{font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:21px;color:#1E2124;line-height:1.15;}
+.si-src{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.13em;text-transform:uppercase;color:#6E6E6E;}
+.si-sec b{display:block;font-family:'JetBrains Mono',monospace;font-size:9.5px;letter-spacing:.14em;text-transform:uppercase;color:#6E6E6E;margin-bottom:4px;}
+.si-sec p{font-size:13.5px;line-height:1.55;color:#6E6E6E;}
+.si-art{border:1px solid rgba(30,33,36,.24);border-radius:10px;padding:11px 13px;color:#6E6E6E;background:#F3F3F3;}
+.si-art b{color:#6E6E6E!important;}
+.si-art p{color:#1E2124!important;}
+.si-actions{display:flex;flex-wrap:wrap;gap:8px;}
+.si-actions button{display:inline-flex;align-items:center;gap:7px;border:1px solid rgba(30,33,36,.18);background:rgba(30,33,36,.06);border-radius:10px;padding:8px 13px;color:#1E2124;font-size:12px;font-weight:600;font-family:'Saira',sans-serif;}
+.si-actions button:hover{background:rgba(30,33,36,.13);}
+.si-actions svg{width:13px;height:13px;}
+.si-actions .lock{color:#6E6E6E;}
+.si-hint{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:#6E6E6E;}
+.spot-x{position:fixed;top:18px;right:18px;z-index:210;width:40px;height:40px;border-radius:12px;border:1px solid rgba(30,33,36,.2);background:rgba(30,33,36,.08);color:#1E2124;font-size:16px;}
+.spot-nav{position:fixed;top:50%;transform:translateY(-50%);z-index:210;width:44px;height:44px;border-radius:50%;border:none;background:rgba(30,33,36,.13);color:#1E2124;font-size:18px;cursor:pointer;}
+.spot-nav:hover{background:rgba(30,33,36,.25);}
+#spotPrev{left:14px;}#spotNext{right:14px;}
+
+/* toast */
+/* one floating tooltip, driven by data-tip anywhere in the page */
+/* the repeat panel: the same white card as the tooltip, but it takes clicks and stays put */
+.rep-pop{position:fixed;z-index:401;left:0;top:0;width:236px;background:#FFFFFF;border:1px solid #DBDBDB;
+ border-radius:12px;padding:11px 12px 12px;box-shadow:0 14px 34px -12px rgba(30,33,36,.26);}
+.rep-pop[hidden]{display:none;}
+.rep-pop .rp-k{font-family:'JetBrains Mono',monospace;font-size:8.5px;letter-spacing:.16em;text-transform:uppercase;color:#6E6E6E;}
+.rep-pop .rp-k+.rp-row{margin-top:6px;}
+.rep-pop .rp-row{display:grid;grid-template-columns:repeat(4,1fr);gap:5px;margin-bottom:11px;}
+.rep-pop .rp-row.three{grid-template-columns:repeat(3,1fr);}
+.rep-pop .rp-row.five{grid-template-columns:repeat(5,1fr);}
+.rep-pop .rp-row.five button{font-size:10.5px;padding:0;}
+.rep-pop .rp-row:last-child{margin-bottom:0;}
+.rep-pop button{height:29px;border-radius:8px;cursor:pointer;border:1px solid rgba(30,33,36,.14);
+ background:rgba(30,33,36,.045);color:#6E6E6E;font-family:'Saira',sans-serif;font-size:11.5px;font-weight:600;transition:.15s;}
+.rep-pop button:hover{background:rgba(30,33,36,.1);color:#1E2124;}
+.rep-pop button[aria-checked="true"]{background:#1E2124;border-color:#1E2124;color:#FFFFFF;}
+.rep-pop .rp-note{margin-top:10px;font-family:'Saira',sans-serif;font-size:10.5px;line-height:1.45;color:#6E6E6E;}
+.tip{position:fixed;z-index:400;left:0;top:0;max-width:260px;pointer-events:none;opacity:0;transform:translateY(4px);transition:opacity .13s ease;background:#FFFFFF;border:1px solid #DBDBDB;border-radius:10px;padding:8px 11px;box-shadow:0 8px 24px -10px rgba(30,33,36,.18);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);}
+.tip.on{opacity:1;}
+.tip b{display:block;font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:12.5px;color:#1E2124;line-height:1.25;}
+.tip span{display:block;font-family:'Saira',sans-serif;font-size:11.5px;line-height:1.45;color:#6E6E6E;margin-top:3px;}
+.tip em{display:block;font-family:'JetBrains Mono',monospace;font-style:normal;font-size:8.5px;letter-spacing:.13em;text-transform:uppercase;color:#6E6E6E;margin-top:5px;}
+@media(hover:none){.tip{display:none;}}
+.pw{position:fixed;inset:0;z-index:420;display:none;align-items:center;justify-content:center;padding:22px 16px;background:rgba(30,33,36,.42);backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(10px);}
+.pw.on{display:flex;}
+.pw-in{position:relative;width:min(520px,100%);max-height:88vh;overflow:auto;border-radius:20px;padding:30px 28px 24px;background:#FFFFFF;border:1px solid #DBDBDB;box-shadow:0 24px 60px -24px rgba(30,33,36,.28);}
+.pw-x{position:absolute;top:14px;right:14px;width:34px;height:34px;border-radius:10px;border:1px solid rgba(30,33,36,.16);background:rgba(30,33,36,.05);color:#1E2124;font-size:14px;}
+.pw-k{font-family:'JetBrains Mono',monospace;font-size:9.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--gold);}
+.pw-h{font-family:'Space Grotesk',sans-serif;font-size:23px;font-weight:700;color:#1E2124;margin:9px 0 0;letter-spacing:-.01em;}
+.pw-p{font-family:'Saira',sans-serif;font-size:13.5px;line-height:1.6;color:#6E6E6E;margin-top:10px;}
+.pw-plans{display:grid;grid-template-columns:1fr 1fr;gap:11px;margin:20px 0 4px;}
+.pw-plan{position:relative;text-align:left;border:1px solid rgba(30,33,36,.14);background:rgba(30,33,36,.04);border-radius:14px;padding:15px 15px 14px;color:#1E2124;cursor:pointer;transition:.15s;}
+.pw-plan:hover{border-color:rgba(30,33,36,.5);background:rgba(30,33,36,.09);}
+.pw-plan.hero{border-color:rgba(30,33,36,.45);background:rgba(30,33,36,.07);}
+.pp-k{display:block;font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:#6E6E6E;}
+.pp-v{display:block;font-family:'Space Grotesk',sans-serif;font-size:22px;font-weight:700;margin-top:5px;}
+.pp-d{display:block;font-family:'Saira',sans-serif;font-size:11px;color:#6E6E6E;margin-top:3px;line-height:1.4;}
+.pp-tag{position:absolute;top:-9px;right:11px;font-family:'JetBrains Mono',monospace;font-size:8px;letter-spacing:.12em;text-transform:uppercase;background:var(--gold);color:#FFFFFF;border-radius:5px;padding:3px 7px;font-weight:700;}
+.pw-list{margin-top:18px;display:flex;flex-direction:column;gap:7px;}
+.pw-li{display:flex;gap:9px;align-items:flex-start;font-family:'Saira',sans-serif;font-size:12.5px;color:#6E6E6E;}
+.pw-li i{flex:none;width:15px;height:15px;border-radius:5px;background:rgba(30,33,36,.2);color:#1E2124;font-style:normal;font-size:9px;display:flex;align-items:center;justify-content:center;margin-top:2px;}
+.pw-li.soon{color:#6E6E6E;}
+.pw-li.soon i{background:rgba(30,33,36,.07);color:#6E6E6E;}
+.pw-soon{margin-left:auto;flex:none;font-family:'JetBrains Mono',monospace;font-size:8px;letter-spacing:.1em;
+ text-transform:uppercase;color:#6E6E6E;background:rgba(30,33,36,.13);border-radius:5px;padding:2px 6px;align-self:flex-start;}
+.pw-give{margin-top:20px;padding-top:18px;border-top:1px solid rgba(30,33,36,.1);}
+.pg-k{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.16em;text-transform:uppercase;color:#1E2124;}
+.pg-p{font-family:'Saira',sans-serif;font-size:12.2px;line-height:1.55;color:#6E6E6E;margin-top:7px;}
+.pg-row{display:flex;flex-wrap:wrap;gap:7px;margin-top:12px;}
+.pg-b{border:1px solid rgba(30,33,36,.3);background:rgba(30,33,36,.08);border-radius:10px;padding:8px 14px;color:#1E2124;font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:12.5px;cursor:pointer;transition:.15s;}
+.pg-b:hover{background:rgba(30,33,36,.18);border-color:rgba(30,33,36,.55);}
+.pg-other{font-weight:500;color:#6E6E6E;}
+.pw-trial{margin-top:14px;text-align:center;}
+.pw-tbtn{width:100%;border:1px solid rgba(30,33,36,.4);background:rgba(30,33,36,.08);border-radius:12px;
+ padding:12px;color:#1E2124;font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:13.5px;cursor:pointer;transition:.14s;}
+.pw-tbtn:hover{background:rgba(30,33,36,.16);border-color:rgba(30,33,36,.65);}
+.pw-tnote{display:block;margin-top:8px;font-family:'Saira',sans-serif;font-size:11.5px;line-height:1.5;color:#6E6E6E;}
+.pw-foot{margin-top:18px;font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:#6E6E6E;text-align:center;line-height:1.8;}
+.pw-full{background:none;border:none;color:#1E2124;font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.1em;
+ text-transform:uppercase;cursor:pointer;text-decoration:underline;text-underline-offset:3px;padding:6px 0 0;}
+.pw-full:hover{color:#1E2124;}
+.pw-plans{grid-template-columns:repeat(3,1fr);}
+@media(max-width:520px){.pw-plans{grid-template-columns:1fr;}}
+.locked{position:relative;}
+.locked::after{content:'';position:absolute;top:-3px;right:-3px;width:7px;height:7px;border-radius:50%;background:var(--gold);box-shadow:0 0 0 2px rgba(30,33,36,.9);}
+/* a quiet card that appears once, after someone has actually read a few duas.
+   Never on arrival, never twice, and dismissing it is the same size as accepting. */
+.nudge{position:fixed;right:20px;bottom:20px;z-index:310;width:min(320px,calc(100vw - 40px));
+ border-radius:16px;padding:18px 18px 16px;background:#F3F3F3;
+ border:1px solid rgba(30,33,36,.26);box-shadow:0 30px 70px -22px rgba(30,33,36,0.1);
+ animation:nudgeIn .45s cubic-bezier(.16,1,.3,1) both;}
+.nudge[hidden]{display:none;}
+@keyframes nudgeIn{from{opacity:0;transform:translateY(14px);}to{opacity:1;transform:none;}}
+@media(prefers-reduced-motion:reduce){.nudge{animation:none;}}
+.nudge-x{position:absolute;top:10px;right:10px;width:26px;height:26px;border-radius:8px;border:none;
+ background:rgba(30,33,36,.07);color:#6E6E6E;font-size:12px;cursor:pointer;}
+.nudge-x:hover{background:rgba(30,33,36,.14);color:#1E2124;}
+.nudge-k{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.16em;text-transform:uppercase;color:var(--gold);}
+.nudge-p{font-family:'Saira',sans-serif;font-size:13px;line-height:1.5;color:#6E6E6E;margin:8px 0 12px;padding-right:16px;}
+.nudge-f{display:flex;gap:7px;}
+.nudge-f input{flex:1;min-width:0;background:rgba(30,33,36,.05);border:1px solid rgba(30,33,36,.16);
+ border-radius:10px;padding:9px 11px;color:#1E2124;font-family:'Saira',sans-serif;font-size:12.5px;outline:none;}
+.nudge-f input:focus{border-color:rgba(30,33,36,.5);}
+.nudge-f button{flex:none;border:none;border-radius:10px;padding:9px 15px;cursor:pointer;
+ background:#1E2124;color:#FFFFFF;font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:12.5px;}
+.nudge-n{display:block;margin-top:9px;font-family:'JetBrains Mono',monospace;font-size:8px;letter-spacing:.1em;
+ text-transform:uppercase;color:#6E6E6E;}
+@media(max-width:520px){.nudge{right:10px;left:10px;bottom:10px;width:auto;}}
+.toast{position:fixed;left:50%;bottom:28px;transform:translate(-50%,20px);z-index:300;background:#1E2124;color:#F3F3F3;font-family:'Saira',sans-serif;font-weight:600;font-size:13px;border-radius:12px;padding:11px 18px;opacity:0;pointer-events:none;transition:.25s;box-shadow:0 18px 50px -12px rgba(30,33,36,0.1);max-width:88vw;text-align:center;}
+.toast.on{opacity:1;transform:translate(-50%,0);}
+
+/* plan overlay */
+.plan{position:fixed;inset:0;z-index:220;display:none;background:rgba(30,33,36,.42);backdrop-filter:blur(3px);padding:24px clamp(10px,4vw,60px);}
+.plan.on{display:block;}
+.plan-in{background:#fff;border-radius:20px;max-width:1020px;margin:0 auto;height:100%;overflow:auto;padding:clamp(18px,3vw,36px);font-family:'Saira',sans-serif;color:#F3F3F3;}
+.plan-h{display:flex;align-items:flex-start;gap:14px;flex-wrap:wrap;}
+.plan-h h2{font-family:'Space Grotesk',sans-serif;font-size:23px;font-weight:700;}
+.plan-h p{color:#DBDBDB;font-size:14px;line-height:1.55;max-width:64ch;margin-top:6px;}
+.plan-x{margin-left:auto;width:38px;height:38px;border-radius:11px;border:1.5px solid rgba(30,33,36,.16);background:#fff;font-size:15px;flex:none;}
+.prices{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin:20px 0 8px;}
+.price{border:1.5px solid rgba(30,33,36,.1);border-radius:14px;padding:13px 14px;}
+.price.hero{background:#F3F3F3;color:#1E2124;border-color:#F3F3F3;}
+.price .pk{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.13em;text-transform:uppercase;opacity:.7;}
+.price .pv{font-family:'Space Grotesk',sans-serif;font-size:19px;font-weight:700;margin-top:4px;}
+.price .pd{font-size:11px;margin-top:3px;opacity:.75;line-height:1.4;}
+.psec{margin-top:26px;}
+.psec h3{font-family:'Space Grotesk',sans-serif;font-size:15px;font-weight:700;display:flex;align-items:center;gap:10px;}
+.psec h3::after{content:'';flex:1;height:1px;background:rgba(30,33,36,.1);}
+.prow{display:grid;grid-template-columns:minmax(140px,1.1fr) 2fr minmax(88px,.8fr) minmax(88px,.8fr);gap:10px;padding:9px 4px;border-bottom:1px solid rgba(30,33,36,.07);font-size:12.5px;align-items:baseline;}
+.prow.head{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:#6E6E6E;border-bottom:1.5px solid rgba(30,33,36,.16);}
+.prow b{font-weight:600;}
+.prow .desc{color:#DBDBDB;line-height:1.45;}
+.tick{color:#6E6E6E;font-weight:800;}
+.dash{color:#6E6E6E;}
+.pill{display:inline-block;background:#1E2124;border-radius:999px;padding:2px 9px;font-size:11px;font-weight:700;color:#F3F3F3;}
+@media(max-width:700px){.prow{grid-template-columns:1fr;gap:3px;padding:11px 2px;}.prow.head{display:none;}.prow .fp::before{content:'Free · ';font-weight:700;}.prow .pp::before{content:'Premium · ';font-weight:700;}}
+
+/* The deck used to be zoomed to 80% under 760px and 72% under 420px. On a 390px phone that
+   rendered the 334px card at 240px inside 362px of available space, and shrank the Arabic from
+   26px to 18.7px: the whole card, and the reading, made smaller than the screen could carry.
+   The card fits at full size down to about 365px, so it is only scaled below that. */
+@media(max-width:760px){.spot-in{gap:20px;padding:30px 12px 60px;}.main{padding-left:10px;padding-right:10px;}}
+/* under 480px the side arrows sat on the card itself. They move into the action bar,
+   where the thumb already is, and grow to a proper target. */
+@media(max-width:480px){
+ /* the arrows leave the card and sit in the thumb corners, clear of the reading */
+ .spot-nav{position:fixed;top:auto;bottom:14px;transform:none;width:48px;height:48px;
+  background:rgba(30,33,36,.9);box-shadow:0 8px 26px -8px rgba(30,33,36,0.1);
+  border:1px solid rgba(30,33,36,.16);}
+ #spotPrev{left:12px;}
+ #spotNext{right:12px;}
+ .spot-bar{padding:0 62px;gap:7px;}
+ .spot-x{top:10px;right:10px;width:38px;height:38px;}
+ .spot-in{padding:52px 12px 78px;}
+}
+/* Phone masthead. At 375px it was stacking into three rows, 141px of chrome before a
+   single dua. The flags carry the language on their own, so the EN/BM words go, and every
+   control tightens until the bar holds two rows: the name, then everything else. */
+/* ---- masthead: one height, one radius, one hairline ---- */
+:is(.top-r,.top-scroll)>.npchip,:is(.top-r,.top-scroll)>.abtn,:is(.top-r,.top-scroll)>.lang,:is(.top-r,.top-scroll)>.gbtn,:is(.top-r,.top-scroll)>.avbtn,:is(.top-r,.top-scroll)>.ovf>.ovf-b{
+ height:36px;border-radius:999px;box-sizing:border-box;}
+:is(.top-r,.top-scroll)>.abtn,:is(.top-r,.top-scroll)>.lang{overflow:hidden;padding:0;}
+:is(.top-r,.top-scroll)>.abtn button,:is(.top-r,.top-scroll)>.lang button{height:100%;display:inline-flex;align-items:center;
+ justify-content:center;}
+:is(.top-r,.top-scroll)>.npchip{padding:0 14px;}
+:is(.top-r,.top-scroll)>.gbtn{padding:0 16px;display:inline-flex;align-items:center;}
+:is(.top-r,.top-scroll)>.avbtn{padding:0 13px 0 5px;}
+:is(.top-r,.top-scroll)>.ovf>.ovf-b{width:36px;border-radius:999px;}
+
+@media(max-width:560px){
+ .top{gap:7px;padding:8px 12px;flex-wrap:nowrap;}
+ /* the controls become one scrollable rail rather than three stacked rows: the same
+    pattern the admin strip already uses, so nothing is buried and nothing is lost */
+ .top-r{gap:6px;flex-wrap:nowrap;margin-left:auto;min-width:0;}
+ /* only the wide controls scroll. the overflow menu, saved and account stay pinned to the
+    right edge: the escape hatch must not be the thing that scrolls out of reach, and an
+    overflow-x container would clip the dropdown that opens below it. */
+ .top-r>.top-scroll{display:flex;align-items:center;gap:6px;flex:1 1 auto;min-width:0;
+  overflow-x:auto;scrollbar-width:none;-ms-overflow-style:none;padding-bottom:2px;}
+ .top-r>.top-scroll::-webkit-scrollbar{display:none;}
+ :is(.top-r,.top-scroll)>*{flex:none;}
+ .wm{flex:none;}
+ .wm .bkw{font-size:25px;}
+ .lang button{font-size:0;gap:0;padding:6px 9px;}
+ .lang .fl{width:18px;height:12px;}
+ .abtn button{padding:0 9px;font-size:12.5px;}
+ .abtn .arf{padding:0 18px 0 9px;}
+ .abtn .ar-lv em{display:none;}
+ .abtn .ar-lv{padding:0 8px;}
+ .gbtn{padding:7px 11px;font-size:11.5px;}
+ .npchip{padding:5px 9px;}
+ .avbtn{width:34px;height:34px;}
+ .ovf-b{width:34px;height:34px;}
+}
+@media(max-width:365px){.deckwrap{zoom:.87;}}
+@media(prefers-reduced-motion:reduce){.card{transition:none;}}
+
+/* ---- REAL CARD STOCK -------------------------------------------------------------------
+   A card should read as a printed object, not a panel: paper tooth in the surface, a cut
+   edge with visible thickness, a contact shadow that says it is lying ON something, and a
+   and a lift when the hand comes near. */
+.card{transition:transform .85s cubic-bezier(.2,.7,.2,1),box-shadow .3s ease;}
+.face.front,.face.back{
+ background-image:var(--stock-bg,none);}
+/* the cut edge: a hairline of lighter stock along the top and left, darker along the
+   bottom and right, so the trim catches light like a real card's edge */
+.face.front::after,.face.back::after{content:'';position:absolute;inset:0;pointer-events:none;z-index:7;
+ border-radius:inherit;
+ box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--zone-line) 48%,transparent);}
+/* contact shadow: tight and dark under the card, wide and soft beyond it */
+.scene .card{border-radius:18px;box-shadow:none;}
+.scene:hover .card{box-shadow:0 3px 4px rgba(30,33,36,0.1),0 26px 46px -14px rgba(30,33,36,0.1),0 70px 120px -40px rgba(30,33,36,0.1);}
+/* lift: the card comes off the table toward the hand. No sheen sweep: a band of light
+   crossing the face read as a screen effect, not as paper. The lift is a whole-pixel
+   translate and nothing else: a scale, even 1.012, puts the card on fractional pixels and
+   every hairline inside it — the cut edge, the folio seams — smears across three device
+   pixels instead of two, and unevenly on each side. The card grows a visible grey line
+   down one edge on hover. The shadow already carries the approach; the scale only cost us
+   the crispness of the borders. */
+@media(hover:hover) and (pointer:fine){
+ .scene .card{transform:rotateY(var(--flip)) translateZ(0);}
+ .scene:hover .card{transform:rotateY(var(--flip)) translateY(-7px);}
+}
+@media(prefers-reduced-motion:reduce){.scene:hover .card{transform:rotateY(var(--flip));}}
+
+/* ---- keyboard focus -------------------------------------------------------------------
+   Nothing in the app drew a focus ring, so tabbing through it was invisible. Only
+   :focus-visible, so a mouse click never leaves a ring behind. */
+/* a phone with little memory should not pay for blur and grain */
+body.lite .tip,body.lite .fab button,body.lite .bk-scroll,body.lite .bk-cats,
+body.lite .top,body.lite .spot,body.lite .pw,body.lite .ac,body.lite .pay,body.lite .plan{
+ backdrop-filter:none!important;-webkit-backdrop-filter:none!important;}
+body.lite .zone.artwin::after{background-image:none;}
+body.lite .face.front,body.lite .face.back{background-image:var(--stock-bg,none);}
+@media(prefers-reduced-transparency:reduce){
+ .top,.spot,.pw,.ac,.pay,.plan,.tip{backdrop-filter:none!important;-webkit-backdrop-filter:none!important;}
+}
+:where(button,a,input,[tabindex],.scene .card):focus{outline:none;}
+:where(button,a,input,[tabindex],.scene .card):focus-visible{
+ outline:2px solid var(--gold,#1E2124);outline-offset:2px;border-radius:8px;}
+.chips .chip:focus-visible{outline-offset:1px;}
+
+/* ---- touch targets --------------------------------------------------------------------
+   The card action buttons were 24px and the search field 22px tall. Both are at or below the
+   WCAG 2.2 minimum, and awkward on a phone. */
+.fab button{width:30px;height:30px;}
+.search{padding:9px 12px;}
+.search input{min-height:24px;}
+/* touch: card actions and the search clear meet a comfortable tap size */
+@media(pointer:coarse){
+ .dact{min-height:36px;}
+ .qx{width:28px;height:28px;}
+}
+@media(pointer:coarse){
+ .chip{padding:9px 15px;}
+ .abtn button,.lang button{padding:10px 12px;}
+}
+
+/* ---- phone chrome ---------------------------------------------------------------------
+   The finder carries every filter at every width, so the phone keeps the same instrument as
+   the desktop: search, the tag panel and the ticked tags. Only the chrome tightens. */
+@media(max-width:760px){
+ .top{gap:8px;padding:9px 14px;}
+ .wm-tag{display:none;}
+ /* The switch used to hide below 760px on the reasoning that a phone is already app-width.
+    That reasoning fails on a narrow desktop window, where it is the one control you are
+    reaching for and it is simply gone. It stays visible at every width. */
+ .top-r{gap:8px;}
+ .codexlink,.gbtn{padding:8px 12px;font-size:12px;}
+ .wm .bkw{font-size:30px;}
+ /* one line on a phone: the kicker, the name, READ. The purpose line waits inside the card. */
+ .daily{margin-top:10px;padding:10px 13px;gap:8px;flex-wrap:nowrap;}
+ .daily .dsub{display:none;}
+ .daily .dtxt{flex:1;min-width:0;}
+ .daily b{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0;flex:1;}
+ .firstrun{padding:10px 13px;gap:8px;flex-wrap:nowrap;}
+ .firstrun .dsub{display:none;}
+ .firstrun>b,.firstrun .dtxt b{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0;flex:1;}
+ .bar{padding-top:10px;gap:8px;}
+ .bar .rowlab{display:none;}
+ .finder{max-width:none;}
+ .fbtn .fbl{display:none;}
+ .fpanel{max-height:min(520px,66vh);}
+ .fpanel-groups{grid-template-columns:1fr;padding:14px 14px 10px;}
+ .fgroup{padding-right:0;}
+ .fgroup+.fgroup{border-left:none;padding-left:0;margin-top:14px;}
+}
+
+/* ================= QIBLA · the direction of the Kaaba =================
+   Same overlay shell as the premium sheet. The dial is one SVG: a rose that
+   counter-rotates against the compass heading, a Kaaba marker fixed at the
+   qibla bearing inside it, and a still marker at the top for where the phone
+   is pointing. With no compass the rose sits at zero and north is simply up. */
+.qib{position:fixed;inset:0;z-index:430;display:none;align-items:center;justify-content:center;padding:22px 16px;
+ background:rgba(30,33,36,.42);backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(10px);}
+.qib.on{display:flex;}
+.qib-in{position:relative;width:min(430px,100%);max-height:90vh;overflow:auto;border-radius:20px;padding:28px 24px 22px;
+ background:#F3F3F3;border:1px solid #DBDBDB;
+ box-shadow:0 40px 100px -30px rgba(30,33,36,0.1);text-align:center;font-family:'Saira',sans-serif;}
+.qib-k{font-family:'JetBrains Mono',monospace;font-size:9.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--gold);}
+.qib-h{font-size:20px;line-height:1.25;color:#1E2124;font-weight:700;margin:7px 0 3px;}
+.qib-sub{font-size:12px;color:#6E6E6E;margin:0 0 15px;}
+.qib-dial{width:min(272px,70vw);margin:0 auto;}
+.qib-dial svg{width:100%;height:auto;display:block;}
+.qr-ring{fill:rgba(30,33,36,.02);stroke:rgba(30,33,36,.22);stroke-width:1.2;}
+/* rotation is set as an SVG transform attribute, not CSS: the heading is already
+   smoothed by a low-pass filter at sensor rate, so a transition would only add lag
+   and make the upright Kaaba glyph wobble against its rotating parent. */
+.qr-tick{stroke:rgba(30,33,36,.22);stroke-width:1;}
+.qr-tick.maj{stroke:rgba(30,33,36,.42);stroke-width:1.6;}
+.qr-c{fill:#6E6E6E;font-family:'JetBrains Mono',monospace;font-size:11px;text-anchor:middle;dominant-baseline:middle;}
+.qr-c.n{fill:var(--acc-soft);font-weight:700;}
+.qr-ray{stroke:var(--gold);stroke-width:2;stroke-linecap:round;opacity:.55;}
+.qr-kb{fill:var(--gold);}
+.qr-kbb{stroke:#F3F3F3;stroke-width:2.2;}
+.qr-hub{fill:var(--acc);}
+.qr-you{fill:var(--acc-soft);}
+.qr-you-l{stroke:rgba(30,33,36,.3);stroke-width:1;stroke-dasharray:3 4;}
+.qib-deg{font-family:'JetBrains Mono',monospace;font-size:30px;color:#1E2124;margin-top:14px;letter-spacing:-.01em;}
+.qib-degk{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.16em;text-transform:uppercase;color:#6E6E6E;margin-top:2px;}
+.qib-turn{font-size:14px;font-weight:600;color:var(--acc-soft);margin-top:12px;min-height:20px;}
+.qib-turn.hit{color:var(--gold);}
+.qib-meta{font-size:11.5px;color:#6E6E6E;margin-top:8px;line-height:1.55;}
+.qib-row{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-top:16px;}
+.qib-b{border:1px solid rgba(30,33,36,.18);background:rgba(30,33,36,.06);border-radius:10px;padding:9px 14px;
+ color:#1E2124;font-family:'Saira',sans-serif;font-size:12px;font-weight:600;cursor:pointer;transition:.14s;}
+.qib-b:hover{background:rgba(30,33,36,.13);}
+.qib-b.pri{border-color:rgba(30,33,36,.45);background:rgba(30,33,36,.15);color:#1E2124;}
+.qib-b[hidden]{display:none;}
+.qib-sel{margin-top:12px;}
+.qib-sel[hidden]{display:none;}
+/* the city list is a fallback, so it waits behind a quiet link until it is wanted —
+   and shows itself unasked when there is no position or the browser refuses one */
+.qib-link{margin-top:11px;background:none;border:none;padding:4px;cursor:pointer;
+ color:#6E6E6E;font-family:'Saira',sans-serif;font-size:11.5px;text-decoration:underline;
+ text-underline-offset:3px;text-decoration-color:rgba(30,33,36,.45);}
+.qib-link:hover{color:#1E2124;}
+.qib-sel select{width:100%;border:1px solid rgba(30,33,36,.16);background:#F3F3F3;color:#1E2124;border-radius:10px;
+ padding:9px 11px;font-family:'Saira',sans-serif;font-size:12.5px;}
+.qib-sun{margin-top:14px;border:1px solid rgba(30,33,36,.12);border-radius:12px;padding:13px 14px;text-align:left;
+ background:rgba(30,33,36,.03);font-size:12px;color:#6E6E6E;line-height:1.6;}
+.qib-sun[hidden]{display:none;}
+.qib-sun b{color:#1E2124;}
+/* ---- the countdown to the next prayer ---- */
+.qtc{margin-top:15px;border:1px solid rgba(30,33,36,.24);border-radius:15px;padding:16px 12px 15px;
+ background:#F3F3F3;text-align:center;}
+.qtc[hidden]{display:none;}
+.qtc-k{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.18em;text-transform:uppercase;color:var(--gold);}
+.qtc-n{font-family:'Saira',sans-serif;font-size:22px;font-weight:700;color:#1E2124;margin-top:5px;line-height:1.15;}
+.qtc-n em{font-style:normal;font-size:14px;color:#6E6E6E;margin-left:8px;}
+.qtc-t{font-family:'JetBrains Mono',monospace;font-size:13.5px;color:var(--acc-soft);margin-top:4px;}
+.qtc-rings{display:flex;justify-content:center;gap:clamp(8px,3vw,16px);margin-top:15px;}
+.qtc-r{position:relative;width:clamp(64px,21vw,80px);}
+.qtc-r svg{width:100%;height:auto;display:block;}
+.qtc-bg{fill:none;stroke:rgba(30,33,36,.09);stroke-width:5;}
+.qtc-fg{fill:none;stroke:var(--gold);stroke-width:5;stroke-linecap:round;}
+.qtc-v{position:absolute;left:0;right:0;top:50%;transform:translateY(-50%);margin-top:-9px;
+ font-family:'JetBrains Mono',monospace;font-size:clamp(17px,5.5vw,21px);color:#1E2124;}
+.qtc-l{display:block;margin-top:5px;font-family:'JetBrains Mono',monospace;font-size:8.5px;
+ letter-spacing:.14em;text-transform:uppercase;color:#6E6E6E;}
+.qtc-f{margin:13px 0 0;font-size:11px;color:#6E6E6E;line-height:1.5;}
+.qtc.due{border-color:#1E2124;background:#DBDBDB;}
+.qtc.due .qtc-fg{stroke:var(--acc);}
+.qib-times{margin-top:14px;border:1px solid rgba(30,33,36,.12);border-radius:12px;padding:13px 14px;text-align:left;
+ background:rgba(30,33,36,.03);}
+.qib-times[hidden]{display:none;}
+/* in its own sheet the panel is the content, so it drops the card treatment */
+.qpt .qib-times{border:none;background:none;padding:0;margin-top:4px;}
+.qpt .qt-row{padding:9px 10px;font-size:13.5px;}
+.qpt .qt-v{font-size:13.5px;}
+.qpt .qt-next{font-size:15px;margin:9px 0 11px;}
+.qt-d{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:#6E6E6E;line-height:1.5;}
+.qt-next{font-size:13.5px;font-weight:700;color:var(--acc-soft);margin:7px 0 9px;}
+.qt-row{display:flex;align-items:baseline;justify-content:space-between;gap:10px;padding:6px 8px;border-radius:8px;
+ font-size:12.5px;color:#6E6E6E;}
+.qt-row.on{background:rgba(30,33,36,.15);color:#1E2124;}
+.qt-row.dim{color:#6E6E6E;}
+/* The bead carries the hour's colour and the name takes it too. --pt is set per row, so the
+   dim and on states keep working on top of it: a marker that is not a prayer fades its bead
+   rather than losing it, and the current row still gets its grey plate underneath. */
+.qt-n{display:inline-flex;align-items:baseline;gap:8px;color:var(--pt);font-weight:600;}
+.qt-b{width:7px;height:7px;border-radius:50%;background:var(--pt);flex:none;align-self:center;}
+.qt-row.dim .qt-n{font-weight:500;opacity:.72;}
+.qt-row.on .qt-n{font-weight:700;}
+.qt-row.on .qt-b{box-shadow:0 0 0 3px color-mix(in srgb,var(--pt) 22%,transparent);}
+.qt-v{color:#1E2124;}
+.qt-row.dim .qt-v{color:#6E6E6E;}
+.qt-n em{font-style:normal;color:#6E6E6E;font-size:11px;margin-left:7px;}
+.qt-v{font-family:'JetBrains Mono',monospace;font-size:12.5px;white-space:nowrap;}
+.qt-sel{display:flex;gap:8px;margin-top:11px;}
+.qt-sel select{flex:1;min-width:0;border:1px solid rgba(30,33,36,.16);background:#F3F3F3;color:#1E2124;
+ border-radius:9px;padding:7px 9px;font-family:'Saira',sans-serif;font-size:11.5px;}
+.qt-note{margin-top:10px;font-size:10.5px;color:#6E6E6E;line-height:1.55;}
+.qib-nudge{display:flex;align-items:center;gap:8px;margin-top:10px;font-family:'JetBrains Mono',monospace;font-size:10px;color:#6E6E6E;}
+.qib-nudge button{width:26px;height:26px;border-radius:8px;border:1px solid rgba(30,33,36,.16);background:rgba(30,33,36,.05);color:#1E2124;cursor:pointer;}
+.qib-note{margin-top:14px;padding-top:12px;border-top:1px solid rgba(30,33,36,.08);
+ font-size:11px;color:#6E6E6E;line-height:1.6;text-align:left;}
+body.app .qib{align-items:flex-end;padding:0;}
+body.app .qib-in{width:min(392px,100%);max-height:84vh;border-radius:20px 20px 0 0;}
+
+/* ---- camera view: the qibla laid over what the lens sees ---- */
+.qcam{position:fixed;inset:0;z-index:500;background:#000;display:none;}
+.qcam.on{display:block;}
+.qcam video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;}
+.qcam-hud{position:absolute;inset:0;pointer-events:none;font-family:'Saira',sans-serif;overflow:hidden;}
+.qcam-x{position:absolute;top:calc(14px + env(safe-area-inset-top));right:14px;width:42px;height:42px;border-radius:13px;
+ border:1px solid rgba(30,33,36,.3);background:rgba(30,33,36,0.1);color:#1E2124;font-size:16px;pointer-events:auto;
+ backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);}
+.qcam-hz{position:absolute;left:0;right:0;height:1px;background:#DBDBDB;}
+/* the path along the ground: a straight line from your feet to the qibla, which in
+   perspective is a wedge from the bottom of the screen to the vanishing point — and
+   the vanishing point is exactly where the marker sits on the horizon */
+.qcam-beam{position:absolute;inset:0;width:100%;height:100%;}
+.qcam-beam[hidden]{display:none;}
+.qcam-km{position:absolute;left:0;top:0;transform:translate(-50%,-50%);white-space:nowrap;
+ background:rgba(30,33,36,.78);border:1px solid rgba(30,33,36,.45);color:#1E2124;border-radius:9px;
+ padding:5px 10px;font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.04em;
+ backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);box-shadow:0 4px 14px rgba(30,33,36,0.1);}
+.qcam-km[hidden]{display:none;}
+.qcam-mk{position:absolute;left:0;top:0;transform:translate(-50%,-100%);text-align:center;will-change:transform;}
+.qcam-mk svg{display:block;margin:0 auto;filter:none;}
+.qcam-mk.off{opacity:.5;}
+.qcam-lbl{margin-bottom:5px;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.1em;color:#1E2124;
+ text-shadow:0 1px 6px rgba(30,33,36,0.1);white-space:nowrap;}
+.qcam-ch{position:absolute;top:50%;transform:translateY(-50%);color:var(--gold);font-size:40px;line-height:1;
+ text-shadow:0 2px 10px rgba(30,33,36,0.1);animation:qcamp 1.1s ease-in-out infinite;}
+.qcam-ch.l{left:14px;}.qcam-ch.r{right:14px;}
+.qcam-ch[hidden]{display:none;}
+@keyframes qcamp{0%,100%{opacity:.45;}50%{opacity:1;}}
+.qcam-bot{position:absolute;left:0;right:0;bottom:0;padding:22px 18px calc(24px + env(safe-area-inset-bottom));
+ background:#F3F3F3;color:#1E2124;text-align:center;}
+.qcam-turn{font-size:17px;font-weight:700;}
+.qcam-turn.hit{color:var(--gold);}
+.qcam-sub{font-size:11px;color:#6E6E6E;margin-top:5px;line-height:1.5;}
+.qcam-msg{position:absolute;left:22px;right:22px;top:50%;transform:translateY(-50%);text-align:center;color:#1E2124;
+ font-size:13.5px;line-height:1.65;text-shadow:0 2px 10px rgba(30,33,36,0.1);}
+.qcam-msg[hidden]{display:none;}
+@media (prefers-reduced-motion:reduce){.qcam-ch{animation:none;opacity:.9;}}
+
+/* the Baik logo (assets/logo/baik-logo_caps.svg): a mask filled with currentColor, so it takes any ink */
+.baik-logo{display:inline-block;vertical-align:middle;height:1em;aspect-ratio:118.13/45.82;background:currentColor;
+ -webkit-mask:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20118.13%2045.82%22%3E%3Cdefs%3E%3Cmask%20id%3D%22cut%22%20maskUnits%3D%22userSpaceOnUse%22%20x%3D%220%22%20y%3D%220%22%20width%3D%22118.13%22%20height%3D%2245.82%22%3E%3Crect%20width%3D%22118.13%22%20height%3D%2245.82%22%20fill%3D%22%23fff%22%2F%3E%3Cg%20fill%3D%22%23000%22%3E%3Cpath%20d%3D%22M9.05%2012.16H19.44A4.26%204.26%200%200%201%2019.44%2020.68H9.05Z%22%2F%3E%3Cpath%20d%3D%22M9.05%2028.08H20.44A4.56%204.56%200%200%201%2020.44%2037.2H9.05Z%22%2F%3E%3Ccircle%20cx%3D%2253.78%22%20cy%3D%2231.15%22%20r%3D%226.96%22%2F%3E%3Cpolygon%20points%3D%2260.73%2C16%2056.23%2C16%2060.73%2C19.7%22%2F%3E%3Cpolygon%20points%3D%2260.73%2C46.3%2056.23%2C46.3%2060.73%2C42.5%22%2F%3E%3C%2Fg%3E%3C%2Fmask%3E%3C%2Fdefs%3E%3Cg%20fill%3D%22%23000%22%20%20mask%3D%22url(%23cut)%22%3E%3Cpolygon%20points%3D%220%2C4.16%209.05%2C4.16%209.05%2C45.2%200%2C45.2%22%2F%3E%3Cpath%20d%3D%22M0%204.16H21.14A11.96%2011.96%200%200%201%2021.14%2028.08H0Z%22%2F%3E%3Cpath%20d%3D%22M0%2020.68H22.14A12.26%2012.26%200%200%201%2022.14%2045.2H0Z%22%2F%3E%3Cellipse%20cx%3D%2253.78%22%20cy%3D%2231%22%20rx%3D%2215.43%22%20ry%3D%2214.79%22%2F%3E%3Cpolygon%20points%3D%2260.73%2C16.9%2069.38%2C16.9%2069.38%2C45.2%2060.73%2C45.2%22%2F%3E%3Cpolygon%20points%3D%2275.13%2C20.26%2084.18%2C16.9%2084.18%2C45.2%2075.13%2C45.2%22%2F%3E%3Cpolygon%20points%3D%2279.66%2C0%2085.96%2C6.3%2079.66%2C12.6%2073.36%2C6.3%22%2F%3E%3Cpolygon%20points%3D%2289.4%2C7.69%2098.33%2C4.16%2098.33%2C28.6%2099.53%2C29.7%2099.53%2C33%2098.33%2C33.7%2098.33%2C45.2%2089.4%2C45.2%22%2F%3E%3Cpolygon%20points%3D%2298.33%2C28.46%20107.15%2C16.9%20118.13%2C16.9%20106.3%2C30.6%20117.97%2C45.2%20108.02%2C45.2%2098.33%2C33.85%22%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E") center/contain no-repeat;mask:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20118.13%2045.82%22%3E%3Cdefs%3E%3Cmask%20id%3D%22cut%22%20maskUnits%3D%22userSpaceOnUse%22%20x%3D%220%22%20y%3D%220%22%20width%3D%22118.13%22%20height%3D%2245.82%22%3E%3Crect%20width%3D%22118.13%22%20height%3D%2245.82%22%20fill%3D%22%23fff%22%2F%3E%3Cg%20fill%3D%22%23000%22%3E%3Cpath%20d%3D%22M9.05%2012.16H19.44A4.26%204.26%200%200%201%2019.44%2020.68H9.05Z%22%2F%3E%3Cpath%20d%3D%22M9.05%2028.08H20.44A4.56%204.56%200%200%201%2020.44%2037.2H9.05Z%22%2F%3E%3Ccircle%20cx%3D%2253.78%22%20cy%3D%2231.15%22%20r%3D%226.96%22%2F%3E%3Cpolygon%20points%3D%2260.73%2C16%2056.23%2C16%2060.73%2C19.7%22%2F%3E%3Cpolygon%20points%3D%2260.73%2C46.3%2056.23%2C46.3%2060.73%2C42.5%22%2F%3E%3C%2Fg%3E%3C%2Fmask%3E%3C%2Fdefs%3E%3Cg%20fill%3D%22%23000%22%20%20mask%3D%22url(%23cut)%22%3E%3Cpolygon%20points%3D%220%2C4.16%209.05%2C4.16%209.05%2C45.2%200%2C45.2%22%2F%3E%3Cpath%20d%3D%22M0%204.16H21.14A11.96%2011.96%200%200%201%2021.14%2028.08H0Z%22%2F%3E%3Cpath%20d%3D%22M0%2020.68H22.14A12.26%2012.26%200%200%201%2022.14%2045.2H0Z%22%2F%3E%3Cellipse%20cx%3D%2253.78%22%20cy%3D%2231%22%20rx%3D%2215.43%22%20ry%3D%2214.79%22%2F%3E%3Cpolygon%20points%3D%2260.73%2C16.9%2069.38%2C16.9%2069.38%2C45.2%2060.73%2C45.2%22%2F%3E%3Cpolygon%20points%3D%2275.13%2C20.26%2084.18%2C16.9%2084.18%2C45.2%2075.13%2C45.2%22%2F%3E%3Cpolygon%20points%3D%2279.66%2C0%2085.96%2C6.3%2079.66%2C12.6%2073.36%2C6.3%22%2F%3E%3Cpolygon%20points%3D%2289.4%2C7.69%2098.33%2C4.16%2098.33%2C28.6%2099.53%2C29.7%2099.53%2C33%2098.33%2C33.7%2098.33%2C45.2%2089.4%2C45.2%22%2F%3E%3Cpolygon%20points%3D%2298.33%2C28.46%20107.15%2C16.9%20118.13%2C16.9%20106.3%2C30.6%20117.97%2C45.2%20108.02%2C45.2%2098.33%2C33.85%22%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E") center/contain no-repeat;}
+.bkw .baik-logo{height:.82em;vertical-align:baseline;}

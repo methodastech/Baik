@@ -1,0 +1,208 @@
+---
+---
+<!doctype html>
+<html lang="en">
+<head>
+<link rel="stylesheet" href="/css/animation-demo.css">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Particle Motifs Catalogue</title>
+<meta name="description" content="Dotted-particle animations of Islamic motifs: Kaaba, masjid, adhan, qibla, sajadah, Quran, tasbih, fanous and more.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Amiri:wght@400;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+</head>
+<body>
+<header class="top">
+  <div class="wrap">
+    <div class="brand"><i></i>KHAYR <small>Motion catalogue</small></div>
+    <div class="tools">
+      <div class="swatches" role="group" aria-label="Dot colour">
+        <button class="sw" data-ink="blue" style="background:#2E6BFF" aria-label="Blue" aria-pressed="true"></button>
+        <button class="sw" data-ink="emerald" style="background:#0F8F6B" aria-label="Emerald" aria-pressed="false"></button>
+        <button class="sw" data-ink="gold" style="background:#C4912F" aria-label="Gold" aria-pressed="false"></button>
+        <button class="sw" data-ink="graphite" style="background:#1E2A3B" aria-label="Graphite" aria-pressed="false"></button>
+      </div>
+      <div class="seg density" role="group" aria-label="Dot density">
+        <button data-d="0.75" aria-pressed="false">Fine</button>
+        <button data-d="1" aria-pressed="true">Standard</button>
+        <button data-d="1.45" aria-pressed="false">Airy</button>
+      </div>
+      <button class="icon-btn" id="themeBtn" aria-label="Toggle light or dark">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
+      </button>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+  <section class="hero">
+    <div>
+      <div class="eyebrow">Particle motifs · Islam</div>
+      <h1>Faith, drawn in <em>points of light</em>.</h1>
+      <p class="lede">A set of dotted, slowly turning scenes for prayer, Quran, zikir and Ramadan. Each one gathers from scattered particles, then keeps moving: tawaf around the Kaaba, the adhan spreading out, a tasbih counting its beads.</p>
+      <div class="stats">
+        <div><b id="statScenes">14</b><span>scenes</span></div>
+        <div><b>0</b><span>libraries</span></div>
+        <div><b>1</b><span>HTML file</span></div>
+      </div>
+    </div>
+    <div class="hero-stage">
+      <canvas id="heroCanvas" aria-label="Particle plaza: the Kaaba at the centre with a masjid, Quran, tasbih, fanous and qibla compass around it"></canvas>
+      <div class="hero-cap">Ummah plaza · composite scene</div>
+    </div>
+  </section>
+
+  <div class="bar" role="group" aria-label="Filter">
+    <h2>Catalogue</h2>
+    <button class="chip" data-f="all" aria-pressed="true">All</button>
+    <button class="chip" data-f="Places" aria-pressed="false">Places</button>
+    <button class="chip" data-f="Prayer" aria-pressed="false">Prayer</button>
+    <button class="chip" data-f="Quran" aria-pressed="false">Quran</button>
+    <button class="chip" data-f="Zikir" aria-pressed="false">Zikir &amp; dua</button>
+    <button class="chip" data-f="Ramadan" aria-pressed="false">Ramadan</button>
+    <span class="count mono" id="count"></span>
+  </div>
+  <section class="grid" id="grid"></section>
+</main>
+<footer><div class="wrap">Click any scene to open it large, drag to orbit. Every shape is drawn in code from dotted edges, with no images or models.</div></footer>
+
+<dialog id="lb">
+  <div class="lb">
+    <div class="stage" id="lbStage"><canvas id="lbCanvas"></canvas><div class="hint">Drag to orbit</div></div>
+    <aside>
+      <button class="icon-btn close" id="lbClose" aria-label="Close">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M6 6l12 12M18 6L6 18"/></svg>
+      </button>
+      <div class="mono" style="font-size:12px;color:var(--soft)" id="lbN"></div>
+      <div class="ar" id="lbAr"></div>
+      <h3 id="lbTitle"></h3>
+      <p id="lbDesc"></p>
+      <div class="ctl">
+        <label>Speed <span class="mono" id="spdV">1.0×</span></label>
+        <input type="range" id="spd" min="0.2" max="3" step="0.1" value="1">
+        <div class="btns">
+          <button class="btn primary" id="lbReplay">Replay</button>
+          <button class="btn" id="lbPause">Pause</button>
+          <button class="btn" id="lbReset">Reset view</button>
+        </div>
+      </div>
+    </aside>
+  </div>
+</dialog>
+
+<script is:inline src="/particles.js"></script>
+<script is:inline>
+(() => {
+'use strict';
+const clamp = (v, a = 0, b = 1) => v < a ? a : v > b ? b : v;
+const { Viewer, SCENES, HERO } = window.BaikParticles;
+function readTheme() { window.BaikParticles.refreshTheme(); viewers && viewers.forEach(v => v.theme()); }
+let DENSITY = 1;
+/* ---------- page wiring ---------- */
+const viewers = new Set();
+const io = new IntersectionObserver(es => es.forEach(e => { const v = e.target.__v; if (!v) return; v.visible = e.isIntersecting; if (e.isIntersecting && v.asm === null) v.replay(); }), { rootMargin: '80px' });
+
+const hero = new Viewer(document.getElementById('heroCanvas'), HERO);
+document.getElementById('heroCanvas').__v = hero; io.observe(hero.cv); viewers.add(hero);
+const heroStage = hero.cv.parentElement;
+heroStage.addEventListener('pointermove', e => { const r = heroStage.getBoundingClientRect(); hero.hxT = ((e.clientX - r.left) / r.width - .5) * 2; });
+heroStage.addEventListener('pointerleave', () => hero.hxT = 0);
+
+const grid = document.getElementById('grid'), cards = [];
+SCENES.forEach((s, i) => {
+  const el = document.createElement('article');
+  el.className = 'card'; el.tabIndex = 0; el.dataset.tag = s.tag; el.setAttribute('role', 'button'); el.setAttribute('aria-label', `Open ${s.title}`);
+  el.innerHTML = `<div class="stage"><canvas></canvas><span class="tag">${s.tag === 'Zikir' ? 'Zikir & dua' : s.tag}</span><button class="replay" type="button">↻ Replay</button></div>
+    <div class="meta"><div class="row"><span class="n">${String(i + 1).padStart(2, '0')}</span><h3>${s.title}</h3><span class="ar" lang="ar">${s.ar}</span></div><p>${s.desc}</p></div>`;
+  grid.appendChild(el);
+  const cv = el.querySelector('canvas'), v = new Viewer(cv, s, { t0: i * 1.7 });
+  v.half = 1 + i % 2;
+  cv.__v = v; io.observe(cv); viewers.add(v); cards.push(el);
+  const st = el.querySelector('.stage');
+  st.addEventListener('pointermove', e => { const r = st.getBoundingClientRect(); v.hxT = ((e.clientX - r.left) / r.width - .5) * 2; });
+  st.addEventListener('pointerleave', () => v.hxT = 0);
+  el.querySelector('.replay').addEventListener('click', e => { e.stopPropagation(); v.replay(); });
+  el.addEventListener('click', () => openLb(i));
+  el.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openLb(i); } });
+});
+document.getElementById('statScenes').textContent = SCENES.length;
+
+const countEl = document.getElementById('count');
+function applyFilter(f) {
+  let c = 0;
+  cards.forEach(el => { const on = f === 'all' || el.dataset.tag === f; el.hidden = !on; c += on; });
+  countEl.textContent = `${c} / ${SCENES.length}`;
+}
+document.querySelectorAll('.chip').forEach(b => b.addEventListener('click', () => {
+  document.querySelectorAll('.chip').forEach(x => x.setAttribute('aria-pressed', x === b));
+  applyFilter(b.dataset.f);
+}));
+applyFilter('all');
+
+// lightbox
+const lb = document.getElementById('lb'), lbCv = document.getElementById('lbCanvas'), lbStage = document.getElementById('lbStage');
+let lbV = null;
+function openLb(i) {
+  const s = SCENES[i];
+  document.getElementById('lbN').textContent = `${String(i + 1).padStart(2, '0')} · ${s.tag === 'Zikir' ? 'Zikir & dua' : s.tag}`;
+  document.getElementById('lbAr').textContent = s.ar; document.getElementById('lbTitle').textContent = s.title; document.getElementById('lbDesc').textContent = s.desc;
+  lb.showModal();
+  if (lbV) viewers.delete(lbV);
+  lbV = new Viewer(lbCv, s); lbV.visible = true; lbV.replay(); viewers.add(lbV);
+  lbV.speed = +spd.value; document.getElementById('lbPause').textContent = 'Pause';
+}
+function closeLb() { if (lbV) { viewers.delete(lbV); lbV = null; } if (lb.open) lb.close(); }
+document.getElementById('lbClose').addEventListener('click', closeLb);
+lb.addEventListener('close', () => { if (lbV) { viewers.delete(lbV); lbV = null; } });
+lb.addEventListener('click', e => { if (e.target === lb) closeLb(); });
+const spd = document.getElementById('spd'), spdV = document.getElementById('spdV');
+spd.addEventListener('input', () => { spdV.textContent = (+spd.value).toFixed(1) + '×'; if (lbV) lbV.speed = +spd.value; });
+document.getElementById('lbReplay').addEventListener('click', () => lbV && lbV.replay());
+document.getElementById('lbPause').addEventListener('click', e => { if (!lbV) return; lbV.paused = !lbV.paused; e.target.textContent = lbV.paused ? 'Play' : 'Pause'; });
+document.getElementById('lbReset').addEventListener('click', () => { if (lbV) { lbV.dAz = 0; lbV.dEl = 0; } });
+let drag = null;
+lbStage.addEventListener('pointerdown', e => { drag = { x: e.clientX, y: e.clientY }; lbStage.setPointerCapture(e.pointerId); });
+lbStage.addEventListener('pointermove', e => {
+  if (!drag || !lbV) return;
+  lbV.dAz += (e.clientX - drag.x) * .008; lbV.dEl += (e.clientY - drag.y) * .005; drag = { x: e.clientX, y: e.clientY };
+});
+lbStage.addEventListener('pointerup', () => drag = null); lbStage.addEventListener('pointercancel', () => drag = null);
+
+// ink, density, theme
+const root = document.documentElement;
+const store = { get: k => { try { return localStorage.getItem(k); } catch { return null; } }, set: (k, v) => { try { localStorage.setItem(k, v); } catch {} } };
+function setInk(ink) {
+  root.dataset.ink = ink; store.set('motif-ink', ink);
+  document.querySelectorAll('.sw').forEach(s => s.setAttribute('aria-pressed', s.dataset.ink === ink));
+  readTheme();
+}
+document.querySelectorAll('.sw').forEach(s => s.addEventListener('click', () => setInk(s.dataset.ink)));
+document.querySelectorAll('.seg.density button').forEach(b => b.addEventListener('click', () => {
+  document.querySelectorAll('.seg.density button').forEach(x => x.setAttribute('aria-pressed', x === b));
+  DENSITY = +b.dataset.d; window.BaikParticles.setDensity(DENSITY); viewers.forEach(v => { v.build(); v.replay(); });
+}));
+document.getElementById('themeBtn').addEventListener('click', () => {
+  root.dataset.theme = root.dataset.theme === 'dark' ? 'light' : 'dark'; readTheme();
+});
+const savedInk = store.get('motif-ink');
+setInk(savedInk || 'blue');
+
+// grid cards draw on alternate frames (staggered); hero and lightbox every frame
+let frame = 0;
+function loop(now) {
+  frame++;
+  viewers.forEach(v => {
+    if (!v.visible) return;
+    if (v.half && (frame + v.half) % 2) return;
+    const dt = v.last ? Math.min(.1, (now - v.last) / 1000) : 0; v.last = now;
+    v.draw(now, dt);
+  });
+  requestAnimationFrame(loop);
+}
+requestAnimationFrame(loop);
+})();
+</script>
+
+</body>
+</html>

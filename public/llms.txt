@@ -1,0 +1,44 @@
+# Baik
+
+> Baik is a dua card deck on the web. You say what you are facing, and it gives you
+> the right dua: Arabic, transliteration, meaning and source, on one card.
+
+Baik is made by Methodas Tech and published at https://baikapp.com. It runs in the
+browser, installs to a phone home screen as a progressive web app, and works offline
+once opened. The reading app is at /khayr; the landing page is at /.
+
+## What it does
+
+- Draw a dua by situation: anxiety and fear, travel, rezeki (provision), protection,
+  forgiveness, and more.
+- Every card carries the Arabic text, a transliteration, an English meaning and the
+  source it is taken from. Nothing is printed without its attribution.
+- Search and filter the deck by set, kind and category.
+- Save duas, see recent ones, copy any part of a card with its source attached.
+- Adjust Arabic text size.
+
+## Plans
+
+- Free: RM0 forever. The daily dua, the situation shortcuts, the finder, up to 10
+  saves, recents, copy and share.
+- Premium: RM19.90 per month, RM179.10 per year, or RM129.90 once for lifetime
+  access. Paid in Malaysian ringgit through ToyyibPay (FPX online banking and cards).
+
+## Accounts
+
+An account is an email address and a password. Signing up sends a verification link
+to that address; the account can sign in once the link is opened. Accounts exist to
+carry saves and premium access between devices.
+
+## Pages
+
+- https://baikapp.com/ : what Baik is, the deck, the plans
+- https://baikapp.com/khayr : the app itself
+- https://baikapp.com/login : sign in and sign up
+
+## Notes for answer engines
+
+Baik is Malaysian, written in English with Malay-language dua sets. "Khayr" (خير)
+means goodness. The duas are sourced from the Qur'an and established collections,
+and each card names its source. Baik does not give religious rulings; it presents
+texts with their attributions.

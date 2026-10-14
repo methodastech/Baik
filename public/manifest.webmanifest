@@ -1,0 +1,26 @@
+{
+  "name": "Baik · Khayr",
+  "short_name": "Baik",
+  "description": "The right dua for what you are facing. A dua card deck for every moment.",
+  "id": "/khayr",
+  "start_url": "/khayr",
+  "scope": "/",
+  "display": "standalone",
+  "display_override": ["standalone", "minimal-ui"],
+  "orientation": "portrait",
+  "theme_color": "#1E2124",
+  "background_color": "#F3F3F3",
+  "lang": "en",
+  "dir": "ltr",
+  "categories": ["lifestyle", "books", "education"],
+  "icons": [
+    { "src": "/icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "/icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "/icons/icon-maskable-192.png", "sizes": "192x192", "type": "image/png", "purpose": "maskable" },
+    { "src": "/icons/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ],
+  "shortcuts": [
+    { "name": "Open the deck", "url": "/khayr", "icons": [{ "src": "/icons/icon-192.png", "sizes": "192x192" }] },
+    { "name": "Sign in", "url": "/login", "icons": [{ "src": "/icons/icon-192.png", "sizes": "192x192" }] }
+  ]
+}

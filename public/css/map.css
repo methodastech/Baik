@@ -1,0 +1,114 @@
+
+  /* The whole page keeps the flat ramp: white, super light grey, light grey, grey, ink.
+     Colour appears only on the marks, one hue per branch, the same rule as the deck. */
+  :root{--paper:#FFFFFF;--panel:#F3F3F3;--line:#DBDBDB;--soft:#6E6E6E;--ink:#1E2124}
+  *{margin:0;padding:0;box-sizing:border-box}
+  html,body{height:100%}
+  body{font-family:"Saira",system-ui,sans-serif;background:var(--paper);color:var(--ink);
+   -webkit-font-smoothing:antialiased;overflow:hidden;display:flex;flex-direction:column}
+
+  /* ---- the shared admin strip, verbatim grammar from the sibling pages ---- */
+  .bmws{background:var(--paper);color:var(--ink);border-bottom:1px solid var(--line);flex:none}
+  .bmws-in{display:flex;align-items:center;justify-content:space-between;padding:8px clamp(14px,3vw,30px);gap:12px;flex-wrap:wrap}
+  .bmws-crumb{display:flex;flex-direction:column;line-height:1.3;white-space:nowrap}
+  .bmws-crumb b{font-size:12.5px;font-weight:700;color:var(--ink);letter-spacing:.01em}
+  .bmws-crumb span{font-family:"JetBrains Mono",monospace;font-size:8.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--soft)}
+  .bmws-tabs{display:flex;align-items:center;border:1px solid var(--line);border-radius:11px;overflow:auto;max-width:100%;margin-left:auto;padding:3px;gap:3px;background:var(--panel)}
+  .bmws-tabs a{font-family:"JetBrains Mono",monospace;font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink);text-decoration:none;padding:7px 13px;border-radius:8px;white-space:nowrap;display:inline-flex;align-items:center;gap:7px;transition:background .25s,color .25s}
+  .bmws-tabs a i{font-style:normal;color:var(--ink);font-size:9px;font-weight:700}
+  .bmws-tabs a:hover{background:rgba(30,33,36,.06)}
+  .bmws-tabs a.on{background:var(--ink);color:var(--paper);font-weight:700}
+  .bmws-tabs a.on i{color:rgba(255,255,255,.66)}
+
+  /* ---- header band ---- */
+  .head{flex:none;display:flex;align-items:baseline;gap:14px;flex-wrap:wrap;
+   padding:14px clamp(14px,3vw,30px) 12px;border-bottom:1px solid var(--line)}
+  .head h1{font-family:"Space Grotesk",sans-serif;font-size:20px;font-weight:700;letter-spacing:-.01em}
+  .head .k{font-family:"JetBrains Mono",monospace;font-size:9px;letter-spacing:.18em;text-transform:uppercase;color:var(--soft)}
+  .head .spacer{margin-left:auto;display:flex;gap:6px;align-items:center}
+  .zbtn{width:32px;height:32px;border:1px solid var(--line);background:var(--paper);border-radius:9px;
+   font-family:"JetBrains Mono",monospace;font-size:14px;color:var(--ink);cursor:pointer;transition:background .15s}
+  .zbtn:hover{background:var(--panel)}
+  .zbtn.fit{width:auto;padding:0 12px;font-size:10px;letter-spacing:.1em;text-transform:uppercase}
+  .legend{display:flex;gap:5px;flex-wrap:wrap;align-items:center}
+  .legend button{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line);
+   background:var(--paper);border-radius:999px;padding:5px 11px;font-family:"Saira",sans-serif;
+   font-size:10.5px;font-weight:600;color:var(--ink);cursor:pointer;transition:background .15s,border-color .15s}
+  .legend button i{font-style:normal;width:7px;height:7px;border-radius:50%;background:var(--c);flex:none}
+  .legend button:hover{background:var(--panel);border-color:var(--c)}
+  /* wires light in their branch hue when the branch is under the pointer */
+  #wires line.hot{stroke:var(--hue);stroke-width:1.5}
+  #wires line.stem.hot{stroke-width:2.2}
+  #world.anim{transition:transform .55s cubic-bezier(.16,1,.3,1)}
+  @media(prefers-reduced-motion:reduce){#world.anim{transition:none}}
+  /* the minimap: the whole plane at a glance, the viewport as a hairline box */
+  #mini{position:absolute;right:clamp(14px,3vw,30px);bottom:62px;z-index:5;width:150px;height:112px;
+   border:1px solid var(--line);border-radius:10px;background:rgba(255,255,255,.92);cursor:pointer;overflow:hidden}
+  #mini .mdot{position:absolute;width:3px;height:3px;border-radius:50%;background:var(--c,#6E6E6E)}
+  #mini .mcore{width:6px;height:6px;background:var(--ink)}
+  #mini #mview{position:absolute;border:1.5px solid var(--ink);border-radius:2px;background:rgba(30,33,36,.05)}
+  @media(max-width:700px){#mini{display:none}}
+
+  /* ---- the stage: a pannable, zoomable plane, centred on the mark ---- */
+  #stage{flex:1;position:relative;overflow:hidden;background:var(--paper);cursor:grab;touch-action:none}
+  #stage.drag{cursor:grabbing}
+  #world{position:absolute;left:0;top:0;transform-origin:0 0}
+  #wires{position:absolute;left:0;top:0;overflow:visible;pointer-events:none}
+  #wires line{stroke:var(--line);stroke-width:1}
+  #wires line.stem{stroke-width:1.5}
+
+  .node{position:absolute;transform:translate(-50%,-50%)}
+  /* the centre: the product itself */
+  .n-core{width:150px;height:150px;border-radius:50%;border:1px solid var(--ink);background:var(--paper);
+   display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px}
+  .n-core .wm{font-family:"Space Grotesk",sans-serif;font-weight:700;font-size:32px;letter-spacing:-.02em}
+  .n-core .wm i{font-style:normal;position:relative}
+  .n-core .sub{font-family:"JetBrains Mono",monospace;font-size:8px;letter-spacing:.2em;text-transform:uppercase;color:var(--soft)}
+  .n-core .cnt{font-family:"JetBrains Mono",monospace;font-size:9.5px;color:var(--ink);border:1px solid var(--line);border-radius:999px;padding:2px 8px;margin-top:3px}
+
+  /* a domain: one branch of the product */
+  .n-dom{min-width:150px;max-width:190px;border:1px solid var(--line);border-top:3px solid var(--c,#1E2124);
+   border-radius:4px 4px 12px 12px;background:var(--paper);padding:10px 13px 11px;text-align:left}
+  .n-dom .ic{width:17px;height:17px;color:var(--c);margin-bottom:6px}
+  .n-dom .ic svg{width:100%;height:100%;display:block}
+  .n-dom b{font-family:"Space Grotesk",sans-serif;font-size:13.5px;font-weight:700;display:block;line-height:1.15}
+  .n-dom small{font-family:"JetBrains Mono",monospace;font-size:8.2px;letter-spacing:.14em;text-transform:uppercase;color:var(--soft);display:block;margin-top:4px}
+
+  /* a leaf: one fact of the product */
+  .n-leaf{min-width:120px;max-width:168px;border:1px solid var(--line);border-radius:10px;background:var(--paper);
+   padding:8px 11px;text-align:left;cursor:pointer;transition:background .15s,border-color .15s}
+  .n-leaf:hover{background:var(--panel);border-color:var(--c,#6E6E6E)}
+  .n-leaf:focus-visible{outline:2px solid var(--ink);outline-offset:2px;background:var(--panel)}
+  .n-leaf b{font-family:"Saira",sans-serif;font-size:11.6px;font-weight:600;display:block;line-height:1.3}
+  .n-leaf small{font-size:10px;color:var(--soft);display:block;line-height:1.4;margin-top:1px}
+  .n-leaf .dot{display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--c,#6E6E6E);margin-right:5px;vertical-align:1px}
+  .n-leaf.done b::after{content:"✓";font-size:9.5px;color:#2E7D5B;margin-left:5px}
+
+  /* the chip cloud for the thirteen needs */
+  .n-chips{max-width:230px;display:flex;flex-wrap:wrap;gap:4px;justify-content:center}
+  .n-chips span{display:inline-flex;align-items:center;gap:4px;border:1px solid var(--line);border-radius:999px;
+   background:var(--paper);padding:2.5px 8px;font-size:9.6px;font-weight:600;color:var(--ink);white-space:nowrap}
+  .n-chips span i{font-style:normal;width:6px;height:6px;border-radius:50%;background:var(--c);flex:none}
+  .n-chips span.empty{color:var(--soft);border-style:dashed}
+
+  /* the detail rail: what a clicked leaf has to say */
+  #detail{position:absolute;left:clamp(14px,3vw,30px);bottom:16px;z-index:5;width:min(330px,calc(100vw - 40px));
+   border:1px solid var(--line);border-left:3px solid var(--dc,#1E2124);border-radius:4px 12px 12px 4px;
+   background:var(--paper);padding:12px 14px;display:none}
+  #detail.on{display:block}
+  #detail .dk{font-family:"JetBrains Mono",monospace;font-size:8.4px;letter-spacing:.16em;text-transform:uppercase;color:var(--dc,#6E6E6E)}
+  #detail b{font-family:"Space Grotesk",sans-serif;font-size:14px;display:block;margin:3px 0 4px}
+  #detail p{font-size:11.8px;line-height:1.55;color:var(--soft)}
+  #detail .dx{position:absolute;top:8px;right:8px;width:24px;height:24px;border:1px solid var(--line);
+   border-radius:7px;background:var(--paper);color:var(--soft);font-size:13px;line-height:1;cursor:pointer}
+  #detail .dx:hover{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+
+  /* the honesty line */
+  #foot{position:absolute;right:clamp(14px,3vw,30px);bottom:16px;z-index:5;
+   font-family:"JetBrains Mono",monospace;font-size:8.4px;letter-spacing:.13em;text-transform:uppercase;color:var(--soft);text-align:right}
+
+  /* entrance: opacity and a settle, nothing more */
+  @media(prefers-reduced-motion:no-preference){
+   .node{animation:in .5s cubic-bezier(.16,1,.3,1) both;animation-delay:var(--d,0s)}
+   @keyframes in{from{opacity:0;transform:translate(-50%,-46%)}to{opacity:1;transform:translate(-50%,-50%)}}
+  }

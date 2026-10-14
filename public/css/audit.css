@@ -1,0 +1,51 @@
+
+  :root{--paper:#FFFFFF;--panel:#F3F3F3;--line:#DBDBDB;--soft:#6E6E6E;--ink:#1E2124;
+    --lift:0 1px 2px rgba(30,33,36,.05),0 10px 24px -14px rgba(30,33,36,.16);}
+  *{box-sizing:border-box;margin:0;padding:0}html{scroll-behavior:smooth}
+  body{font-family:"Inter",system-ui,sans-serif;background:var(--paper);color:var(--ink);font-size:16px;line-height:1.62;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+  .wrap{max-width:1120px;margin:0 auto;padding:0 22px}.mono{font-family:"JetBrains Mono",monospace}
+  .bmws{background:var(--paper);color:var(--ink);position:sticky;top:0;z-index:900;border-bottom:1px solid var(--line)}
+  .bmws-in{display:flex;align-items:center;justify-content:space-between;padding:9px 22px;gap:12px;flex-wrap:wrap}
+  .bmws-crumb{display:flex;flex-direction:column;line-height:1.3;white-space:nowrap}
+  .bmws-crumb b{font-size:13px;font-weight:700;color:var(--ink);letter-spacing:.01em}
+  .bmws-crumb span{font-family:"JetBrains Mono",monospace;font-size:8.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--soft)}
+  .bmws-tabs{display:flex;align-items:center;border:1px solid var(--line);border-radius:11px;overflow:auto;max-width:100%;margin-left:auto;padding:3px;gap:3px;background:var(--panel)}
+  .bmws-tabs a{font-family:"JetBrains Mono",monospace;font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink);text-decoration:none;padding:7px 13px;border-radius:8px;white-space:nowrap;display:inline-flex;align-items:center;gap:7px;transition:background .25s,color .25s}
+  .bmws-tabs a i{font-style:normal;color:var(--ink);font-size:9px;font-weight:700}
+  .bmws-tabs a:hover{background:rgba(30,33,36,.06);color:var(--ink)}
+  .bmws-tabs a.on{background:var(--ink);color:var(--paper);font-weight:700}
+  .bmws-tabs a.on i{color:var(--line)}
+  .nav{border-bottom:1px solid var(--line);background:var(--panel);position:sticky;top:48px;z-index:49;overflow-x:auto}
+  .nav-in{display:flex;gap:3px;padding:8px 22px;white-space:nowrap;max-width:1120px;margin:0 auto}
+  .nav a{font-family:"JetBrains Mono",monospace;font-size:11px;letter-spacing:.04em;text-transform:uppercase;color:var(--ink);text-decoration:none;padding:6px 10px;border-radius:8px}
+  .nav a:hover{color:var(--ink);background:rgba(30,33,36,.06)}.nav .ch-no{color:var(--ink);font-weight:700;margin-right:6px}
+  .eyebrow{font-family:"JetBrains Mono",monospace;font-size:12px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink);display:inline-flex;align-items:center;gap:10px;font-weight:600}
+  .hero{padding:50px 0 8px}.hero h1{font-family:"Fraunces",serif;font-weight:500;font-size:clamp(36px,5.6vw,62px);line-height:1.03;letter-spacing:-.02em;margin:18px 0 0}
+  .hero h1 em{font-style:italic;color:var(--ink)}
+  .hero .lede{font-size:clamp(17px,2vw,20px);color:var(--soft);max-width:66ch;margin:20px 0 0}
+  .vrow{display:flex;flex-wrap:wrap;gap:10px;margin-top:24px}.vchip{background:var(--panel);border:1px solid var(--line);border-radius:999px;padding:8px 15px;font-size:13px;color:var(--ink)}
+  .execsum{margin-top:32px;border:1px solid var(--line);border-radius:16px;background:var(--panel);padding:26px 28px}
+  section{padding:32px 0}
+  .chapdiv{display:flex;align-items:baseline;gap:18px;padding:42px 0 4px;border-top:1px solid var(--line);margin-top:10px}
+  .cd-no{font-family:"Fraunces",serif;font-weight:600;font-size:38px;color:var(--ink);line-height:1}
+  .cd-h{font-family:"Fraunces",serif;font-weight:500;font-size:27px;letter-spacing:-.01em}.cd-sub{font-size:15px;color:var(--soft);margin-top:5px}
+  h2{font-family:"Fraunces",serif;font-weight:500;font-size:clamp(25px,3.6vw,37px);line-height:1.08;letter-spacing:-.015em;margin:13px 0 0;max-width:30ch}
+  .sec-intro{font-size:16.5px;color:var(--soft);max-width:72ch;margin:15px 0 0}.sec-intro b,.sec-intro strong{color:var(--ink)}.sec-intro em{color:var(--ink)}.execsum .sec-intro{color:var(--ink)}
+  .grid{display:grid;gap:16px;margin-top:22px}.g2{grid-template-columns:repeat(auto-fit,minmax(290px,1fr))}.g3{grid-template-columns:repeat(auto-fit,minmax(225px,1fr))}
+  .card{background:var(--paper);border:1px solid var(--line);border-radius:14px;padding:20px 21px;box-shadow:var(--lift)}
+  .card .tag{font-family:"JetBrains Mono",monospace;font-size:10px;letter-spacing:.05em;text-transform:uppercase;color:var(--ink);font-weight:700}
+  .card h3{font-family:"Fraunces",serif;font-weight:500;font-size:19px;margin-top:8px}.card p{font-size:14px;color:var(--soft);margin-top:9px;line-height:1.55}.card p b{color:var(--ink)}
+  .stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:14px;margin-top:22px}
+  .stat{border:1px solid var(--line);border-radius:13px;background:var(--paper);padding:16px 18px;box-shadow:var(--lift)}
+  .stat .num{font-family:"Fraunces",serif;font-size:28px;font-weight:500;color:var(--ink);line-height:1.05}
+  .stat .lab{font-size:13px;font-weight:600;margin-top:8px}.stat .s{font-size:12px;color:var(--soft);margin-top:3px}
+  table{width:100%;border-collapse:separate;border-spacing:0;margin-top:18px;font-size:14px;background:var(--paper);border:1px solid var(--line);border-radius:12px;overflow:hidden;box-shadow:var(--lift)}
+  th,td{text-align:left;padding:11px 14px;border-bottom:1px solid var(--line);vertical-align:top}
+  thead th{font-family:"JetBrains Mono",monospace;font-size:10.5px;letter-spacing:.05em;text-transform:uppercase;color:var(--ink);background:var(--panel)}
+  tr:last-child td{border-bottom:none}td.dim{font-weight:600;white-space:nowrap}
+  .vtag{font-family:"JetBrains Mono",monospace;font-size:9.5px;text-transform:uppercase;letter-spacing:.04em;padding:3px 8px;border-radius:6px;font-weight:700;white-space:nowrap}
+  .vtag.hi{background:var(--panel);color:var(--ink)}.vtag.lo{background:var(--paper);color:var(--soft)}.vtag.bad{background:var(--ink);color:var(--paper)}
+  .pin{margin-top:22px;border-left:3px solid var(--soft);background:var(--panel);padding:15px 19px;border-radius:0 12px 12px 0;font-size:15px;display:block}
+  .pin b{color:var(--ink)}.pin.warn{border-left-color:var(--ink)}
+  .tscroll{overflow-x:auto}
+  footer{padding:34px 0 70px;color:var(--soft);font-size:12px;font-family:"JetBrains Mono",monospace;text-transform:uppercase;letter-spacing:.05em;border-top:1px solid var(--line);margin-top:30px}

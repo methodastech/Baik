@@ -1,0 +1,95 @@
+---
+import Head from "../layouts/Head.astro";
+---
+<!doctype html>
+<html lang="en">
+<head>
+<link rel="stylesheet" href="/css/login.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Set a new password · Baik</title>
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#F3F3F3">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Saira:wght@400;500;600;700&family=JetBrains+Mono:wght@500&family=Amiri:wght@400;700&display=swap" rel="stylesheet">
+<Head />
+</head>
+<body>
+<header class="top"><a class="logo" href="/login"><span class="baik-logo" role="img" aria-label="Baik"></span></a></header>
+<main>
+  <section class="card" aria-labelledby="h">
+    <div class="bis" lang="ar">بِسْمِ ٱللَّٰهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ</div>
+    <div class="k" id="kicker">New password</div>
+    <h1 id="h">Set a new password</h1>
+    <p class="p" id="lede">Choose a password you have not used on Baik before.</p>
+    <div class="msg" id="msg" role="alert"></div>
+    <form id="form" novalidate>
+      <div class="f">
+        <label for="pw">New password</label>
+        <div class="in">
+          <input id="pw" name="password" type="password" autocomplete="new-password" minlength="8" maxlength="128" required>
+          <button type="button" class="eye" id="eye" aria-controls="pw" aria-pressed="false">Show</button>
+        </div>
+        <div class="hint">At least 8 characters.</div>
+      </div>
+      <button class="go" id="go" type="submit">Set password and sign in</button>
+    </form>
+    <p class="swap"><a href="/login">Back to sign in</a></p>
+  </section>
+</main>
+<footer>© Baik · The right dua for what you are facing</footer>
+<script is:inline>
+(function () {
+  var $ = function (id) { return document.getElementById(id); };
+  var token = new URLSearchParams(location.search).get('token') || '';
+  var busy = false;
+
+  function say(text, ok) { var m = $('msg'); m.textContent = text || ''; m.className = 'msg' + (text ? ok ? ' ok' : ' bad' : ''); }
+
+  /* No token means the link was mistyped or the address was opened by hand.
+     Saying so up front beats letting someone type a password that cannot be saved. */
+  if (!token) {
+    $('form').hidden = true;
+    say('This page opens from the link in your reset email. Ask for a new one from the sign-in page.');
+  } else {
+    $('pw').focus();
+  }
+
+  $('eye').addEventListener('click', function () {
+    var show = $('pw').type === 'password';
+    $('pw').type = show ? 'text' : 'password';
+    this.textContent = show ? 'Hide' : 'Show';
+    this.setAttribute('aria-pressed', show);
+  });
+
+  $('form').addEventListener('submit', function (e) {
+    e.preventDefault();
+    if (busy) return;
+    if ($('pw').value.length < 8) { $('pw').setAttribute('aria-invalid', 'true'); $('pw').focus(); say('Your password needs at least 8 characters.'); return; }
+    $('pw').removeAttribute('aria-invalid');
+    busy = true; say(''); $('go').disabled = true; $('go').textContent = 'Saving…';
+    fetch('/api/auth/reset', {
+      method: 'POST', credentials: 'same-origin',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ token: token, password: $('pw').value })
+    }).then(function (r) {
+      return r.json().catch(function () { return {}; }).then(function (d) { return { ok: r.ok, d: d }; });
+    }).then(function (x) {
+      if (x.ok) {
+        /* reset signs you straight in, so there is no second password to type */
+        try { localStorage.setItem('baik.view', JSON.stringify('grid')); } catch (err) {}
+        location.replace('/khayr');
+        return;
+      }
+      say((x.d && x.d.error) || 'That did not work. Please ask for a new link.');
+    }).catch(function () {
+      say('Could not reach Baik. Check your connection and try again.');
+    }).then(function () {
+      busy = false; $('go').disabled = false; $('go').textContent = 'Set password and sign in';
+    });
+  });
+})();
+</script>
+</body>
+</html>

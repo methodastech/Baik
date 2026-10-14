@@ -1,7 +1,0 @@
-User-agent: *
-Allow: /
-
-# The Codex is the internal system reference, not a page for readers.
-Disallow: /Codex.html
-
-Sitemap: /sitemap.xml

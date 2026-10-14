@@ -1,0 +1,44 @@
+# Baik · baikapp.com
+
+User-agent: *
+Allow: /
+
+# Internal references, not pages for readers.
+Disallow: /codex
+Disallow: /audit
+Disallow: /plan
+Disallow: /competitors
+Disallow: /iso-icons
+Disallow: /card-back
+Disallow: /card-tcg
+Disallow: /animation-demo
+
+# Answer and generative engines are welcome: being quotable is the point.
+User-agent: GPTBot
+Allow: /
+User-agent: OAI-SearchBot
+Allow: /
+User-agent: ChatGPT-User
+Allow: /
+User-agent: ClaudeBot
+Allow: /
+User-agent: Claude-Web
+Allow: /
+User-agent: anthropic-ai
+Allow: /
+User-agent: PerplexityBot
+Allow: /
+User-agent: Google-Extended
+Allow: /
+User-agent: Applebot-Extended
+Allow: /
+User-agent: CCBot
+Allow: /
+User-agent: Bytespider
+Allow: /
+User-agent: Amazonbot
+Allow: /
+User-agent: meta-externalagent
+Allow: /
+
+Sitemap: https://baikapp.com/sitemap-index.xml

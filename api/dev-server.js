@@ -15,12 +15,14 @@ try {
 } catch (e) { /* no api/.env: run without payments */ }
 const auth = require('./src/auth');
 const pay = require('./src/pay');
-const HANDLERS = Object.assign({}, auth, { payCreate: auth.helpers.wrap(pay.create), payCallback: auth.helpers.wrap(pay.callback), payStatus: auth.helpers.wrap(pay.status) });
+const HANDLERS = Object.assign({}, auth, { payCreate: auth.helpers.wrap(pay.create), payCallback: auth.helpers.wrap(pay.callback), payStatus: auth.helpers.wrap(pay.status), payOffer: auth.helpers.wrap(pay.offer) });
 
-const ROOT = path.resolve(__dirname, '..');
+// Astro builds into dist/; serve that when it exists so local matches production.
+const BUILT = path.resolve(__dirname, '..', 'dist');
+const ROOT = fs.existsSync(BUILT) ? BUILT : path.resolve(__dirname, '..');
 const PORT = +process.env.PORT || 4280;
 const TYPES = { '.html': 'text/html; charset=utf-8', '.js': 'text/javascript', '.mjs': 'text/javascript', '.css': 'text/css', '.json': 'application/json', '.svg': 'image/svg+xml', '.png': 'image/png', '.jpg': 'image/jpeg', '.webp': 'image/webp', '.woff2': 'font/woff2', '.txt': 'text/plain', '.xml': 'application/xml', '.mp3': 'audio/mpeg' };
-const ROUTES = { 'POST /api/pay/create': 'payCreate', 'POST /api/pay/callback': 'payCallback', 'GET /api/pay/status': 'payStatus', 'GET /api/sync': 'sync', 'PUT /api/sync': 'sync', 'POST /api/auth/register': 'register', 'POST /api/auth/login': 'login', 'POST /api/auth/logout': 'logout', 'GET /api/auth/me': 'me' };
+const ROUTES = { 'POST /api/pay/create': 'payCreate', 'POST /api/pay/callback': 'payCallback', 'GET /api/pay/status': 'payStatus', 'GET /api/pay/offer': 'payOffer', 'GET /api/sync': 'sync', 'PUT /api/sync': 'sync', 'POST /api/auth/register': 'register', 'POST /api/auth/login': 'login', 'POST /api/auth/logout': 'logout', 'GET /api/auth/me': 'me', 'POST /api/auth/resend': 'resend', 'GET /api/auth/verify': 'verify', 'POST /api/auth/forgot': 'forgot', 'POST /api/auth/reset': 'reset', 'POST /api/auth/trial': 'trial' };
 
 http.createServer(async (req, res) => {
   const url = new URL(req.url, `http://${req.headers.host}`);
@@ -40,7 +42,10 @@ http.createServer(async (req, res) => {
   let file = path.join(ROOT, decodeURIComponent(url.pathname));
   if (!file.startsWith(ROOT) || file.startsWith(path.join(ROOT, 'api'))) { res.writeHead(403); return res.end(); }
   if (fs.existsSync(file) && fs.statSync(file).isDirectory()) file = path.join(file, 'index.html');
-  if (!fs.existsSync(file)) file = path.join(ROOT, 'index.html'); // same fallback as staticwebapp.config.json
-  res.writeHead(200, { 'Content-Type': TYPES[path.extname(file).toLowerCase()] || 'application/octet-stream', 'Cache-Control': 'no-cache' });
+  // Azure serves /khayr from khayr.html; do the same so local URLs match production.
+  if (!fs.existsSync(file) && fs.existsSync(file + '.html')) file += '.html';
+  let status = 200;
+  if (!fs.existsSync(file)) { file = path.join(ROOT, '404.html'); status = 404; } // same as staticwebapp.config.json
+  res.writeHead(status, { 'Content-Type': TYPES[path.extname(file).toLowerCase()] || 'application/octet-stream', 'Cache-Control': 'no-cache' });
   fs.createReadStream(file).pipe(res);
 }).listen(PORT, () => console.log(`Baik local server: http://localhost:${PORT}  (accounts saved in api/.data/users.json)`));

@@ -13,8 +13,8 @@ function tableStore() {
   const t = TableClient.fromConnectionString(conn, 'baikusers');
   let ready = null;
   const init = () => ready || (ready = t.createTable().catch(e => { ready = null; if (e.statusCode !== 409) throw e; }));
-  const toEnt = u => ({ partitionKey: 'user', rowKey: key(u.email), email: u.email, name: u.name, hash: u.hash, createdAt: u.createdAt, failed: u.failed || 0, lockUntil: u.lockUntil || 0, premiumPlan: u.premiumPlan || '', premiumUntil: u.premiumUntil || 0, premiumLife: !!u.premiumLife });
-  const fromEnt = e => ({ email: e.email, name: e.name, hash: e.hash, createdAt: e.createdAt, failed: e.failed || 0, lockUntil: Number(e.lockUntil) || 0, premiumPlan: e.premiumPlan || '', premiumUntil: Number(e.premiumUntil) || 0, premiumLife: !!e.premiumLife });
+  const toEnt = u => ({ partitionKey: 'user', rowKey: key(u.email), email: u.email, name: u.name, hash: u.hash, createdAt: u.createdAt, failed: u.failed || 0, lockUntil: u.lockUntil || 0, premiumPlan: u.premiumPlan || '', premiumUntil: u.premiumUntil || 0, premiumLife: !!u.premiumLife, ...(u.verified === undefined ? {} : { verified: !!u.verified }), trialUntil: u.trialUntil || 0, trialStarted: u.trialStarted || '', lastMailAt: u.lastMailAt || 0 });
+  const fromEnt = e => ({ email: e.email, name: e.name, hash: e.hash, createdAt: e.createdAt, failed: e.failed || 0, lockUntil: Number(e.lockUntil) || 0, premiumPlan: e.premiumPlan || '', premiumUntil: Number(e.premiumUntil) || 0, premiumLife: !!e.premiumLife, ...(e.verified === undefined ? {} : { verified: !!e.verified }), trialUntil: Number(e.trialUntil) || 0, trialStarted: e.trialStarted || '', lastMailAt: Number(e.lastMailAt) || 0 });
   return {
     async get(email) {
       await init();
@@ -34,6 +34,29 @@ function tableStore() {
       catch (e) { if (e.statusCode === 404) return null; throw e; }
     },
     async putOrder(o) { await init(); await t.upsertEntity({ partitionKey: 'order', rowKey: key(o.id), email: o.email, status: o.status, data: JSON.stringify(o) }, 'Replace'); },
+    /* How many founding seats have been taken. One row, read often and written
+       rarely. The write uses the row's etag so two people paying at the same
+       moment cannot both read 998 and both write 999. */
+    async foundingCount() {
+      await init();
+      try { const e = await t.getEntity('meta', 'founding'); return Number(e.n) || 0; }
+      catch (e) { if (e.statusCode === 404) return 0; throw e; }
+    },
+    async bumpFounding() {
+      await init();
+      for (let attempt = 0; attempt < 5; attempt++) {
+        try {
+          const e = await t.getEntity('meta', 'founding');
+          await t.updateEntity({ partitionKey: 'meta', rowKey: 'founding', n: (Number(e.n) || 0) + 1 }, 'Merge', { etag: e.etag });
+          return;
+        } catch (err) {
+          if (err.statusCode === 404) {
+            try { await t.createEntity({ partitionKey: 'meta', rowKey: 'founding', n: 1 }); return; }
+            catch (e2) { if (e2.statusCode !== 409) throw e2; }   // someone else created it: read again
+          } else if (err.statusCode !== 412) throw err;           // 412: etag moved, read again
+        }
+      }
+    },
     // synced app data: one entity per user, the JSON split over p0..pN (a string property holds at most 32K chars)
     async getBlob(email) {
       await init();
@@ -57,6 +80,8 @@ function fileStore() {
     async get(email) { return read()[key(email)] || null; },
     async create(u) { const all = read(); if (all[key(u.email)]) return false; all[key(u.email)] = u; write(all); return true; },
     async update(u) { const all = read(); all[key(u.email)] = u; write(all); },
+    async foundingCount() { return read()._founding || 0; },
+    async bumpFounding() { const all = read(); all._founding = (all._founding || 0) + 1; write(all); },
     async getOrder(id) { return (read()._orders || {})[id] || null; },
     async putOrder(o) { const all = read(); (all._orders = all._orders || {})[o.id] = o; write(all); },
     async getBlob(email) { const all = read(); return (all._sync || {})[key(email)] || null; },

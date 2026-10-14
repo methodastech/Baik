@@ -13,7 +13,16 @@ const PLANS = {
   month: { label: 'Monthly', cents: 1990, days: 30 },
   annual: { label: 'Annual', cents: 17910, days: 365 },
   life: { label: 'Lifetime', cents: 35820, days: null },
+  /* The launch offer the Free vs Premium table promises: lifetime access at a
+     lower price, for the first FOUNDING_SEATS people who actually pay. */
+  founding: { label: 'Founding Member', cents: 12990, days: null },
 };
+const FOUNDING_SEATS = 1000;
+
+/* Seats are counted from paid orders, not from bills created, so an abandoned
+   checkout never holds one. Two people paying at the same instant could take the
+   same last seat; one extra founding member is a better outcome than a lost sale. */
+async function foundingLeft() { return Math.max(0, FOUNDING_SEATS - await store.foundingCount()); }
 
 function config() {
   const secret = process.env.TOYYIBPAY_SECRET, category = process.env.TOYYIBPAY_CATEGORY;
@@ -44,7 +53,11 @@ async function create(req) {
   if (!u) throw httpError(401, 'Please sign in again.');
   const b = await readJson(req);
   const plan = PLANS[b.plan];
-  if (!plan) throw httpError(400, 'Choose Monthly, Annual or Lifetime.');
+  if (!plan) throw httpError(400, 'Choose Monthly, Annual, Lifetime or Founding Member.');
+  /* checked before the bill exists, so nobody pays for a seat that has gone */
+  if (b.plan === 'founding' && !(await foundingLeft())) {
+    throw httpError(409, 'All 1,000 Founding Member places have been taken. Lifetime access is still available.');
+  }
   // ToyyibPay refuses a bill without the payer's phone number
   const phone = String(b.phone || '').replace(/[^\d+]/g, '').slice(0, 15);
   if (phone.replace(/\D/g, '').length < 9) throw httpError(400, 'Please enter your phone number. ToyyibPay needs it for the receipt.');
@@ -56,7 +69,7 @@ async function create(req) {
     billName: clean('Baik Premium ' + plan.label, 30),
     billDescription: clean('Baik Premium ' + plan.label + (plan.days ? ' ' + plan.days + ' days' : ' lifetime') + ' order ' + id, 100),
     billPriceSetting: '1', billPayorInfo: '1', billAmount: String(plan.cents),
-    billReturnUrl: site + '/Khayr.html?pay=return&order=' + id,
+    billReturnUrl: site + '/khayr?pay=return&order=' + id,
     billCallbackUrl: site + '/api/pay/callback',
     billExternalReferenceNo: id,
     billTo: u.name, billEmail: u.email, billPhone: phone,
@@ -99,8 +112,20 @@ async function markPaid(order, tx) {
     else u.premiumUntil = Math.max(Date.now(), u.premiumUntil || 0) + plan.days * 864e5;   // renewing early adds on
     u.premiumPlan = u.premiumLife ? 'life' : order.plan;
     await store.update(u);
+    if (order.plan === 'founding') await store.bumpFounding();
   }
   return order;
+}
+
+/* What the premium sheet asks before it prints a price. Public on purpose: it
+   says only how many founding places are left, which the offer itself advertises. */
+async function offer() {
+  const left = await foundingLeft();
+  return {
+    status: 200,
+    jsonBody: { founding: { left, seats: FOUNDING_SEATS, amount: (PLANS.founding.cents / 100).toFixed(2) } },
+    headers: { 'Cache-Control': 'no-store' },
+  };
 }
 
 async function callback(req) {
@@ -125,4 +150,4 @@ async function status(req) {
   };
 }
 
-module.exports = { create, callback, status, PLANS };
+module.exports = { create, callback, status, PLANS, offer };

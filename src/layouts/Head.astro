@@ -1,0 +1,28 @@
+---
+/**
+ * Everything the original pages did not carry: install metadata, the canonical
+ * link, and the machine-readable layer that answer engines read. Page-specific
+ * title, description and Open Graph tags stay in each page's own head, exactly
+ * as they were authored.
+ */
+const site = "https://baikapp.com";
+const canonical = new URL(Astro.url.pathname, site).href.replace(/\/$/, "") || site;
+---
+<link rel="canonical" href={canonical} />
+
+<link rel="manifest" href="/manifest.webmanifest" />
+<link rel="apple-touch-icon" href="/icons/icon-180.png" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+<meta name="apple-mobile-web-app-title" content="Baik" />
+<meta name="mobile-web-app-capable" content="yes" />
+<meta name="application-name" content="Baik" />
+<meta name="format-detection" content="telephone=no" />
+
+<script is:inline>
+  if ('serviceWorker' in navigator) {
+    addEventListener('load', function () {
+      navigator.serviceWorker.register('/sw.js').catch(function () {});
+    });
+  }
+</script>

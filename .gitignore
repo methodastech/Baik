@@ -38,3 +38,7 @@ _cmp*.html
 Thumbs.db
 desktop.ini
 *.swp
+
+# ---- build output, rebuilt by CI on every deploy ----
+dist/
+.astro/
