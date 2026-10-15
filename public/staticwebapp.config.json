@@ -9,7 +9,7 @@
     "X-Content-Type-Options": "nosniff",
     "Referrer-Policy": "strict-origin-when-cross-origin",
     "X-Frame-Options": "SAMEORIGIN",
-    "Permissions-Policy": "geolocation=(), microphone=(), camera=(), interest-cohort=()"
+    "Permissions-Policy": "geolocation=(self), camera=(self), microphone=(), interest-cohort=()"
   },
   "mimeTypes": {
     ".webp": "image/webp",
