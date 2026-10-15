@@ -140,7 +140,7 @@ function start() {
   let par = 0, parTo = 0, W = 0, H = 0;
   function frame() {
     const a = W / H, v = THREE.MathUtils.degToRad(camera.fov / 2);
-    const want = THREE.MathUtils.clamp(a * 6.8, 7.2, 13);                // world width visible across the gap
+    const want = THREE.MathUtils.clamp(W / 56, 7.2, 13);                 // world width across: about 56px a bead on a phone
     const d = want / 2 / (Math.tan(v) * a), el = THREE.MathUtils.degToRad(42);
     camera.aspect = a;
     camera.position.set(look.x + par * 0.6, look.y + Math.sin(el) * d, look.z + Math.cos(el) * d);

@@ -1,0 +1,103 @@
+---
+/* Internal: three card loading screens side by side (public/js/loaders-cards.js, three.js). Each
+   tile runs live; "Open full screen" shows it as a visitor would meet it, where "Page ready" lifts a
+   card toward you, turns it over, and hands over to the page. Listed under Admin in the More menu. */
+const LOADERS = [
+  { k: 'draw', n: '01', t: 'The Draw', d: 'One Baik card floating in soft studio light, turning a few degrees as the light slides across its glossy back.' },
+  { k: 'fan', n: '02', t: 'The Fan', d: 'The deck opens into a hand of cards like a slow breath, holds a moment, and closes again.' },
+  { k: 'cut', n: '03', t: 'The Cut', d: 'A squared deck seen from above, cut by hand: the top half slides out, the bottom rises, and they swap.' },
+];
+---
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>Loading screens · Baik internal</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Saira:ital,wght@0,400;0,500;0,600;1,400&family=Space+Grotesk:wght@600;700&family=JetBrains+Mono:wght@500&family=Scheherazade+New:wght@600&display=swap" rel="stylesheet">
+<style is:global>
+ *{box-sizing:border-box;margin:0;padding:0}
+ body{background:#ECECEA;color:#1E2124;font-family:'Saira',sans-serif;-webkit-font-smoothing:antialiased;}
+ .hd{max-width:1240px;margin:0 auto;padding:40px 24px 8px;}
+ .k{font:500 10.5px 'JetBrains Mono',monospace;letter-spacing:.18em;text-transform:uppercase;color:#8A6D1E;}
+ h1{font:700 clamp(28px,4vw,40px) 'Space Grotesk',sans-serif;letter-spacing:-.02em;margin:8px 0 8px;}
+ .hd p{max-width:62ch;color:#4A4D50;line-height:1.55;font-size:15px;}
+ .grid{max-width:1240px;margin:0 auto;padding:24px 24px 64px;display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:22px;}
+ .tile{background:#fff;border-radius:20px;overflow:hidden;box-shadow:0 1px 2px rgba(30,33,36,.06),0 18px 40px -26px rgba(30,33,36,.35);display:flex;flex-direction:column;}
+ .stage,.full{background:radial-gradient(120% 90% at 50% 38%,#FBFBF9 0%,#F1F1EE 55%,#E4E4E0 100%);}
+ .stage{position:relative;aspect-ratio:4/5;}
+ .cl-cv{position:absolute;inset:0;width:100%;height:100%;display:block;opacity:0;transition:opacity .9s ease;}
+ .cl-cv.in{opacity:1;}
+ .meta{padding:18px 20px 20px;display:flex;flex-direction:column;gap:6px;flex:1;}
+ .meta .n{font:500 10.5px 'JetBrains Mono',monospace;letter-spacing:.16em;color:#6E6E6E;}
+ .meta b{font:700 20px 'Space Grotesk',sans-serif;}
+ .meta p{color:#4A4D50;font-size:14px;line-height:1.5;flex:1;}
+ .row{display:flex;gap:8px;margin-top:10px;}
+ .b{border:1px solid rgba(30,33,36,.16);background:#fff;color:#1E2124;font:600 13px 'Saira',sans-serif;padding:9px 14px;border-radius:11px;cursor:pointer;}
+ .b:hover{background:#F3F3F3;} .b.pri{background:#1E2124;color:#fff;border-color:#1E2124;} .b.pri:hover{background:#33363a;}
+ .b:focus-visible{outline:2px solid #1E2124;outline-offset:2px;}
+ /* full-screen view: exactly as a visitor would meet it */
+ .full{position:fixed;inset:0;z-index:10;display:none;}
+ .full.on{display:block;}
+ .full.leaving .cl-cv{opacity:0;transition:opacity .6s ease;}
+ .full .page{position:absolute;inset:0;display:grid;place-items:center;color:#6E6E6E;font:500 12px 'JetBrains Mono',monospace;letter-spacing:.14em;text-transform:uppercase;opacity:0;transition:opacity .5s ease .4s;}
+ .full.leaving .page{opacity:1;transition-delay:.25s;}
+ .bar{position:absolute;left:50%;bottom:28px;transform:translateX(-50%);display:flex;gap:8px;background:rgba(255,255,255,.82);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);padding:8px;border-radius:14px;box-shadow:0 10px 30px -14px rgba(0,0,0,.3);z-index:2;}
+ .bar .nm{align-self:center;padding:0 10px 0 6px;font:600 13px 'Space Grotesk',sans-serif;}
+</style>
+</head>
+<body>
+<header class="hd">
+ <div class="k">Internal · not linked from the site</div>
+ <h1>Loading screens</h1>
+ <p>Three openings built from the Baik card itself, lit like a product shot. Open one to see it full screen as a visitor would, then press Page ready: a card lifts toward you, turns over to a dua, and the page comes through.</p>
+</header>
+<main class="grid">
+ {LOADERS.map((l) => (
+  <article class="tile">
+   <div class="stage" data-k={l.k} aria-hidden="true"></div>
+   <div class="meta">
+    <span class="n">{l.n} · {l.k}</span>
+    <b>{l.t}</b>
+    <p>{l.d}</p>
+    <div class="row"><button class="b pri" type="button" data-open={l.k} data-t={l.t}>Open full screen</button><button class="b" type="button" data-replay={l.k}>Replay</button></div>
+   </div>
+  </article>
+ ))}
+</main>
+<div class="full" id="full" role="dialog" aria-modal="true" aria-label="Loading screen preview">
+ <div class="fhost" id="fullHost" style="position:absolute;inset:0"></div>
+ <div class="page">The page would be here</div>
+ <div class="bar"><span class="nm" id="fullName"></span><button class="b pri" type="button" id="fullReady">Page ready</button><button class="b" type="button" id="fullReplay">Replay</button><button class="b" type="button" id="fullX">Close</button></div>
+</div>
+<script is:inline src="/deck3d-cards.js"></script>
+<script is:inline type="importmap">{"imports":{"three":"/js/vendor/three/three.module.js","three/addons/":"/js/vendor/three/addons/"}}</script>
+<script is:inline type="module" src="/js/loaders-cards.js"></script>
+<script is:inline>
+(function () {
+  function go() {
+    var L = window.BaikCardLoader, tiles = {};
+    function shown(h) { var c = h.querySelector('.cl-cv'); if (c) requestAnimationFrame(function () { c.classList.add('in'); }); }
+    document.querySelectorAll('.stage[data-k]').forEach(function (h) { L.mount(h, h.dataset.k).then(function (m) { tiles[h.dataset.k] = m; shown(h); }); });
+    document.querySelectorAll('[data-replay]').forEach(function (b) { b.addEventListener('click', function () { var m = tiles[b.dataset.replay]; if (m) m.replay(); }); });
+    var full = document.getElementById('full'), host = document.getElementById('fullHost'), cur = null, kind = '', name = '';
+    function open(k, n) {
+      if (cur) { cur.stop(); cur = null; }
+      kind = k; name = n; document.getElementById('fullName').textContent = n;
+      full.classList.remove('leaving'); full.classList.add('on'); document.body.style.overflow = 'hidden';
+      L.mount(host, k, { onDone: function () { full.classList.add('leaving'); } }).then(function (m) { cur = m; shown(host); });
+      document.getElementById('fullReady').focus();
+    }
+    function close() { if (cur) cur.stop(); cur = null; full.classList.remove('on', 'leaving'); document.body.style.overflow = ''; }
+    document.querySelectorAll('[data-open]').forEach(function (b) { b.addEventListener('click', function () { open(b.dataset.open, b.dataset.t); }); });
+    document.getElementById('fullReady').addEventListener('click', function () { if (cur) cur.ready(); });
+    document.getElementById('fullReplay').addEventListener('click', function () { open(kind, name); });
+    document.getElementById('fullX').addEventListener('click', close);
+    document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && full.classList.contains('on')) close(); });
+  }
+  if (window.BaikCardLoader) go(); else window.addEventListener('baik-card-loader', go, { once: true });
+})();
+</script>
+</body>
+</html>

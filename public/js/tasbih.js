@@ -234,11 +234,73 @@
     $('tbSounds').innerHTML = SOUNDS.map(function (s) { return '<button type="button" class="tb-sd' + (s.k === ST.snd ? ' on' : '') + '" data-s="' + s.k + '">' + esc(bm() ? s.bm : s.en) + '</button>'; }).join('');
     $('tbSounds').querySelectorAll('[data-s]').forEach(function (el) { el.onclick = function () { ST.snd = el.dataset.s; ST.sound = ST.snd !== 'none'; save(); soundIcon(); renderPanel(); tock(false); }; });
     $('tbBeads').querySelectorAll('[data-b]').forEach(function (el) { el.onclick = function () { ST.bead = el.dataset.b; save(); renderPanel(); draw(); emit('bead'); }; });
+    measure();
   }
-  var panel = $('tbPanel');
-  function setOpen(o) { panel.classList.toggle('open', o); $('tbHandle').setAttribute('aria-expanded', o); }
-  $('tbHandle').addEventListener('click', function () { setOpen(!panel.classList.contains('open')); });
-  $('tbAll').addEventListener('click', function () { setOpen(!panel.classList.contains('open')); });
+  /* the panel is a sheet: always its full height, slid down so only its top shows (the "peek").
+     A finger drags it and it follows; let go and it settles open or closed by speed and position.
+     The handle and "View all" slide it the same way. It moves by transform only, so it stays
+     smooth while the beads draw. The count, beads and words keep their floor at the peek. */
+  var panel = $('tbPanel'), list = $('tbList'), scrim = $('tbScrim');
+  var isOpen = false, peek = 0, full = 0, y = 0, drag = null, dragged = false;
+  function measure() {
+    if (!panel) return;
+    var pb = parseFloat(getComputedStyle(panel).paddingBottom) || 16, lm = parseFloat(getComputedStyle(list).marginTop) || 0;
+    peek = Math.round(list.offsetTop - lm + pb);
+    full = Math.round(Math.max(peek + 120, Math.min(innerHeight * 0.84, list.offsetTop + list.scrollHeight + pb)));
+    panel.style.height = full + 'px';
+    document.documentElement.style.setProperty('--tbp', peek + 'px');
+    if (!drag) place(isOpen ? 0 : full - peek, false);
+  }
+  function place(ty, slide) {
+    y = ty; panel.classList.toggle('drag', !slide); scrim.classList.toggle('drag', !slide);
+    panel.style.setProperty('--ty', ty.toFixed(1) + 'px');
+    scrim.style.opacity = (Math.max(0, Math.min(1, 1 - ty / Math.max(1, full - peek))) * 0.55).toFixed(3);
+  }
+  function setOpen(o) {
+    isOpen = o; panel.classList.toggle('open', o); scrim.classList.toggle('on', o);
+    $('tbHandle').setAttribute('aria-expanded', o); place(o ? 0 : full - peek, true);
+    if (!o) setTimeout(function () { if (!isOpen) list.scrollTop = 0; }, 500);
+  }
+  panel.addEventListener('pointerdown', function (e) {
+    if (e.button > 0) return;
+    var inList = !!e.target.closest('.tb-list');
+    if (inList && list.scrollTop > 0) return;                   // the list scrolls before the sheet moves
+    drag = { id: e.pointerId, x0: e.clientX, y0: e.clientY, ty0: y, on: false, inList: inList, ly: e.clientY, lt: e.timeStamp, v: 0 };
+  });
+  panel.addEventListener('pointermove', function (e) {
+    if (!drag || e.pointerId !== drag.id) return;
+    var dx = e.clientX - drag.x0, dy = e.clientY - drag.y0;
+    if (!drag.on) {
+      if (Math.abs(dx) > 10 && Math.abs(dx) > Math.abs(dy)) { drag = null; return; }   // sideways: the bead row scrolls
+      if (Math.abs(dy) < 6) return;
+      if (drag.inList && dy < 0) { drag = null; return; }       // pushing up inside the list scrolls it
+      drag.on = true; dragged = true; try { panel.setPointerCapture(e.pointerId); } catch (err) {}
+    }
+    var max = full - peek, ty = drag.ty0 + dy;
+    ty = ty < 0 ? 0 : ty > max ? max + (ty - max) / 3 : ty;     // stops at the top, gives a little past the bottom
+    var dt = e.timeStamp - drag.lt;
+    if (dt > 0) drag.v = 0.6 * ((e.clientY - drag.ly) / dt) + 0.4 * drag.v;
+    drag.ly = e.clientY; drag.lt = e.timeStamp;
+    place(ty, false);
+  });
+  function release(e) {
+    if (!drag || e.pointerId !== drag.id) return;
+    var d = drag; drag = null; if (!d.on) return;
+    // a flick decides by its direction; a slow drag by which half the sheet was left in
+    setOpen(d.v < -0.3 ? true : d.v > 0.3 ? false : y < (full - peek) / 2);
+    setTimeout(function () { dragged = false; }, 0);
+  }
+  panel.addEventListener('pointerup', release);
+  panel.addEventListener('pointercancel', release);
+  panel.addEventListener('click', function (e) { if (dragged) { e.stopPropagation(); e.preventDefault(); dragged = false; } }, true);
+  scrim.addEventListener('click', function () { setOpen(false); });
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && isOpen) setOpen(false); });
+  window.addEventListener('resize', measure);
+  new ResizeObserver(measure).observe($('tbBeads'));
+  // on a short screen the hint under the words is hidden (tasbih.css): say it once, before the first count
+  if (!count() && getComputedStyle($('tbHint')).display === 'none') setTimeout(function () { if (!count()) toast(bm() ? 'Ketik di mana-mana untuk mengira · leret ke kiri untuk undur satu' : 'Tap anywhere to count · swipe left to take one back'); }, 900);
+  $('tbHandle').addEventListener('click', function () { setOpen(!isOpen); });
+  $('tbAll').addEventListener('click', function () { setOpen(!isOpen); });
 
   new ResizeObserver(function () { resize(); draw(); }).observe(cv);
   resize(); renderPanel(); paint(); draw();

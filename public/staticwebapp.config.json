@@ -21,6 +21,46 @@
   },
   "routes": [
     {
+      "route": "/codex",
+      "statusCode": 404
+    },
+    {
+      "route": "/codex.html",
+      "statusCode": 404
+    },
+    {
+      "route": "/audit",
+      "statusCode": 404
+    },
+    {
+      "route": "/audit.html",
+      "statusCode": 404
+    },
+    {
+      "route": "/competitors",
+      "statusCode": 404
+    },
+    {
+      "route": "/competitors.html",
+      "statusCode": 404
+    },
+    {
+      "route": "/loaders",
+      "statusCode": 404
+    },
+    {
+      "route": "/loaders.html",
+      "statusCode": 404
+    },
+    {
+      "route": "/plan",
+      "statusCode": 404
+    },
+    {
+      "route": "/plan.html",
+      "statusCode": 404
+    },
+    {
       "route": "/google27ed9a6141bb5a27.html",
       "rewrite": "/google-site-verification.txt",
       "headers": {

@@ -34,8 +34,10 @@ import Head from "../layouts/Head.astro";
   <div class="tb-bar"><i id="tbBar"></i></div>
   <div class="tb-steps" id="tbSteps"></div>
  </div>
- <canvas id="tbCv" aria-hidden="true"></canvas>
- <canvas id="tbGl" aria-hidden="true"></canvas>
+ <div class="tb-stage">
+  <canvas id="tbCv" aria-hidden="true"></canvas>
+  <canvas id="tbGl" aria-hidden="true"></canvas>
+ </div>
  <div class="tb-words">
   <div class="tb-ar" id="tbAr" lang="ar"></div>
   <div class="tb-tr" id="tbTr"></div>
@@ -44,6 +46,7 @@ import Head from "../layouts/Head.astro";
  <div class="tb-today" id="tbToday"></div>
 </div>
 
+<div class="tb-scrim" id="tbScrim" aria-hidden="true"></div>
 <section class="tb-panel" id="tbPanel" aria-label="Dhikr and beads">
  <button type="button" class="tb-handle" id="tbHandle" aria-expanded="false" aria-controls="tbList" aria-label="Show every dhikr"></button>
  <div class="tb-row"><b>Current dhikr<small id="tbCur"></small></b><button type="button" id="tbAll">View all</button></div>

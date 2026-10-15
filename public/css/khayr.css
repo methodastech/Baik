@@ -2208,3 +2208,72 @@ html:not(.authwait):not(.bk-intro) .bk-mark{transform:scale(1.05);}
  #qpt .qt-row{padding:clamp(6px,calc(4.2vh - 19px),24px) 18px;font-size:clamp(14px,calc(1.2vh + 6px),19px);}
  #qpt .qt-v{font-size:clamp(14px,calc(1.2vh + 6px),19px);}
 }
+
+/* ============ first tour (public/js/tour.js) ============
+   The page dims around one control; covers (.tour-blk) sit over everything else so only that
+   control can be pressed. On "look" steps a cover sits over the lit part too. */
+.tour{position:fixed;inset:0;z-index:4500;pointer-events:none;opacity:0;transition:opacity .35s ease;}
+.tour.in{opacity:1;} .tour.out{opacity:0;transition-duration:.3s;}
+.tour-dim{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;}
+.tour-dim path{fill:rgba(14,18,17,.64);}
+.tour-ring{position:fixed;pointer-events:none;border-radius:14px;box-shadow:0 0 0 2px #fff,0 0 0 6px rgba(255,255,255,.18);animation:tourRing 1.8s ease-in-out infinite;}
+.tour.noel .tour-ring,.tour.noel .tour-hand,.tour.look .tour-hand{display:none;}
+.tour-blk{position:fixed;pointer-events:auto;background:transparent;}
+.tour-cap{display:none;} .tour.look .tour-cap{display:block;}
+@keyframes tourRing{0%,100%{box-shadow:0 0 0 2px #fff,0 0 0 5px rgba(255,255,255,.22);}50%{box-shadow:0 0 0 2px #fff,0 0 0 11px rgba(255,255,255,0);}}
+/* the hand: a white glove-like pointer that taps */
+.tour-hand{position:fixed;left:0;top:0;width:44px;height:44px;pointer-events:none;filter:drop-shadow(0 4px 8px rgba(0,0,0,.35));}
+.tour-hand svg{width:100%;height:100%;fill:#fff;stroke:#1E2124;stroke-width:1.4;stroke-linejoin:round;animation:tourTap 1.4s cubic-bezier(.45,0,.55,1) infinite;transform-origin:30% 10%;}
+@keyframes tourTap{0%,100%{transform:translate(6px,8px) scale(1);}45%{transform:translate(0,0) scale(.92);}55%{transform:translate(0,0) scale(.92);}}
+/* the card that says what to do */
+.tour-tip{position:fixed;left:0;top:0;pointer-events:auto;background:#fff;color:#1E2124;border-radius:18px;padding:16px 16px 12px;
+ box-shadow:0 24px 60px -12px rgba(0,0,0,.45),0 0 0 1px rgba(30,33,36,.06);font-family:'Saira',sans-serif;
+ transition:transform .45s cubic-bezier(.32,.72,0,1);}
+.tour-tip.show{animation:tourTip .4s cubic-bezier(.16,1,.3,1);}
+@keyframes tourTip{from{opacity:0;}to{opacity:1;}}
+.tour.tour-shake .tour-tip{animation:tourShake .42s ease;}
+.tour.tour-shake .tour-ring{animation:tourRing .5s ease 2;}
+@keyframes tourShake{0%,100%{margin-left:0;}20%{margin-left:-7px;}40%{margin-left:6px;}60%{margin-left:-4px;}80%{margin-left:2px;}}
+.tour-n{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.16em;color:var(--gold,#8A6D1E);min-height:12px;}
+.tour-tip h3{margin:4px 0 4px;font:700 17px 'Space Grotesk','Saira',sans-serif;letter-spacing:-.01em;}
+.tour-tip p{margin:0 0 12px;font-size:13.5px;line-height:1.5;color:#4A4D50;}
+.tour-ft{display:flex;align-items:center;gap:8px;border-top:1px solid #EDEDED;padding-top:10px;}
+.tour-off{display:flex;align-items:center;gap:7px;font-size:12.5px;color:#4A4D50;cursor:pointer;user-select:none;}
+.tour-off input{width:16px;height:16px;margin:0;accent-color:#1E2124;cursor:pointer;}
+.tour-sp{flex:1;}
+.tour-skip{border:0;background:none;color:#6E6E6E;font:600 12.5px 'Saira',sans-serif;padding:8px 6px;cursor:pointer;}
+.tour-go{border:0;background:#1E2124;color:#fff;font:600 13.5px 'Saira',sans-serif;padding:9px 16px;border-radius:11px;cursor:pointer;}
+.tour-go[hidden]{display:none;}
+.tour-skip:focus-visible,.tour-go:focus-visible,.tour-off input:focus-visible{outline:2px solid #1E2124;outline-offset:2px;}
+@media(prefers-reduced-motion:reduce){.tour-ring,.tour-hand svg,.tour.tour-shake .tour-tip{animation:none;}.tour-tip{transition:none;}}
+/* the app's hover panel stays out of the way while the tour runs */
+html.touring #tip{display:none!important;}
+
+/* ============ profile pictures (avatars.js) ============ */
+.avbtn #acAv.pic{background:none;}
+#acAv svg,.ac-ava svg{display:block;width:100%;height:100%;border-radius:50%;}
+button.ac-ava{position:relative;border:0;padding:0;cursor:pointer;overflow:visible;transition:transform .2s,box-shadow .2s;}
+button.ac-ava:hover{transform:scale(1.04);box-shadow:0 0 0 3px rgba(30,33,36,.12);}
+button.ac-ava:focus-visible{outline:2px solid #1E2124;outline-offset:3px;}
+.ac-ava.pic{background:none;}
+.ac-ava-ed{position:absolute;right:-4px;bottom:-4px;width:21px;height:21px;border-radius:50%;background:#1E2124;color:#fff;display:grid;place-items:center;border:2px solid #F3F3F3;}
+.ac-ava .ac-ava-ed svg{width:11px;height:11px;border-radius:0;}
+.avp-h{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:2px 0 14px;padding-right:40px;}
+.avp-h b{font:700 17px 'Space Grotesk',sans-serif;color:#1E2124;}
+.avp-x{border:0;background:#1E2124;color:#fff;font:600 13px 'Saira',sans-serif;padding:8px 16px;border-radius:10px;cursor:pointer;}
+.avp-k{margin:18px 0 10px;font-family:'JetBrains Mono',monospace;font-size:9.5px;letter-spacing:.16em;text-transform:uppercase;color:#6E6E6E;}
+.avp-g{display:grid;grid-template-columns:repeat(auto-fill,minmax(84px,1fr));gap:12px 8px;}
+.avp-o{border:0;background:none;padding:4px 2px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:6px;border-radius:14px;font-family:'Saira',sans-serif;}
+.avp-i{width:64px;height:64px;border-radius:50%;display:grid;place-items:center;box-shadow:0 0 0 2px transparent;transition:box-shadow .2s,transform .2s;}
+.avp-o:hover .avp-i{transform:translateY(-2px);}
+.avp-o.on .avp-i{box-shadow:0 0 0 3px #F3F3F3,0 0 0 5.5px #1E2124;}
+.avp-o:focus-visible{outline:2px solid #1E2124;outline-offset:2px;}
+.avp-init{width:64px;height:64px;border-radius:50%;display:grid;place-items:center;background:#6E6E6E;color:#fff;font:700 24px 'Space Grotesk',sans-serif;}
+.avp-n{font-size:11.5px;line-height:1.25;color:#4A4D50;text-align:center;}
+.avp-o.on .avp-n{color:#1E2124;font-weight:600;}
+
+/* the Arabic script menu sits inside the A−/A+ group, so it must undo that group's toolbar-button
+   look (centred, full height) and size to its own rows; khayr-app.js places it under the ع button */
+.abtn .arf-m{width:max-content;min-width:250px;max-width:min(320px,calc(100vw - 24px));right:auto;}
+.abtn .arf-m button{display:flex;justify-content:flex-start;align-items:center;height:auto;width:100%;padding:8px 10px;border-left:0;
+ font-family:'Saira',sans-serif;font-weight:400;font-size:12.5px;color:#1E2124;}

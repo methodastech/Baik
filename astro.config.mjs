@@ -2,7 +2,7 @@
 import { defineConfig } from 'astro/config';
 import sitemap from '@astrojs/sitemap';
 import { createHash } from 'node:crypto';
-import { readFileSync, writeFileSync, readdirSync, existsSync } from 'node:fs';
+import { readFileSync, writeFileSync, readdirSync, existsSync, rmSync } from 'node:fs';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -40,6 +40,26 @@ function versionAssets() {
   };
 }
 
+/* Internal pages (the Codex and the admin pages) are built for review on this computer but never
+   published: the live deploy sets BAIK_SITE=live (.github/workflows), and the build then deletes
+   them from dist/. They are kept out of the sitemap everywhere. staticwebapp.config.json also
+   answers their addresses with 404, in case one ever slips through. */
+const INTERNAL = ['codex', 'audit', 'competitors', 'loaders', 'plan'];
+function dropInternal() {
+  return {
+    name: 'baik-drop-internal',
+    hooks: {
+      'astro:build:done': ({ dir, logger }) => {
+        if (process.env.BAIK_SITE !== 'live') { logger.info('internal pages kept (not a live build)'); return; }
+        const out = fileURLToPath(dir);
+        let n = 0;
+        for (const p of INTERNAL) { const f = join(out, p + '.html'); if (existsSync(f)) { rmSync(f); n++; } }
+        logger.info(`live build: removed ${n} internal pages`);
+      },
+    },
+  };
+}
+
 // The site is a static build uploaded to Azure Static Web Apps. Nothing renders
 // on a server: `dist/` is the whole deployment.
 export default defineConfig({
@@ -47,7 +67,7 @@ export default defineConfig({
   output: 'static',
   trailingSlash: 'never',
   build: { format: 'file' },
-  integrations: [sitemap(), versionAssets()],
+  integrations: [sitemap({ filter: page => !INTERNAL.some(p => new URL(page).pathname.replace(/\.html$/, '') === '/' + p) }), versionAssets(), dropInternal()],
   // keep the authored markup byte-for-byte: whitespace between inline
   // elements is rendered, so collapsing it would shift the design
   compressHTML: false,
