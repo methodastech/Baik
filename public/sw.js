@@ -8,7 +8,7 @@
  *      the cache only as the offline fallback. Static files are cache-first,
  *      because their contents never change under the same URL.
  */
-const VERSION = 'baik-v1';
+const VERSION = 'baik-v2';   // v2: pages load css/js as ?v=<hash>; dropping v1 clears the stale copies
 const SHELL = VERSION + '-shell';
 const RUNTIME = VERSION + '-runtime';
 
@@ -69,7 +69,7 @@ self.addEventListener('fetch', event => {
         caches.open(RUNTIME).then(c => c.put(req, copy));
       }
       return res;
-    }))
+    }).catch(() => caches.match(req, { ignoreSearch: true })))   // offline: any saved copy of the file
   );
 });
 

@@ -1,0 +1,29 @@
+---
+import Head from "../layouts/Head.astro";
+import Sky from "../components/Sky.astro";
+---
+<!doctype html>
+<html lang="en">
+<head>
+<link rel="stylesheet" href="/css/khayr.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Prayer times · Baik</title>
+<meta name="description" content="Today’s prayer times for your JAKIM zone or location, with the Hijri date.">
+<meta name="theme-color" content="#F3F3F3">
+<script is:inline>if(/^https?:$/.test(location.protocol))document.documentElement.classList.add('authwait');</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Saira:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Space+Grotesk:wght@500;600;700&family=JetBrains+Mono:wght@400;500;700&family=Scheherazade+New:wght@500;700&family=Reem+Kufi:wght@400;500;600;700&family=Amiri:wght@400;700&family=Amiri+Quran&display=swap" rel="stylesheet">
+<Head />
+</head>
+<body data-sky="prayer" class="skypage">
+<header class="sky-top">
+ <a class="sky-logo" href="/khayr" aria-label="Back to Baik"><span class="baik-logo" role="img" aria-label="Baik"></span></a>
+</header>
+<div class="toast" id="toast" role="status" aria-live="polite" aria-atomic="true"></div>
+<Sky />
+<script is:inline src="/js/sky-base.js"></script>
+<script is:inline src="/js/sky.js"></script>
+</body>
+</html>

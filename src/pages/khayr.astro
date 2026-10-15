@@ -1,5 +1,6 @@
 ---
 import Head from "../layouts/Head.astro";
+import Sky from "../components/Sky.astro";
 ---
 <!doctype html>
 <html lang="en">
@@ -165,134 +166,13 @@ import Head from "../layouts/Head.astro";
 
 <div class="toast" id="toast" role="status" aria-live="polite" aria-atomic="true"></div>
 
-<div class="qib" id="qib" aria-labelledby="qibH">
- <div class="qib-in">
-  <button class="pw-x" id="qibX" aria-label="Close">✕</button>
-  <div class="qib-k" id="qibK">Qibla</div>
-  <h3 class="qib-h" id="qibH">The direction of the Kaaba</h3>
-  <p class="qib-sub">Makkah al-Mukarramah · 21.4225°N 39.8262°E</p>
-
-  <div class="qib-dial">
-   <svg viewBox="0 0 200 200" role="img" aria-labelledby="qibSvgT">
-    <title id="qibSvgT">Compass dial with the qibla bearing marked</title>
-    <circle class="qr-ring" cx="100" cy="100" r="92"/>
-    <g class="qr-rose" id="qRose">
-     <g id="qTicks"></g>
-     <text class="qr-c n" x="100" y="30">N</text>
-     <text class="qr-c" x="170" y="100">E</text>
-     <text class="qr-c" x="100" y="170">S</text>
-     <text class="qr-c" x="30" y="100">W</text>
-     <g id="qKaaba">
-      <line class="qr-ray" x1="100" y1="100" x2="100" y2="52"/>
-      <g transform="translate(100,40)"><g id="qKbR">
-       <rect class="qr-kb" x="-9" y="-9.5" width="18" height="19" rx="1.5"/>
-       <path class="qr-kbb" d="M-9 -3.5h18"/>
-      </g></g>
-     </g>
-    </g>
-    <line class="qr-you-l" x1="100" y1="100" x2="100" y2="14"/>
-    <circle class="qr-hub" cx="100" cy="100" r="3.4"/>
-    <path class="qr-you" d="M100 3 l6.5 12 h-13 z"/>
-   </svg>
-  </div>
-
-  <div class="qib-deg" id="qibDeg">—</div>
-  <div class="qib-degk" id="qibDegK">degrees from true north</div>
-  <div class="qib-turn" id="qibTurn" role="status" aria-live="polite"></div>
-  <div class="qib-meta" id="qibMeta">Set your location to get the bearing.</div>
-
-  <div class="qib-row">
-   <button class="qib-b pri" id="qibGeo" type="button">Use my location</button>
-   <button class="qib-b" id="qibComp" type="button" hidden>Turn on compass</button>
-   <button class="qib-b" id="qibCam" type="button" hidden>Camera view</button>
-   <button class="qib-b" id="qibSunB" type="button">Find north by the sun</button>
-  </div>
-
-  <button class="qib-link" id="qibCityB" type="button" aria-expanded="false" aria-controls="qibCityWrap">Set location by city</button>
-  <div class="qib-sel" id="qibCityWrap" hidden><select id="qibCity" aria-label="Pick a city"></select></div>
-
-  <div class="qib-sun" id="qibSun" hidden></div>
-
-  <div class="qib-note" id="qibNote" data-base="1">A phone compass is a magnetometer: metal, speakers, cases and cars pull it off. Turn the phone in a slow figure of eight to settle it, and check it against the sun before you rely on it. The bearing itself is exact — only the compass needle is a guess.</div>
- </div>
-</div>
-
-<div class="qib qpt" id="qpt" aria-labelledby="qptH">
- <div class="qib-in">
-  <button class="pw-x" id="qptX" aria-label="Close">✕</button>
-  <div class="qib-k" id="qptK">Prayer times</div>
-  <h3 class="qib-h" id="qptH">Today</h3>
-  <p class="qib-sub" id="qptLoc">Set your location to get today’s times.</p>
-
-  <div class="qtc" id="qtc" hidden>
-   <div class="qtc-k" id="qtcK">Next prayer</div>
-   <div class="qtc-n" id="qtcName">—</div>
-   <div class="qtc-t" id="qtcTime"></div>
-   <div class="qtc-rings" role="timer" aria-live="off" aria-label="Time until the next prayer">
-    <div class="qtc-r">
-     <svg viewBox="0 0 76 76" aria-hidden="true"><circle class="qtc-bg" cx="38" cy="38" r="32"/>
-      <circle class="qtc-fg" id="qtcAh" cx="38" cy="38" r="32" transform="rotate(-90 38 38)"/></svg>
-     <span class="qtc-v" id="qtcH">00</span><span class="qtc-l" id="qtcLh">Hours</span>
-    </div>
-    <div class="qtc-r">
-     <svg viewBox="0 0 76 76" aria-hidden="true"><circle class="qtc-bg" cx="38" cy="38" r="32"/>
-      <circle class="qtc-fg" id="qtcAm" cx="38" cy="38" r="32" transform="rotate(-90 38 38)"/></svg>
-     <span class="qtc-v" id="qtcM">00</span><span class="qtc-l" id="qtcLm">Minutes</span>
-    </div>
-    <div class="qtc-r">
-     <svg viewBox="0 0 76 76" aria-hidden="true"><circle class="qtc-bg" cx="38" cy="38" r="32"/>
-      <circle class="qtc-fg" id="qtcAs" cx="38" cy="38" r="32" transform="rotate(-90 38 38)"/></svg>
-     <span class="qtc-v" id="qtcS">00</span><span class="qtc-l" id="qtcLs">Seconds</span>
-    </div>
-   </div>
-   <p class="qtc-f" id="qtcFoot"></p>
-  </div>
-
-  <div class="qib-times" id="qibTimes"></div>
-  <div class="qib-row"><button class="qib-b pri" id="qptGeo" type="button">Use my location</button></div>
- </div>
-</div>
-
-<div class="qcam" id="qcam" aria-hidden="true">
- <video id="qcamV" playsinline muted autoplay></video>
- <div class="qcam-hud">
-  <div class="qcam-hz" id="qcamHz" hidden></div>
-  <svg class="qcam-beam" id="qcamBeam" aria-hidden="true" hidden>
-   <defs>
-    <linearGradient id="qcamBG" x1="0" y1="1" x2="0" y2="0">
-     <stop offset="0" stop-color="#10B981" stop-opacity=".05"/>
-     <stop offset=".14" stop-color="#10B981" stop-opacity=".38"/>
-     <stop offset=".55" stop-color="#10B981" stop-opacity=".55"/>
-     <stop offset="1" stop-color="#34D399" stop-opacity=".8"/>
-    </linearGradient>
-   </defs>
-   <polygon id="qcamBeamP" fill="url(#qcamBG)"/>
-  </svg>
-  <div class="qcam-km" id="qcamKm" hidden></div>
-  <div class="qcam-mk" id="qcamMk" hidden>
-   <div class="qcam-lbl" id="qcamLbl">Kaaba</div>
-   <svg width="58" height="76" viewBox="0 0 58 76" aria-hidden="true">
-    <path class="qcam-pin" d="M29 76c0-19-25-25-25-47a25 25 0 1 1 50 0c0 22-25 28-25 47z" fill="#059669"/>
-    <circle cx="29" cy="28" r="17" fill="#FFFFFF"/>
-    <rect x="20" y="19" width="18" height="19" rx="1.5" fill="#14120F"/>
-    <path d="M20 25.5h18" stroke="#D4A72C" stroke-width="2.6"/>
-   </svg>
-  </div>
-  <div class="qcam-ch l" id="qcamL" hidden>‹</div>
-  <div class="qcam-ch r" id="qcamR" hidden>›</div>
-  <p class="qcam-msg" id="qcamMsg" hidden></p>
-  <button class="qcam-x" id="qcamX" aria-label="Close the camera view">✕</button>
-  <div class="qcam-bot">
-   <div class="qcam-turn" id="qcamTurn" role="status" aria-live="polite">Starting the camera…</div>
-   <div class="qcam-sub" id="qcamSub"></div>
-  </div>
- </div>
-</div>
+<Sky />
 <div class="tip" id="tip" role="tooltip" aria-hidden="true"></div>
 <div class="rep-pop" id="repPop" role="dialog" aria-label="Repeat settings" hidden></div>
 <div class="pw" id="pw"><div class="pw-in"><button class="pw-x" id="pwX" aria-label="Close">✕</button><div class="pw-k">Baik Premium</div><h3 class="pw-h">Every dua stays free. Always.</h3><p class="pw-p">Premium supports the app and unlocks the tools around the duas: recitation audio, unlimited saves and notes, guided journeys, deeper study and offline packs. It never puts a dua behind a price.</p><div class="pw-plans"><button class="pw-plan" data-plan="month"><span class="pp-k">Monthly</span><span class="pp-v">RM19.90</span><span class="pp-d">per month, cancel any time</span></button><button class="pw-plan hero" data-plan="life"><span class="pp-k">Lifetime</span><span class="pp-v">RM358.20</span><span class="pp-d">two years' worth, yours for good</span><span class="pp-tag">Best value</span></button></div><div class="pw-list" id="pwList"></div><div class="pw-give"><div class="pg-k">Or simply give</div><p class="pg-p">If you do not need the extra tools but want this to keep going, you can contribute instead. Every ringgit given goes back into the app: scholar review of the duas, recitation recordings, artwork and translation. Nothing is unlocked by giving, and nothing is asked of you.</p><div class="pg-row"><button class="pg-b" data-give="10">RM10</button><button class="pg-b" data-give="30">RM30</button><button class="pg-b" data-give="100">RM100</button><button class="pg-b pg-other" data-give="other">Another amount</button></div></div><div class="pw-foot">Prices in ringgit. Monthly renews on card; annual and lifetime are paid once.</div></div></div>
 
 <script is:inline src="/js/khayr-app.js"></script>
+<script is:inline src="/js/sky.js"></script>
 <script is:inline src="/khayr-features.js"></script>
 <script is:inline src="/js/founding-offer.js"></script>
 
