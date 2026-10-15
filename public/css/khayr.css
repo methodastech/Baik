@@ -2030,6 +2030,24 @@ body.app .qib-in{width:min(392px,100%);max-height:84vh;border-radius:20px 20px 0
  font-size:13.5px;line-height:1.65;text-shadow:0 2px 10px rgba(30,33,36,0.1);}
 .qcam-msg[hidden]{display:none;}
 @media (prefers-reduced-motion:reduce){.qcam-ch{animation:none;opacity:.9;}}
+/* the camera view in colour: everything over live video sits on a dark pill or carries a shadow,
+   the path is emerald, and it all turns bright green once the Kaaba is dead ahead */
+.qcam-x{background:rgba(10,12,14,.55);border-color:rgba(255,255,255,.25);color:#fff;}
+.qcam-hz{height:1.5px;background:rgba(255,255,255,.85);box-shadow:0 0 6px rgba(0,0,0,.6);}
+.qcam-km{background:rgba(6,78,59,.85);border-color:rgba(52,211,153,.6);color:#fff;font-weight:600;box-shadow:0 6px 18px rgba(0,0,0,.35);}
+.qcam-lbl{display:inline-block;background:rgba(10,12,14,.72);color:#fff;font-weight:600;font-size:12px;padding:4px 10px;border-radius:8px;text-shadow:none;margin-bottom:6px;}
+.qcam-mk svg{filter:drop-shadow(0 6px 12px rgba(0,0,0,.45));}
+.qcam-mk.off{opacity:.65;}
+.qcam-ch{color:#FBBF24;font-size:52px;text-shadow:0 2px 12px rgba(0,0,0,.7);}
+.qcam-msg{color:#fff;background:rgba(10,12,14,.65);padding:14px 16px;border-radius:14px;text-shadow:none;}
+.qcam-bot{background:#fff;box-shadow:0 -8px 24px rgba(0,0,0,.25);border-radius:22px 22px 0 0;}
+.qcam-turn{font-size:20px;color:#1E2124;}
+.qcam-turn.hit{color:#059669;}
+.qcam-sub{font-size:12px;color:#4B5563;}
+.qcam:has(.qcam-turn.hit) .qcam-bot{background:#ECFDF5;}
+.qcam:has(.qcam-turn.hit) #qcamBG stop{stop-color:#22C55E;}
+.qcam:has(.qcam-turn.hit) .qcam-pin{fill:#16A34A;}
+.qcam:has(.qcam-turn.hit) .qcam-km{background:rgba(21,128,61,.9);}
 
 /* the Baik logo (assets/logo/baik-logo_caps.svg): a mask filled with currentColor, so it takes any ink */
 .baik-logo{display:inline-block;vertical-align:middle;height:1em;aspect-ratio:118.13/45.82;background:currentColor;

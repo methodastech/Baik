@@ -3758,6 +3758,19 @@ document.addEventListener('keydown',function(e){
   $('qibCam').hidden=!camOK();
   cityList(!POS);   /* nothing to go on yet: offer the fallback without being asked */
   compass();   /* the menu click is the user gesture iOS wants; attach() guards repeats */
+  autoGeo();   /* ask for the position straight away; the button stays for a refresh */
+ }
+ /* Locate on open, without waiting for "Use my location". The browser still asks the reader
+    the first time. Skipped when the reader chose a city by hand, or has blocked location
+    (no point re-asking; the city list is shown instead). */
+ function autoGeo(){
+  if(!navigator.geolocation||!window.isSecureContext||location.protocol==='file:')return;
+  var saved=load('baik.qibla',null);
+  if(saved&&saved.label&&saved.label!=='Your location'&&saved.label!=='Lokasi anda'&&saved.label!=='Saved location')return;
+  var go=function(){store('baik.ptzman',0);geo();};
+  if(navigator.permissions&&navigator.permissions.query){
+   navigator.permissions.query({name:'geolocation'}).then(function(s){if(s.state!=='denied')go();else cityList(true);}).catch(go);
+  }else go();
  }
  function close(){
   arClose();
