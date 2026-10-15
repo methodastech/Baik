@@ -8,6 +8,16 @@
 const site = "https://baikapp.com";
 const canonical = new URL(Astro.url.pathname, site).href.replace(/\/$/, "") || site;
 ---
+<!-- Google tag (gtag.js) · Google Analytics G-VP0JPM141Z, on every page that uses this head -->
+<script is:inline async src="https://www.googletagmanager.com/gtag/js?id=G-VP0JPM141Z"></script>
+<script is:inline>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-VP0JPM141Z');
+</script>
+
 <link rel="canonical" href={canonical} />
 
 <link rel="manifest" href="/manifest.webmanifest" />
