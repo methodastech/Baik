@@ -177,6 +177,8 @@ import Head from "../layouts/Head.astro";
         }
         // a fresh sign-in opens the app on the card grid (the app keeps its view under baik.view)
         try { localStorage.setItem('baik.view', JSON.stringify('grid')); } catch (err) {}
+        // the next page plays the opening screen through once (src/components/Loader.astro)
+        try { sessionStorage.setItem('baik.in', '1'); } catch (err) {}
         location.replace(next); return;
       }
       // signed up, confirmed nothing yet: offer the link again rather than a dead end
@@ -192,7 +194,7 @@ import Head from "../layouts/Head.astro";
   // already signed in: go straight to the app
   fetch('/api/auth/me', { credentials: 'same-origin', cache: 'no-store' })
     .then(function (r) { return r.ok ? r.json() : null; })
-    .then(function (d) { if (d && d.user) location.replace(next); }).catch(function () {});
+    .then(function (d) { if (d && d.user) { try { sessionStorage.setItem('baik.in', '1'); } catch (e) {} location.replace(next); } }).catch(function () {});
 })();
 </script>
 

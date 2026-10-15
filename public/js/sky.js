@@ -237,7 +237,33 @@
   $(id).setAttribute('stroke-dasharray',C.toFixed(2));
   $(id).setAttribute('stroke-dashoffset',(C*(1-Math.max(0,Math.min(1,frac)))).toFixed(2));
  }
+ /* the day's five prayers on one line, for the desktop page (CSS hides it on phones). Each prayer
+    gets an equal step so the labels never crowd (Maghrib and Isha sit an hour apart); the fill
+    moves through the current step in real time. */
+ var dlRows=null;
+ function drawDay(){
+  var el=$('qdl');if(!el)return;
+  var five=(ROWS||[]).filter(function(r){return r[3]&&r[2]!=null;});
+  if(five.length<2){el.hidden=true;return;}
+  var bm=LANG==='bm', now=Date.now(), last=five.length-1, i, f=0;
+  if(dlRows!==ROWS){
+   dlRows=ROWS;
+   el.innerHTML='<div class="qdl-k">'+(bm?'Solat hari ini':'Today’s prayers')+'</div>'
+    +'<div class="qdl-tr"><i class="qdl-f" id="qdlF"></i>'
+    +five.map(function(r,k){
+      return '<span class="qdl-p" style="left:'+(k/last*100)+'%;--pt:'+(PTCOL[r[0]]||'#6E6E6E')+'"><i></i>'
+       +'<b>'+esc(bm?r[1]:r[0])+'</b><small>'+esc(clock(r[2]))+'</small></span>';
+    }).join('')+'</div>';
+  }
+  el.hidden=false;
+  for(i=0;i<five.length;i++)if(five[i][2]>now)break;          /* i = the first prayer still to come */
+  if(i===0)f=0;else if(i>last)f=1;
+  else f=(i-1+(now-five[i-1][2])/(five[i][2]-five[i-1][2]))/last;
+  $('qdlF').style.width=(f*100).toFixed(3)+'%';
+  el.querySelectorAll('.qdl-p').forEach(function(p,k){p.classList.toggle('done',k<i);p.classList.toggle('next',k===i);});
+ }
  function drawCount(){
+  drawDay();
   var box=$('qtc');
   if(!NEXT||NEXT.ms==null){box.hidden=true;return;}
   box.hidden=false;

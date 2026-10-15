@@ -1,4 +1,5 @@
 ---
+import Loader from "../components/Loader.astro";
 import Head from "../layouts/Head.astro";
 import Sky from "../components/Sky.astro";
 ---
@@ -18,6 +19,7 @@ import Sky from "../components/Sky.astro";
 <Head />
 </head>
 <body data-sky="qibla" class="skypage">
+<Loader />
 <header class="sky-top">
  <a class="sky-logo" href="/khayr" aria-label="Back to Baik"><span class="baik-logo" role="img" aria-label="Baik"></span></a>
 </header>

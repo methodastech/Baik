@@ -1963,6 +1963,7 @@ body.lite .face.front,body.lite .face.back{background-image:var(--stock-bg,none)
 .qpt .qt-row{padding:9px 10px;font-size:13.5px;}
 .qpt .qt-v{font-size:13.5px;}
 .qpt .qt-next{font-size:15px;margin:9px 0 11px;}
+.qpt .qt-d{padding-top:10px;}
 .qt-d{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:#6E6E6E;line-height:1.5;}
 .qt-next{font-size:13.5px;font-weight:700;color:var(--acc-soft);margin:7px 0 9px;}
 .qt-row{display:flex;align-items:baseline;justify-content:space-between;gap:10px;padding:6px 8px;border-radius:8px;
@@ -2066,3 +2067,144 @@ body.skypage .qib.on{position:static;display:flex;justify-content:center;backgro
 body.skypage .qib.on .qib-in{max-height:none;box-shadow:0 20px 50px -30px rgba(30,33,36,.35);}
 body.skypage[data-sky="qibla"] #qpt,body.skypage[data-sky="prayer"] #qib{display:none!important;}
 @media(max-width:520px){.sky-nav a{padding:7px 9px;font-size:12.5px;}body.skypage .qib.on{padding:12px 0 32px;}body.skypage .qib.on .qib-in{border-radius:18px;}}
+
+/* /prayer-times on a desktop: two columns. The left holds where you are and the countdown, large;
+   the right holds the day's schedule with room to breathe. Phones keep the single sheet above. */
+@media(min-width:900px){
+ body.skypage[data-sky="prayer"] .qib.on{padding:56px 32px 72px;}
+ body.skypage[data-sky="prayer"] #qpt .qib-in{width:min(1080px,100%);display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);
+  grid-template-rows:auto auto auto auto 1fr;column-gap:0;padding:0;text-align:left;border-radius:24px;overflow:hidden;}
+ #qpt .qib-in>.qib-k,#qpt .qib-in>.qib-h,#qpt .qib-in>.qib-sub,#qpt .qib-in>.qtc,#qpt .qib-in>.qib-row{grid-column:1;padding-left:48px;padding-right:44px;}
+ #qpt .qib-in>.qib-k{padding-top:46px;font-size:10.5px;}
+ #qpt .qib-in>.qib-h{font-size:38px;letter-spacing:-.02em;margin:10px 0 6px;}
+ #qpt .qib-in>.qib-sub{font-size:14px;line-height:1.5;margin:0;}
+ #qpt .qib-in>.qib-row{justify-content:flex-start;padding-bottom:44px;}
+ /* the countdown: a quiet panel of its own, with rings big enough to read across a desk */
+ #qpt .qtc{margin:30px 44px 0 48px;padding:30px 24px 26px;border-radius:20px;background:#fff;border-color:#E2E2E2;}
+ #qpt .qtc-k{font-size:10px;}
+ #qpt .qtc-n{font-size:34px;margin-top:8px;}
+ #qpt .qtc-n em{font-size:18px;}
+ #qpt .qtc-t{font-size:16px;margin-top:6px;}
+ #qpt .qtc-rings{gap:26px;margin-top:26px;}
+ #qpt .qtc-r{width:112px;}
+ #qpt .qtc-v{font-size:30px;margin-top:-11px;}
+ #qpt .qtc-l{font-size:9.5px;margin-top:8px;}
+ #qpt .qtc-f{font-size:12.5px;margin-top:20px;}
+ /* the schedule: its own column, set off by a hairline and a slightly deeper ground */
+ #qpt .qib-in>.qib-times{grid-column:2;grid-row:1 / -1;margin:0;padding:44px 48px 40px 44px;background:#EDEDEE;border-left:1px solid #DFDFDF;border-radius:0;}
+ #qpt .qt-d{font-size:10.5px;padding-right:44px;margin-bottom:16px;}
+ #qpt .qt-row{padding:14px 16px;font-size:16px;border-radius:12px;align-items:center;}
+ #qpt .qt-row+.qt-row{box-shadow:0 -1px 0 rgba(30,33,36,.06);}
+ #qpt .qt-row.on,#qpt .qt-row.on+.qt-row{box-shadow:none;}
+ #qpt .qt-row.on{background:#fff;box-shadow:0 1px 2px rgba(30,33,36,.06),0 8px 24px -14px rgba(30,33,36,.3);}
+ #qpt .qt-n{gap:10px;} #qpt .qt-n em{font-size:12.5px;}
+ #qpt .qt-b{width:9px;height:9px;}
+ #qpt .qt-v{font-size:16px;}
+ #qpt .qt-sel{margin-top:22px;} #qpt .qt-sel select{font-size:13px;padding:10px 12px;border-radius:11px;background:#fff;}
+ #qpt .qt-note{font-size:12px;margin-top:14px;max-width:46ch;}
+ #qpt .pw-x{top:20px;right:20px;width:38px;height:38px;}
+}
+
+/* the day line under the countdown: desktop /prayer-times only */
+.qdl{display:none;}
+@media(min-width:900px){
+ body.skypage #qpt .qib-in>.qdl:not([hidden]){display:block;grid-column:1;margin:30px 44px 0 48px;padding:0 6px;}
+ .qdl-k{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--gold);margin-bottom:22px;}
+ .qdl-tr{position:relative;height:3px;border-radius:2px;background:rgba(30,33,36,.1);margin:0 30px 54px;}
+ .qdl-f{position:absolute;left:0;top:0;bottom:0;border-radius:2px;background:#1E2124;transition:width 1s linear;}
+ .qdl-p{position:absolute;top:50%;transform:translate(-50%,-50%);display:flex;flex-direction:column;align-items:center;}
+ .qdl-p i{width:13px;height:13px;border-radius:50%;background:#F3F3F3;border:2px solid rgba(30,33,36,.22);box-sizing:border-box;}
+ .qdl-p.done i{background:var(--pt);border-color:var(--pt);}
+ .qdl-p.next i{border-color:var(--pt);box-shadow:0 0 0 4px color-mix(in srgb,var(--pt) 20%,transparent);}
+ .qdl-p b,.qdl-p small{position:absolute;top:21px;white-space:nowrap;}
+ .qdl-p b{font:600 13px 'Saira',sans-serif;color:var(--pt);}
+ .qdl-p small{top:39px;font:400 11px 'JetBrains Mono',monospace;color:#6E6E6E;}
+ .qdl-p.done b{opacity:.7;}
+}
+
+/* ============ the opening screen (src/components/Loader.astro) ============
+   Shown while html.authwait hides the page, or through a fresh sign-in as html.bk-intro.
+   body is visibility:hidden during authwait, so the screen sets itself visible. */
+.bk-load{position:fixed;inset:0;z-index:5000;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:34px;
+ background:var(--bk-bg,#F3F3F3);color:var(--bk-fg,#1E2124);visibility:hidden;opacity:0;pointer-events:none;
+ transition:opacity .6s cubic-bezier(.4,0,.2,1),visibility 0s linear .6s;}
+html.authwait .bk-load,html.bk-intro .bk-load{visibility:visible;opacity:1;pointer-events:auto;transition:opacity .35s ease var(--d,0s),visibility 0s;}
+body.skypage{--bk-bg:#EAEBED;}
+body.tbpage{--bk-bg:#0E1513;--bk-fg:#EDEFEA;}
+.bk-mark{position:relative;width:min(168px,42vw);aspect-ratio:118.13/45.82;transition:transform .7s cubic-bezier(.4,0,.2,1),opacity .6s ease;}
+.bk-mark svg{position:absolute;inset:0;display:block;width:100%;height:100%;}
+/* leaving: the mark eases forward as the page comes through */
+html:not(.authwait):not(.bk-intro) .bk-mark{transform:scale(1.05);}
+/* letters rise from the baseline (45.2 of 45.82), one after another */
+.bk-c{position:absolute;left:0;right:0;top:-40%;height:138.65%;overflow:hidden;}
+.bk-l{position:absolute;left:0;right:0;top:28.85%;height:72.12%;will-change:transform;
+ animation:bkRise 1.05s cubic-bezier(.16,1,.3,1) both;animation-delay:calc(var(--d,0s) + var(--i) * 85ms);}
+@keyframes bkRise{from{transform:translateY(105%);}to{transform:none;}}
+/* the diamond drops in last, then turns a quarter at a time, like a bead being moved */
+.bk-dot{position:absolute;left:62.1%;top:0;width:10.67%;height:27.5%;will-change:transform,opacity;
+ animation:bkDot .8s cubic-bezier(.34,1.4,.64,1) both;animation-delay:calc(var(--d,0s) + .55s);}
+.bk-dot-in{position:absolute;inset:0;will-change:transform;animation:bkTurn 1.5s cubic-bezier(.65,0,.35,1) infinite;animation-delay:calc(var(--d,0s) + 1.35s);}
+@keyframes bkDot{from{opacity:0;transform:translateY(-110%) rotate(-90deg) scale(.5);}to{opacity:1;transform:none;}}
+@keyframes bkTurn{0%,45%{transform:rotate(0);}80%,100%{transform:rotate(90deg);}}
+/* a hairline under the mark with a slow gleam: the only plain "still loading" sign */
+.bk-line{position:relative;width:56px;height:1.5px;border-radius:1px;overflow:hidden;background:color-mix(in srgb,currentColor 10%,transparent);
+ opacity:0;animation:bkIn .6s ease both;animation-delay:calc(var(--d,0s) + .9s);}
+.bk-line::after{content:'';position:absolute;inset:0;width:40%;border-radius:1px;background:currentColor;opacity:.55;
+ animation:bkGleam 1.5s cubic-bezier(.65,0,.35,1) infinite;animation-delay:calc(var(--d,0s) + .9s);}
+@keyframes bkIn{to{opacity:1;}}
+@keyframes bkGleam{from{transform:translateX(-100%);}to{transform:translateX(250%);}}
+@media(prefers-reduced-motion:reduce){
+ .bk-l,.bk-dot,.bk-dot-in,.bk-line,.bk-line::after{animation:none!important;}
+ .bk-line{opacity:1;} html:not(.authwait):not(.bk-intro) .bk-mark{transform:none;}
+}
+
+/* /prayer-times on a desktop, fitted to the window: the card fills the width and exactly the height
+   under the header, so the whole day is on one screen. Spacing scales with the window height;
+   the countdown card takes up the spare room; the schedule scrolls inside itself if it must. */
+@media(min-width:900px) and (min-height:560px){
+ body.skypage[data-sky="prayer"]{display:flex;flex-direction:column;height:100vh;height:100svh;overflow:hidden;}
+ body.skypage[data-sky="prayer"] .sky-top{flex:none;}
+ body.skypage[data-sky="prayer"] #qpt.on{flex:1;min-height:0;padding:clamp(14px,2.6vh,28px) clamp(16px,2.2vw,32px);}
+ body.skypage[data-sky="prayer"] #qpt .qib-in{width:100%;max-width:1720px;height:100%;overflow:auto;
+  grid-template-rows:auto auto auto minmax(0,1fr) auto auto;}
+ #qpt .qib-in>.qib-k{padding-top:clamp(22px,5vh,48px);}
+ #qpt .qib-in>.qib-k,#qpt .qib-in>.qib-h,#qpt .qib-in>.qib-sub,#qpt .qib-in>.qib-row{padding-left:clamp(28px,3.4vw,64px);padding-right:clamp(24px,3vw,56px);}
+ #qpt .qib-in>.qib-h{font-size:clamp(28px,4.8vh,44px);margin:clamp(4px,1vh,10px) 0 clamp(2px,.6vh,6px);}
+ #qpt .qtc:not([hidden]){display:flex;flex-direction:column;justify-content:center;min-height:0;
+  margin:clamp(14px,3vh,32px) clamp(24px,3vw,56px) 0 clamp(28px,3.4vw,64px);padding:clamp(14px,3vh,34px) 24px;}
+ #qpt .qtc-n{font-size:clamp(24px,4.4vh,40px);margin-top:clamp(2px,.8vh,8px);}
+ #qpt .qtc-t{font-size:clamp(13px,2vh,17px);}
+ #qpt .qtc-rings{gap:clamp(14px,2.2vw,34px);margin-top:clamp(10px,2.6vh,30px);}
+ #qpt .qtc-r{width:clamp(76px,14vh,140px);}
+ #qpt .qtc-v{font-size:clamp(20px,3.8vh,36px);}
+ #qpt .qtc-f{margin-top:clamp(8px,2vh,22px);}
+ body.skypage #qpt .qib-in>.qdl:not([hidden]){margin:clamp(14px,3vh,32px) clamp(24px,3vw,56px) clamp(4px,1.4vh,14px) clamp(28px,3.4vw,64px);}
+ .qdl-k{margin-bottom:clamp(14px,2.4vh,22px);}
+ .qdl-tr{margin-bottom:50px;}
+ #qpt .qib-in>.qib-row{padding-bottom:clamp(20px,4vh,44px);}
+ #qpt .qib-in>.qib-row[style*="none"]+*,#qpt .qib-in>.qdl:last-of-type{margin-bottom:clamp(20px,4vh,44px);}
+ /* the schedule column */
+ #qpt .qib-in>.qib-times{overflow:auto;min-height:0;padding:clamp(22px,5vh,48px) clamp(28px,3.4vw,64px) clamp(18px,3vh,36px) clamp(24px,3vw,56px);}
+ #qpt .qt-d{margin-bottom:clamp(6px,1.6vh,18px);}
+ #qpt .qt-row{padding:clamp(6px,1.55vh,15px) 16px;font-size:clamp(14px,2.1vh,17px);}
+ #qpt .qt-v{font-size:clamp(14px,2.1vh,17px);}
+ #qpt .qt-sel{margin-top:clamp(10px,2.2vh,24px);}
+ #qpt .qt-note{margin-top:clamp(8px,1.6vh,14px);font-size:clamp(11px,1.6vh,12.5px);max-width:60ch;}
+}
+/* taller windows: the countdown and the rows grow with the height instead of leaving it empty */
+@media(min-width:900px) and (min-height:560px){
+ #qpt .qtc-r{width:clamp(76px,17vh,210px);}
+ #qpt .qtc-v{font-size:clamp(20px,4.4vh,52px);margin-top:clamp(-14px,-1.2vh,-9px);}
+ #qpt .qtc-l{font-size:clamp(8.5px,1.1vh,11px);}
+ #qpt .qtc-n{font-size:clamp(24px,5vh,54px);}
+ #qpt .qtc-t{font-size:clamp(13px,2.1vh,21px);}
+ #qpt .qtc-f{font-size:clamp(11px,1.4vh,14px);}
+ #qpt .qt-row{padding:clamp(6px,2.1vh,24px) 18px;font-size:clamp(14px,2.2vh,20px);}
+ #qpt .qt-v{font-size:clamp(14px,2.2vh,20px);}
+ #qpt .qt-n em{font-size:clamp(11px,1.5vh,14px);}
+}
+@media(min-width:900px) and (min-height:560px){
+ /* rows stay compact on a laptop and open up only on taller screens */
+ #qpt .qt-row{padding:clamp(6px,calc(4.2vh - 19px),24px) 18px;font-size:clamp(14px,calc(1.2vh + 6px),19px);}
+ #qpt .qt-v{font-size:clamp(14px,calc(1.2vh + 6px),19px);}
+}

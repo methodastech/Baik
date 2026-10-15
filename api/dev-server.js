@@ -47,5 +47,6 @@ http.createServer(async (req, res) => {
   let status = 200;
   if (!fs.existsSync(file)) { file = path.join(ROOT, '404.html'); status = 404; } // same as staticwebapp.config.json
   res.writeHead(status, { 'Content-Type': TYPES[path.extname(file).toLowerCase()] || 'application/octet-stream', 'Cache-Control': 'no-cache' });
-  fs.createReadStream(file).pipe(res);
+  // a rebuild empties dist/ for a moment; a request then must not take the server down with it
+  fs.createReadStream(file).on('error', () => res.end()).pipe(res);
 }).listen(PORT, () => console.log(`Baik local server: http://localhost:${PORT}  (accounts saved in api/.data/users.json)`));
