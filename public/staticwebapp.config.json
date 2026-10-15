@@ -21,6 +21,13 @@
   },
   "routes": [
     {
+      "route": "/google27ed9a6141bb5a27.html",
+      "rewrite": "/google-site-verification.txt",
+      "headers": {
+        "Content-Type": "text/html; charset=utf-8"
+      }
+    },
+    {
       "route": "/sw.js",
       "headers": {
         "Cache-Control": "no-cache, no-store, must-revalidate",
