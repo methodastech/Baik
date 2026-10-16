@@ -1935,6 +1935,45 @@ function setAr(){var px=AR[ari];document.documentElement.style.setProperty('--ar
  try{store('baik.ar',ari);}catch(e){}}
 document.getElementById('arMinus').addEventListener('click',function(){ari=Math.max(0,ari-1);setAr();});
 document.getElementById('arPlus').addEventListener('click',function(){ari=Math.min(AR.length-1,ari+1);setAr();});
+/* Phones: one "Aa" button stands in for the A− / size / A+ / ع group, which crowded the top bar.
+   Its panel sits on the page (the top bar's rail scrolls and would clip it) and drives the same
+   size and script settings, so both controls always agree. */
+(function(){
+ var btn=document.getElementById('aaBtn');if(!btn)return;
+ var pan=document.createElement('div');pan.className='aa-p';pan.id='aaPanel';pan.hidden=true;
+ pan.setAttribute('role','dialog');pan.setAttribute('aria-label','Arabic text');document.body.appendChild(pan);
+ // taps inside stay inside: each one redraws the panel, which would otherwise look like a tap outside
+ pan.addEventListener('click',function(e){e.stopPropagation();});
+ function draw(){
+  var bm=LANG==='bm';
+  pan.innerHTML='<div class="aa-k">'+(bm?'Teks Arab':'Arabic text')+'</div>'
+   +'<div class="aa-size"><button type="button" class="aa-step" data-d="-1" aria-label="'+(bm?'Kecilkan':'Smaller')+'"'+(ari===0?' disabled':'')+'>A−</button>'
+   +'<span class="aa-lv" role="status" aria-live="polite"><span class="aa-bars">'+AR.map(function(_,i){return '<i'+(i<=ari?' class="on"':'')+'></i>';}).join('')+'</span>'
+   +'<b>'+AR[ari]+'</b></span>'
+   +'<button type="button" class="aa-step" data-d="1" aria-label="'+(bm?'Besarkan':'Larger')+'"'+(ari===AR.length-1?' disabled':'')+'>A+</button></div>'
+   +'<div class="aa-k">'+(bm?'Tulisan':'Script')+'</div>'
+   +'<div class="aa-list" role="radiogroup">'+SCRIPTS.map(function(sc,i){
+     return '<button type="button" role="radio" aria-checked="'+(i===sci?'true':'false')+'" data-sci="'+i+'"'+(i===sci?' class="on"':'')+'>'
+      +'<span class="sm-s" style="font-family:'+sc.f.replace(/"/g,'&quot;')+'">بسم</span>'
+      +'<span class="sm-t"><b>'+esc(sc.n)+'</b><small>'+esc(sc.d)+'</small></span></button>';}).join('')+'</div>'
+   +'<p class="aa-prev ar" lang="ar" dir="rtl">رَبَّنَا آتِنَا فِي الدُّنْيَا حَسَنَةً</p>';
+  pan.querySelectorAll('[data-d]').forEach(function(b){b.onclick=function(){ari=Math.max(0,Math.min(AR.length-1,ari+parseInt(b.dataset.d,10)));setAr();draw();};});
+  pan.querySelectorAll('[data-sci]').forEach(function(b){b.onclick=function(){sci=parseInt(b.dataset.sci,10);setScript();renderScriptMenu();draw();};});
+ }
+ function place(){
+  var r=btn.getBoundingClientRect(),w=pan.offsetWidth;
+  pan.style.top=(r.bottom+8)+'px';pan.style.left=Math.max(8,Math.min(innerWidth-w-8,r.right-w))+'px';
+ }
+ function set(open){
+  if(open){draw();pan.hidden=false;place();}else pan.hidden=true;
+  btn.setAttribute('aria-expanded',open?'true':'false');
+ }
+ btn.addEventListener('click',function(e){e.stopPropagation();set(pan.hidden);});
+ document.addEventListener('click',function(e){if(!pan.hidden&&!pan.contains(e.target)&&!btn.contains(e.target))set(false);});
+ document.addEventListener('keydown',function(e){if(e.key==='Escape'&&!pan.hidden){set(false);btn.focus();}});
+ addEventListener('resize',function(){if(!pan.hidden)place();});
+ var rail=btn.closest('.top-scroll');if(rail)rail.addEventListener('scroll',function(){if(!pan.hidden)set(false);});
+})();
 
 
 /* the web / app preview switch is gone: the site is always the web layout. Anyone who left it
