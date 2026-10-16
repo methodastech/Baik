@@ -386,8 +386,8 @@
       +'follow. The Hijri date is the Umm al-Qura calculation and a local sighting may place the day '
       +'differently.'))
    +' '+(bm
-    ?'Halaman web ini tidak dapat membunyikan azan sendiri. Notifikasi azan datang bersama aplikasi natif.'
-    :'This web page cannot sound the azan by itself. Azan notifications arrive with the native app.')
+    ?'Hidupkan Peringatan di bawah untuk pemberitahuan setiap waktu solat, walaupun Baik ditutup.'
+    :'Turn on Reminders below for a notification at each prayer, even when Baik is closed.')
    +'</div>';
   box.innerHTML=h;
 

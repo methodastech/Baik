@@ -1,11 +1,19 @@
 ---
-/* Internal: three card loading screens side by side (public/js/loaders-cards.js, three.js). Each
-   tile runs live; "Open full screen" shows it as a visitor would meet it, where "Page ready" lifts a
-   card toward you, turns it over, and hands over to the page. Listed under Admin in the More menu. */
+/* Internal: the loading screen candidates side by side. Three built from the Baik card
+   (public/js/loaders-cards.js, three.js) and five from the wordmark (public/js/loaders-logo.js).
+   Each tile runs live; "Open full screen" shows it as a visitor would meet it, and "Page ready"
+   plays its hand-over to the page. Listed under Admin in the More menu, built locally only. */
 const LOADERS = [
   { k: 'draw', n: '01', t: 'The Draw', d: 'One Baik card floating in soft studio light, turning a few degrees as the light slides across its glossy back.' },
   { k: 'fan', n: '02', t: 'The Fan', d: 'The deck opens into a hand of cards like a slow breath, holds a moment, and closes again.' },
   { k: 'cut', n: '03', t: 'The Cut', d: 'A squared deck seen from above, cut by hand: the top half slides out, the bottom rises, and they swap.' },
+];
+const LOGOS = [
+  { k: 'trace', n: '04', t: 'Trace', d: 'A fine line draws every letter, the letters fill in, then a bead of gold light keeps running round the edges.' },
+  { k: 'sheen', n: '05', t: 'Sheen', d: 'The mark rises gently into place; now and then a soft band of light slides across it, like light on lacquer.' },
+  { k: 'orbit', n: '06', t: 'Orbit', d: 'The letters arrive one by one; the diamond lifts off the i, circles the word on a faint orbit, and settles home.' },
+  { k: 'mosaic', n: '07', t: 'Mosaic', d: 'The mark assembles from hundreds of small diamonds, the shape of its own i-dot, then a gold glint ripples across.' },
+  { k: 'focus', n: '08', t: 'Focus', d: 'The letters drift in apart and out of focus and close up sharp; a halo breathes behind, a hairline keeps time below.' },
 ];
 ---
 <!doctype html>
@@ -45,14 +53,18 @@ const LOADERS = [
  .full.leaving .page{opacity:1;transition-delay:.25s;}
  .bar{position:absolute;left:50%;bottom:28px;transform:translateX(-50%);display:flex;gap:8px;background:rgba(255,255,255,.82);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);padding:8px;border-radius:14px;box-shadow:0 10px 30px -14px rgba(0,0,0,.3);z-index:2;}
  .bar .nm{align-self:center;padding:0 10px 0 6px;font:600 13px 'Space Grotesk',sans-serif;}
+ .sec{max-width:1240px;margin:0 auto;padding:12px 24px 0;display:flex;align-items:baseline;gap:12px;}
+ .sec b{font:700 20px 'Space Grotesk',sans-serif;} .sec span{font:500 10.5px 'JetBrains Mono',monospace;letter-spacing:.16em;text-transform:uppercase;color:#6E6E6E;}
+ .grid.g5{padding-top:16px;}
 </style>
 </head>
 <body>
 <header class="hd">
  <div class="k">Internal · not linked from the site</div>
  <h1>Loading screens</h1>
- <p>Three openings built from the Baik card itself, lit like a product shot. Open one to see it full screen as a visitor would, then press Page ready: a card lifts toward you, turns over to a dua, and the page comes through.</p>
+ <p>Eight candidates: three built from the Baik card itself, lit like a product shot, and five from the wordmark. Open one to see it full screen as a visitor would, then press Page ready to see how it hands over to the page.</p>
 </header>
+<div class="sec"><b>From the card</b><span>three.js</span></div>
 <main class="grid">
  {LOADERS.map((l) => (
   <article class="tile">
@@ -66,6 +78,20 @@ const LOADERS = [
   </article>
  ))}
 </main>
+<div class="sec"><b>From the logo</b><span>svg · canvas</span></div>
+<section class="grid g5">
+ {LOGOS.map((l) => (
+  <article class="tile">
+   <div class="stage" data-k={l.k} aria-hidden="true"></div>
+   <div class="meta">
+    <span class="n">{l.n} · {l.k}</span>
+    <b>{l.t}</b>
+    <p>{l.d}</p>
+    <div class="row"><button class="b pri" type="button" data-open={l.k} data-t={l.t}>Open full screen</button><button class="b" type="button" data-replay={l.k}>Replay</button></div>
+   </div>
+  </article>
+ ))}
+</section>
 <div class="full" id="full" role="dialog" aria-modal="true" aria-label="Loading screen preview">
  <div class="fhost" id="fullHost" style="position:absolute;inset:0"></div>
  <div class="page">The page would be here</div>
@@ -74,29 +100,38 @@ const LOADERS = [
 <script is:inline src="/deck3d-cards.js"></script>
 <script is:inline type="importmap">{"imports":{"three":"/js/vendor/three/three.module.js","three/addons/":"/js/vendor/three/addons/"}}</script>
 <script is:inline type="module" src="/js/loaders-cards.js"></script>
+<script is:inline src="/js/loaders-logo.js"></script>
 <script is:inline>
 (function () {
-  function go() {
-    var L = window.BaikCardLoader, tiles = {};
-    function shown(h) { var c = h.querySelector('.cl-cv'); if (c) requestAnimationFrame(function () { c.classList.add('in'); }); }
-    document.querySelectorAll('.stage[data-k]').forEach(function (h) { L.mount(h, h.dataset.k).then(function (m) { tiles[h.dataset.k] = m; shown(h); }); });
-    document.querySelectorAll('[data-replay]').forEach(function (b) { b.addEventListener('click', function () { var m = tiles[b.dataset.replay]; if (m) m.replay(); }); });
-    var full = document.getElementById('full'), host = document.getElementById('fullHost'), cur = null, kind = '', name = '';
-    function open(k, n) {
-      if (cur) { cur.stop(); cur = null; }
-      kind = k; name = n; document.getElementById('fullName').textContent = n;
-      full.classList.remove('leaving'); full.classList.add('on'); document.body.style.overflow = 'hidden';
-      L.mount(host, k, { onDone: function () { full.classList.add('leaving'); } }).then(function (m) { cur = m; shown(host); });
-      document.getElementById('fullReady').focus();
-    }
-    function close() { if (cur) cur.stop(); cur = null; full.classList.remove('on', 'leaving'); document.body.style.overflow = ''; }
-    document.querySelectorAll('[data-open]').forEach(function (b) { b.addEventListener('click', function () { open(b.dataset.open, b.dataset.t); }); });
-    document.getElementById('fullReady').addEventListener('click', function () { if (cur) cur.ready(); });
-    document.getElementById('fullReplay').addEventListener('click', function () { open(kind, name); });
-    document.getElementById('fullX').addEventListener('click', close);
-    document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && full.classList.contains('on')) close(); });
+  var LOGO = window.BaikLogoLoader, tiles = {};
+  function lib(k) { return LOGO.kinds.indexOf(k) >= 0 ? LOGO : window.BaikCardLoader; }
+  function shown(h) { h.querySelectorAll('.cl-cv').forEach(function (c) { requestAnimationFrame(function () { c.classList.add('in'); }); }); }
+  function mountTiles(which) {
+    document.querySelectorAll('.stage[data-k]').forEach(function (h) {
+      var k = h.dataset.k; if ((LOGO.kinds.indexOf(k) >= 0) !== (which === 'logo')) return;
+      lib(k).mount(h, k).then(function (m) { tiles[k] = m; shown(h); });
+    });
   }
-  if (window.BaikCardLoader) go(); else window.addEventListener('baik-card-loader', go, { once: true });
+  mountTiles('logo');                                   // the wordmark ones need nothing to load
+  if (window.BaikCardLoader) mountTiles('card'); else window.addEventListener('baik-card-loader', function () { mountTiles('card'); }, { once: true });
+  document.querySelectorAll('[data-replay]').forEach(function (b) { b.addEventListener('click', function () { var m = tiles[b.dataset.replay]; if (m) m.replay(); }); });
+  var full = document.getElementById('full'), host = document.getElementById('fullHost'), cur = null, kind = '', name = '', opened = 0;
+  function open(k, n) {
+    if (!lib(k)) return;                                // the card loaders are still loading three.js
+    if (cur) { cur.stop(); cur = null; }
+    kind = k; name = n; document.getElementById('fullName').textContent = n;
+    full.classList.remove('leaving'); full.classList.add('on'); document.body.style.overflow = 'hidden';
+    // a hand-over that finishes after another screen was opened belongs to the old one: ignore it
+    var ticket = ++opened;
+    lib(k).mount(host, k, { onDone: function () { if (ticket === opened) full.classList.add('leaving'); } }).then(function (m) { if (ticket === opened) { cur = m; shown(host); } else m.stop(); });
+    document.getElementById('fullReady').focus();
+  }
+  function close() { opened++; if (cur) cur.stop(); cur = null; full.classList.remove('on', 'leaving'); document.body.style.overflow = ''; }
+  document.querySelectorAll('[data-open]').forEach(function (b) { b.addEventListener('click', function () { open(b.dataset.open, b.dataset.t); }); });
+  document.getElementById('fullReady').addEventListener('click', function () { if (cur) cur.ready(); });
+  document.getElementById('fullReplay').addEventListener('click', function () { open(kind, name); });
+  document.getElementById('fullX').addEventListener('click', close);
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && full.classList.contains('on')) close(); });
 })();
 </script>
 </body>

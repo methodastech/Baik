@@ -86,6 +86,7 @@
 
   <div class="qdl" id="qdl" hidden aria-hidden="true"></div>
   <div class="qib-times" id="qibTimes"></div>
+  <div class="qrm" id="qrm" aria-label="Prayer reminders"></div>
   <div class="qib-row"><button class="qib-b pri" id="qptGeo" type="button">Use my location</button></div>
  </div>
 </div>
@@ -125,3 +126,5 @@
   </div>
  </div>
 </div>
+<!-- defer: runs after the page's own scripts (sky-base.js gives LANG and toast) -->
+<script is:inline defer src="/js/reminders.js"></script>

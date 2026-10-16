@@ -1,14 +1,19 @@
 /* Baik · first tour, like a game tutorial. The screen dims except for one control, a hand taps
    at it, and only that control can be pressed: everything around it is covered. Pressing it does
-   what it always does, and the tour moves on to the next. It plays on every visit to /khayr until
-   "Don't show this again" is ticked (localStorage baik.tour = 'off'); Skip ends it for this visit
-   only. "Show the tour" in the More menu plays it again at any time. Loaded after khayr-app.js. */
+   what it always does, and the tour moves on to the next. It starts by itself only for accounts
+   made since the tour existed, and at most once per browser session (going to Qibla and back does
+   not bring it back), until "Don't show this again" is ticked (localStorage baik.tour = 'off').
+   "Show the tour" in the More menu plays it at any time. Loaded after khayr-app.js. */
 (function () {
   'use strict';
   var KEY = 'baik.tour', $ = function (id) { return document.getElementById(id); };
   var bm = function () { return typeof LANG !== 'undefined' && LANG === 'bm'; };
   var tx = function (p) { return p ? (bm() ? p[1] : p[0]) : ''; };
   function isOff() { try { return localStorage.getItem(KEY) === 'off'; } catch (e) { return false; } }
+  var LAUNCH = Date.parse('2026-10-15T00:00:00+08:00');          // the day the tour arrived
+  function isNewAccount() { var u = window.USER; return !!(u && u.real && (u.at || 0) >= LAUNCH); }
+  function seenThisSession() { try { return sessionStorage.getItem(KEY + '.session') === '1'; } catch (e) { return false; } }
+  function markSession() { try { sessionStorage.setItem(KEY + '.session', '1'); } catch (e) {} }
   function setOff(v) { try { if (v) localStorage.setItem(KEY, 'off'); else localStorage.removeItem(KEY); } catch (e) {} }
   function shown(el) { if (!el || el.hidden) return false; var r = el.getBoundingClientRect(); return r.width > 0 && r.height > 0 && getComputedStyle(el).visibility !== 'hidden'; }
 
@@ -71,7 +76,7 @@
 
   function start(force) {
     if (on || (!force && isOff())) return;
-    on = true; busy = false; build();
+    on = true; busy = false; markSession(); build();
     document.documentElement.classList.add('touring');
     plan = []; STEPS.forEach(function (s, n) { if (!(s.skip && s.skip())) plan.push(n); });
     $('tourOff').checked = isOff();
@@ -204,6 +209,8 @@
       if (Date.now() - t0 < 20000) setTimeout(ready, 200);
       return;
     }
+    // only a new account, and only once this session
+    if (!isNewAccount() || seenThisSession()) return;
     setTimeout(function () { start(false); }, 700);
   })();
 })();

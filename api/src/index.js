@@ -15,3 +15,10 @@ app.http('pay-create', { methods: ['POST'], authLevel: 'anonymous', route: 'pay/
 app.http('pay-callback', { methods: ['POST'], authLevel: 'anonymous', route: 'pay/callback', handler: wrap(pay.callback) });
 app.http('pay-offer', { methods: ['GET'], authLevel: 'anonymous', route: 'pay/offer', handler: wrap(pay.offer) });
 app.http('pay-status', { methods: ['GET'], authLevel: 'anonymous', route: 'pay/status', handler: wrap(pay.status) });
+// prayer and adhkar reminders (web push); /api/push/tick is called once a minute by an outside timer
+const push = require('./push');
+app.http('push-key', { methods: ['GET'], authLevel: 'anonymous', route: 'push/key', handler: wrap(push.key) });
+app.http('push-subscribe', { methods: ['POST'], authLevel: 'anonymous', route: 'push/subscribe', handler: wrap(push.subscribe) });
+app.http('push-unsubscribe', { methods: ['POST'], authLevel: 'anonymous', route: 'push/unsubscribe', handler: wrap(push.unsubscribe) });
+app.http('push-test', { methods: ['POST'], authLevel: 'anonymous', route: 'push/test', handler: wrap(push.test) });
+app.http('push-tick', { methods: ['GET', 'POST'], authLevel: 'anonymous', route: 'push/tick', handler: wrap(push.tick) });

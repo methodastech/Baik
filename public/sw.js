@@ -75,3 +75,26 @@ self.addEventListener('fetch', event => {
 
 // Lets a new deploy replace a running worker without the user closing every tab.
 self.addEventListener('message', e => { if (e.data === 'skipWaiting') self.skipWaiting(); });
+
+// Prayer and adhkar reminders (api/src/push.js). Each kind replaces its own last notification
+// (the tag), so a missed Zohor never piles up under Asar.
+self.addEventListener('push', event => {
+  let d = {};
+  try { d = event.data ? event.data.json() : {}; } catch (e) { d = { title: 'Baik', body: event.data ? event.data.text() : '' }; }
+  event.waitUntil(self.registration.showNotification(d.title || 'Baik', {
+    body: d.body || '',
+    tag: d.tag || 'baik',
+    icon: '/icons/icon-192.png',
+    badge: '/icons/icon-192.png',
+    data: { url: d.url || '/khayr' },
+  }));
+});
+// Tapping a reminder brings an open Baik tab forward, or opens the page it points to.
+self.addEventListener('notificationclick', event => {
+  event.notification.close();
+  const url = (event.notification.data && event.notification.data.url) || '/khayr';
+  event.waitUntil(self.clients.matchAll({ type: 'window', includeUncontrolled: true }).then(list => {
+    for (const c of list) if (new URL(c.url).pathname === url && 'focus' in c) return c.focus();
+    return self.clients.openWindow(url);
+  }));
+});

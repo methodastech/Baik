@@ -69,6 +69,26 @@ function tableStore() {
       for (let i = 0; i * 30000 < s.length; i++) { ent['p' + i] = s.slice(i * 30000, (i + 1) * 30000); ent.parts = i + 1; }
       await t.upsertEntity(ent, 'Replace');
     },
+    // reminder subscriptions (one per device) and each JAKIM zone's week of times, as JSON
+    async putPush(o) { await init(); await t.upsertEntity({ partitionKey: 'push', rowKey: o.id, data: JSON.stringify(o) }, 'Replace'); },
+    async delPush(id) { await init(); try { await t.deleteEntity('push', id); } catch (e) { if (e.statusCode !== 404) throw e; } },
+    async getPush(id) {
+      await init();
+      try { return JSON.parse((await t.getEntity('push', id)).data); }
+      catch (e) { if (e.statusCode === 404) return null; throw e; }
+    },
+    async listPush() {
+      await init();
+      const out = [];
+      for await (const e of t.listEntities({ queryOptions: { filter: "PartitionKey eq 'push'" } })) { try { out.push(JSON.parse(e.data)); } catch (err) { /* skip a broken row */ } }
+      return out;
+    },
+    async getZone(z) {
+      await init();
+      try { return JSON.parse((await t.getEntity('ptz', key(z))).data); }
+      catch (e) { if (e.statusCode === 404) return null; throw e; }
+    },
+    async putZone(z, o) { await init(); await t.upsertEntity({ partitionKey: 'ptz', rowKey: key(z), data: JSON.stringify(o) }, 'Replace'); },
   };
 }
 
@@ -86,12 +106,19 @@ function fileStore() {
     async putOrder(o) { const all = read(); (all._orders = all._orders || {})[o.id] = o; write(all); },
     async getBlob(email) { const all = read(); return (all._sync || {})[key(email)] || null; },
     async putBlob(email, s) { const all = read(); (all._sync = all._sync || {})[key(email)] = s; write(all); },
+    async putPush(o) { const all = read(); (all._push = all._push || {})[o.id] = o; write(all); },
+    async delPush(id) { const all = read(); if (all._push) delete all._push[id]; write(all); },
+    async getPush(id) { return (read()._push || {})[id] || null; },
+    async listPush() { return Object.values(read()._push || {}); },
+    async getZone(z) { return (read()._ptz || {})[z] || null; },
+    async putZone(z, o) { const all = read(); (all._ptz = all._ptz || {})[z] = o; write(all); },
   };
 }
 
 function missing() {
   const fail = async () => { const e = new Error('Sign-in is not set up on the server yet (AZURE_TABLES_CONNECTION is missing).'); e.status = 500; throw e; };
-  return { get: fail, create: fail, update: fail, getBlob: fail, putBlob: fail, getOrder: fail, putOrder: fail };
+  return { get: fail, create: fail, update: fail, getBlob: fail, putBlob: fail, getOrder: fail, putOrder: fail,
+    putPush: fail, delPush: fail, getPush: fail, listPush: fail, getZone: fail, putZone: fail };
 }
 
 module.exports = conn ? tableStore() : process.env.BAIK_DEV === '1' ? fileStore() : missing();

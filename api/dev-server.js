@@ -15,14 +15,15 @@ try {
 } catch (e) { /* no api/.env: run without payments */ }
 const auth = require('./src/auth');
 const pay = require('./src/pay');
-const HANDLERS = Object.assign({}, auth, { payCreate: auth.helpers.wrap(pay.create), payCallback: auth.helpers.wrap(pay.callback), payStatus: auth.helpers.wrap(pay.status), payOffer: auth.helpers.wrap(pay.offer) });
+const push = require('./src/push');
+const HANDLERS = Object.assign({}, auth, { payCreate: auth.helpers.wrap(pay.create), payCallback: auth.helpers.wrap(pay.callback), payStatus: auth.helpers.wrap(pay.status), payOffer: auth.helpers.wrap(pay.offer), pushKey: auth.helpers.wrap(push.key), pushSubscribe: auth.helpers.wrap(push.subscribe), pushUnsubscribe: auth.helpers.wrap(push.unsubscribe), pushTest: auth.helpers.wrap(push.test), pushTick: auth.helpers.wrap(push.tick) });
 
 // Astro builds into dist/; serve that when it exists so local matches production.
 const BUILT = path.resolve(__dirname, '..', 'dist');
 const ROOT = fs.existsSync(BUILT) ? BUILT : path.resolve(__dirname, '..');
 const PORT = +process.env.PORT || 4280;
 const TYPES = { '.html': 'text/html; charset=utf-8', '.js': 'text/javascript', '.mjs': 'text/javascript', '.css': 'text/css', '.json': 'application/json', '.svg': 'image/svg+xml', '.png': 'image/png', '.jpg': 'image/jpeg', '.webp': 'image/webp', '.woff2': 'font/woff2', '.txt': 'text/plain', '.xml': 'application/xml', '.mp3': 'audio/mpeg' };
-const ROUTES = { 'POST /api/pay/create': 'payCreate', 'POST /api/pay/callback': 'payCallback', 'GET /api/pay/status': 'payStatus', 'GET /api/pay/offer': 'payOffer', 'GET /api/sync': 'sync', 'PUT /api/sync': 'sync', 'POST /api/auth/register': 'register', 'POST /api/auth/login': 'login', 'POST /api/auth/logout': 'logout', 'GET /api/auth/me': 'me', 'POST /api/auth/resend': 'resend', 'GET /api/auth/verify': 'verify', 'POST /api/auth/forgot': 'forgot', 'POST /api/auth/reset': 'reset', 'POST /api/auth/trial': 'trial' };
+const ROUTES = { 'GET /api/push/key': 'pushKey', 'POST /api/push/subscribe': 'pushSubscribe', 'POST /api/push/unsubscribe': 'pushUnsubscribe', 'POST /api/push/test': 'pushTest', 'GET /api/push/tick': 'pushTick', 'POST /api/push/tick': 'pushTick', 'POST /api/pay/create': 'payCreate', 'POST /api/pay/callback': 'payCallback', 'GET /api/pay/status': 'payStatus', 'GET /api/pay/offer': 'payOffer', 'GET /api/sync': 'sync', 'PUT /api/sync': 'sync', 'POST /api/auth/register': 'register', 'POST /api/auth/login': 'login', 'POST /api/auth/logout': 'logout', 'GET /api/auth/me': 'me', 'POST /api/auth/resend': 'resend', 'GET /api/auth/verify': 'verify', 'POST /api/auth/forgot': 'forgot', 'POST /api/auth/reset': 'reset', 'POST /api/auth/trial': 'trial' };
 
 http.createServer(async (req, res) => {
   const url = new URL(req.url, `http://${req.headers.host}`);
