@@ -915,6 +915,8 @@
   var home=function(){location.href='/khayr';};
   ['qibX','qptX'].forEach(function(id){var b=$(id);if(b){b.removeEventListener('click',close);b.removeEventListener('click',ptClose);b.addEventListener('click',home);b.setAttribute('aria-label','Back to Baik');}});
   if(STANDALONE==='qibla')open();else ptOpen();
+  /* opening locks the page's scroll, which suits the sheet over the app; here the sheet is the page */
+  document.body.style.overflow='';
  }
  /* the sky reads the day and the compass from here */
  window.baikSky={rows:function(){return ROWS;},next:function(){return NEXT;},compass:{start:compass,stop:detach,read:function(){return {head:HEAD,qibla:QB,pos:POS};}}};
