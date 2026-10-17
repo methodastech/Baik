@@ -2347,3 +2347,15 @@ button.ac-ava:focus-visible{outline:2px solid #1E2124;outline-offset:3px;}
  .aa-b .aa-s{font-size:12px;}
  .aa-b[aria-expanded="true"]{background:rgba(30,33,36,.12);}
 }
+/* phones: the account tabs share the width equally, icon over label, instead of a hidden sideways scroll */
+@media(max-width:520px){
+ .ac-tabs{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:0;overflow:visible;}
+ .ac-tab{flex-direction:column;justify-content:center;gap:4px;padding:8px 2px 9px;font-size:11px;line-height:1.15;text-align:center;min-width:0;white-space:nowrap;}
+ .ac-tab svg{width:16px;height:16px;}
+}
+/* phones: the account and payment sheets fill most of the screen, over the app dimmed rather than
+   a white blur that read as empty space */
+@media(max-width:520px){
+ .ac,.pay{background:rgba(14,18,17,.46);backdrop-filter:blur(2px);-webkit-backdrop-filter:blur(2px);}
+ .ac-in,.pay-in{min-height:min(80svh,calc(100svh - 56px));max-height:calc(100svh - 40px);border:0;box-shadow:0 -10px 40px -12px rgba(0,0,0,.35);}
+}
