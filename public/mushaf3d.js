@@ -1,7 +1,10 @@
 /* Baik · "The open mushaf", WebGL (Three.js). A Qur'an lies open on a rehal. Its paper leaves turn
    with a soft curl, right to left the way a mushaf is read: drag a page across, use the arrows, or
    leave it and it turns by itself, slowly. Each spread is one short surah from the deck: the Arabic
-   on the right-hand page, the meaning and the source on the left. Monochrome paper, nothing loud. */
+   on the right-hand page, the meaning and the source on the left. Monochrome paper, nothing loud.
+   Every couple of turns the right-hand page lifts off the book as a Baik card: it shrinks to a card,
+   turns over to show the deck's back, turns again, and hangs a moment under "Open this card" before
+   it settles back into the page. The page and the card are the same surah: that is the point. */
 import * as THREE from 'three';
 import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
 
@@ -155,16 +158,105 @@ async function start() {
   leafF.castShadow = true; leafB.castShadow = true; leafF.visible = leafB.visible = false;
   book.add(leafF, leafB);
 
+  /* ---------- the page becomes a card ---------- */
+  const CW = 1.46, CH = 2.19;                        // a deck card, 2 : 3
+  const rounded = (() => { const c = document.createElement('canvas'); c.width = 256; c.height = 384; const x = c.getContext('2d');
+    x.fillStyle = '#000'; x.fillRect(0, 0, 256, 384); x.fillStyle = '#fff'; x.beginPath(); x.roundRect(0, 0, 256, 384, 18); x.fill();
+    return new THREE.CanvasTexture(c); })();
+  const logoW = await new Promise(res => { const im = new Image(); im.onload = () => res(im); im.onerror = () => res(null); im.src = 'assets/logo/baik-logo_caps-white.png'; });
+  function cardLattice(x, cx, cy, R0, a, col) {
+    x.save(); x.strokeStyle = col; x.globalAlpha = a; x.lineWidth = 1.4;
+    for (let k = 1; k <= 7; k++) { const r = R0 * k / 7;
+      for (const off of [0, Math.PI / 4]) { x.beginPath(); for (let j = 0; j < 4; j++) { const an = off + j * Math.PI / 2 + Math.PI / 4; j ? x.lineTo(cx + Math.cos(an) * r, cy + Math.sin(an) * r) : x.moveTo(cx + Math.cos(an) * r, cy + Math.sin(an) * r); } x.closePath(); x.stroke(); }
+      x.beginPath(); x.arc(cx, cy, r * .72, 0, Math.PI * 2); x.stroke(); }
+    x.restore();
+  }
+  const CV = 768, CHH = 1152;
+  function cardBack() {                              // the deck's back, as on every Baik card
+    const c = document.createElement('canvas'); c.width = CV; c.height = CHH; const x = c.getContext('2d');
+    const g = x.createLinearGradient(0, 0, CV, CHH); g.addColorStop(0, '#26292E'); g.addColorStop(1, '#131518'); x.fillStyle = g; x.fillRect(0, 0, CV, CHH);
+    x.strokeStyle = 'rgba(255,255,255,.22)'; x.lineWidth = 2; x.beginPath(); x.roundRect(30, 30, CV - 60, CHH - 60, 24); x.stroke();
+    cardLattice(x, CV / 2, CHH / 2, 330, .5, '#fff');
+    x.fillStyle = '#1B1D21'; x.beginPath(); x.arc(CV / 2, CHH / 2, 118, 0, Math.PI * 2); x.fill(); x.strokeStyle = 'rgba(255,255,255,.35)'; x.stroke();
+    if (logoW) { const lw = 168, lh = lw * logoW.height / logoW.width; x.drawImage(logoW, CV / 2 - lw / 2, CHH / 2 - lh / 2, lw, lh); }
+    x.font = '500 20px "JetBrains Mono"'; x.fillStyle = 'rgba(255,255,255,.55)'; x.textAlign = 'center'; x.fillText('A DECK OF AUTHENTIC DUAS', CV / 2, CHH - 100);
+    return tex(c);
+  }
+  const cardFaces = {};
+  function cardFront(i) {                            // the surah card: near-black stock, gold rule, the mushaf's cartouche
+    if (cardFaces[i]) return cardFaces[i];
+    const d = DATA[i], c = document.createElement('canvas'); c.width = CV; c.height = CHH; const x = c.getContext('2d');
+    x.fillStyle = '#16171A'; x.fillRect(0, 0, CV, CHH);
+    x.strokeStyle = '#C9A227'; x.lineWidth = 2.4; x.beginPath(); x.roundRect(34, 34, CV - 68, CHH - 68, 22); x.stroke();
+    x.strokeStyle = 'rgba(201,162,39,.45)'; x.lineWidth = 1.2; x.beginPath(); x.roundRect(48, 48, CV - 96, CHH - 96, 16); x.stroke();
+    x.fillStyle = '#F4EFE2'; x.textBaseline = 'middle';
+    x.font = '600 34px "Space Grotesk"'; x.textAlign = 'left'; x.fillText(d.t.split(' · ')[0], 84, 112);
+    x.font = '600 30px "JetBrains Mono"'; x.textAlign = 'right'; x.fillStyle = '#C9A227'; x.fillText(String(d.sno).padStart(3, '0'), CV - 84, 112);
+    const w = CV - 200, h = 84, X = 100, y = 170;      // the cartouche
+    x.strokeStyle = 'rgba(201,162,39,.8)'; x.lineWidth = 1.6; x.beginPath(); x.moveTo(X + 34, y); x.lineTo(X + w - 34, y); x.lineTo(X + w, y + h / 2); x.lineTo(X + w - 34, y + h); x.lineTo(X + 34, y + h); x.lineTo(X, y + h / 2); x.closePath(); x.stroke();
+    x.fillStyle = '#F4EFE2'; x.textAlign = 'center'; x.direction = 'rtl'; x.font = '600 44px "Scheherazade New"'; x.fillText('سُورَةُ ' + d.sarab, CV / 2, y + h / 2 + 4);
+    let size = 46, lines; const ar = d.ar.replace(/^بِسْمِ[^۝]*?ٱلرَّحِيمِ\s*/, '');
+    for (; size > 26; size -= 2) { x.font = `600 ${size}px "Scheherazade New"`; lines = wrap(x, ar, CV - 170); if (lines.length * size * 1.85 < 610) break; }
+    if (lines.length * size * 1.85 >= 610) { lines = lines.slice(0, Math.floor(610 / (size * 1.85))); lines[lines.length - 1] += ' …'; }
+    const top = 300 + (610 - lines.length * size * 1.85) / 2 + size;
+    lines.forEach((l, k) => x.fillText(l, CV / 2, top + k * size * 1.85));
+    x.direction = 'ltr'; x.fillStyle = 'rgba(201,162,39,.5)'; x.fillRect(84, CHH - 150, CV - 168, 1.5);
+    x.fillStyle = 'rgba(244,239,226,.7)'; x.font = '500 21px "JetBrains Mono"'; x.textAlign = 'left'; x.fillText(String(d.src).toUpperCase(), 84, CHH - 110);
+    x.textAlign = 'right'; x.fillStyle = '#C9A227'; x.fillText('BAIK', CV - 84, CHH - 110);
+    return (cardFaces[i] = tex(c));
+  }
+  const cardGeo = new THREE.PlaneGeometry(1, 1);
+  const skinM = new THREE.MeshStandardMaterial({ roughness: .92, transparent: true, alphaMap: rounded, depthWrite: false });
+  const faceM = new THREE.MeshBasicMaterial({ transparent: true, alphaMap: rounded, toneMapped: false, depthWrite: false });
+  const backFM = new THREE.MeshBasicMaterial({ map: cardBack(), transparent: true, alphaMap: rounded, toneMapped: false });
+  const card = new THREE.Group(), skin = new THREE.Mesh(cardGeo, skinM), face = new THREE.Mesh(cardGeo, faceM), backF = new THREE.Mesh(cardGeo, backFM);
+  backF.rotation.y = Math.PI; skin.position.z = .002; face.position.z = .001;
+  const shadowCard = new THREE.Mesh(new THREE.BoxGeometry(1, 1, .01), new THREE.MeshBasicMaterial({ colorWrite: false, depthWrite: false })); shadowCard.castShadow = true;   // casts the shadow only; never hides the faces
+  card.add(face, skin, backF, shadowCard); card.visible = false; book.add(card);
+  // resting on the right-hand page, the page's size, facing up; and floating before the reader, card-sized
+  const restQ = new THREE.Quaternion().setFromEuler(new THREE.Euler(-Math.PI / 2, 0, 0)).premultiply(new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0, 0, 1), LIFT));
+  const restP = new THREE.Vector3(Math.cos(LIFT) * W / 2, .075 + Math.sin(LIFT) * W / 2, 0);
+  let promo = null, autoTurns = 0;
+  const promoEl = document.createElement('div'); promoEl.className = 'mf-promo'; promoEl.setAttribute('aria-live', 'polite'); host.appendChild(promoEl);
+  const ease = k => k < .5 ? 4 * k * k * k : 1 - Math.pow(-2 * k + 2, 3) / 2, seg = (t, a, b) => Math.max(0, Math.min(1, (t - a) / (b - a)));
+  function startPromo() {
+    if (promo || turning || REDUCED) return;
+    const d = DATA[cur]; faceM.map = cardFront(cur); skinM.map = arabicPage(cur); faceM.needsUpdate = skinM.needsUpdate = true;
+    promoEl.innerHTML = '<span>Every page is a card · Surah ' + d.sno + '</span><b>' + d.t.split(' · ')[0] + '</b><a href="/khayr">Open this card ›</a>';
+    promo = { t: 0 }; card.visible = true;
+  }
+  function endPromo() { promo = null; card.visible = false; promoEl.classList.remove('on'); }
+  const qA = new THREE.Quaternion(), qB = new THREE.Quaternion(), qS = new THREE.Quaternion(), Yax = new THREE.Vector3(0, 1, 0), tmpP = new THREE.Vector3(), camQ = new THREE.Quaternion();
+  function stepPromo(dt) {
+    if (!promo) return;
+    const T = promo.t += dt, END = 5.0;
+    // up (0–0.9), over to the back (1.05–1.6), back to the face (2.0–2.55), hang, down (4.0–5.0)
+    const up = ease(seg(T, 0, .9)) * (1 - ease(seg(T, 4.0, 5.0)));
+    const turn = ease(seg(T, 1.05, 1.6)) * Math.PI + ease(seg(T, 2.0, 2.55)) * Math.PI;
+    // where it floats: between the book and the camera, upright toward the reader, in book space
+    book.updateMatrixWorld(); camQ.copy(camera.quaternion);
+    const inv = new THREE.Quaternion().copy(book.getWorldQuaternion(new THREE.Quaternion())).invert();
+    qB.copy(inv).multiply(camQ);
+    tmpP.copy(camera.position).sub(LOOK).normalize().multiplyScalar(1.75).add(LOOK); book.worldToLocal(tmpP); tmpP.y -= .12;   // low enough that the label above it stays clear
+    card.position.lerpVectors(restP, tmpP, up); card.position.y += Math.sin(Math.PI * up) * .35;
+    qA.copy(restQ).slerp(qB, up); qS.setFromAxisAngle(Yax, turn + (up > .98 ? Math.sin(T * 1.3) * .06 : 0)); card.quaternion.copy(qA).multiply(qS);
+    card.scale.set(W * .97 + (CW - W * .97) * up, D * .97 + (CH - D * .97) * up, 1);
+    skinM.opacity = 1 - seg(up, .15, .7); faceM.opacity = seg(up, .15, .7);
+    promoEl.classList.toggle('on', T > 2.25 && T < 4.15);
+    if (T >= END) endPromo();
+  }
+
   /* ---------- texture orientation: u runs from the spine outward ---------- */
   function onLeft(t) { const c = t.clone(); c.wrapS = THREE.RepeatWrapping; c.repeat.x = -1; c.offset.x = 1; c.needsUpdate = true; return c; }   // spine at the texture's right edge
   const flipped = new Map(); const L = t => { if (!flipped.has(t)) flipped.set(t, onLeft(t)); return flipped.get(t); };
 
-  let cur = 0, turning = null;
+  let cur = 0, turning = null, firstPromo = false, pendingPromo = false;
   function setRest(i) { leftM.map = L(meaningPage(i)); rightM.map = arabicPage(i); leftM.needsUpdate = rightM.needsUpdate = true; }
   setRest(0); warm(0);
 
   /* turning forward (to the next surah) lifts the LEFT leaf and lays it on the right, the mushaf's way */
   function begin(dir) {
+    if (promo) endPromo();
     if (turning || !DATA[cur + dir]) return false;
     const nx = cur + dir; warm(nx);
     if (dir > 0) { backM.map = L(meaningPage(cur)); frontM.map = arabicPage(nx); leftM.map = L(meaningPage(nx)); }   // lying left, the leaf shows its back
@@ -176,6 +268,7 @@ async function start() {
   }
   function finish(done) {
     const tr = turning; turning = null; leafF.visible = leafB.visible = false;
+    if (done && tr.auto && ++autoTurns % 2 === 0) pendingPromo = true;
     if (done) { cur = tr.nx; }
     setRest(cur); caption();
   }
@@ -230,7 +323,7 @@ async function start() {
   let onScreen = false;
   new IntersectionObserver(es => { onScreen = es[0].isIntersecting; }, { threshold: 0.3 }).observe(host);
   host.closest('.mf-wrap') && host.closest('.mf-wrap').classList.add('gl');
-  window._mf = { book, scene, leftP, rightP };   // for automated checks
+  window._mf = { book, scene, leftP, rightP, promo: () => { idle = 0; startPromo(); }, state: () => promo && +promo.t.toFixed(2), card };   // for automated checks
   const clock = new THREE.Clock(), damp = (k, dt) => 1 - Math.exp(-k * dt);
   (function frame() {
     requestAnimationFrame(frame);
@@ -243,7 +336,13 @@ async function start() {
       else update();
     }
     // left alone, it turns on by itself, and starts again from the first surah at the end
-    if (!REDUCED && !turning && !drag) { idle += dt; if (idle > 7) { idle = 0; if (cur + 1 < DATA.length) { if (begin(1)) turning.settle = 1; } else { cur = 0; setRest(0); caption(); } } }
+    if (!REDUCED && !turning && !drag && !promo) {
+      idle += dt;
+      if (!firstPromo && idle > 1.0) { firstPromo = true; idle = 0; startPromo(); }
+      else if (pendingPromo && idle > .7) { pendingPromo = false; idle = 0; startPromo(); }
+      else if (idle > 7) { idle = 0; if (cur + 1 < DATA.length) { if (begin(1)) { turning.settle = 1; turning.auto = true; } } else { cur = 0; setRest(0); caption(); } }
+    }
+    stepPromo(dt);
     book.position.y = REDUCED ? 0 : Math.sin(clock.elapsedTime * 0.6) * 0.012;
     camera.position.x += (CAM.x + par.x * 0.5 - camera.position.x) * damp(2.5, dt);
     camera.position.y += (CAM.y - par.y * 0.3 - camera.position.y) * damp(2.5, dt);

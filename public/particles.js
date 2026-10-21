@@ -283,18 +283,18 @@ function wudu(b) {
 
 function quran(b, o = {}) {
   if (!o.mini) platform(b, 1.5);
-  const X = .62;
+  const X = .62, HH = .62;                 // the stand's height: a low rehal, the book resting close to the floor
   for (const s of [1, -1]) {
-    const p0 = [0, 0, -.52 * s], p1 = [0, 1.1, .52 * s], dir = norm([0, 1.1, 1.04 * s]), n = [0, dir[2] * s * .05, -dir[1] * s * .05];
+    const p0 = [0, 0, -.52 * s], p1 = [0, HH, .52 * s], dir = norm([0, HH, 1.04 * s]), n = [0, dir[2] * s * .05, -dir[1] * s * .05];
     const C = [[-X, ...p0.slice(1)], [X, ...p0.slice(1)], [X, ...p1.slice(1)], [-X, ...p1.slice(1)]];
     b.poly(C, ST.hi, true); b.poly(C.map(p => add(p, n, -1)), ST.lo, true);
     C.forEach(p => b.line(p, add(p, n, -1), ST.lo));
-    const L = Math.hypot(1.1, 1.04), cc = add(p0, dir, L * .22), u = [1, 0, 0];
+    const L = Math.hypot(HH, 1.04), cc = add(p0, dir, L * .22), u = [1, 0, 0];
     for (const [r, st] of [[.13, ST.md], [.08, ST.lo]]) { const P = []; for (let i = 0; i < 36; i++) { const a = i / 36 * TAU; P.push(add(add(cc, u, Math.cos(a) * r), dir, Math.sin(a) * r)); } b.poly(P, st, true); }
   }
-  const R = rng(7), spine = [0, .6, 0], L = .62, pages = [];
+  const R = rng(7), spine = [0, .6 * HH / 1.1, 0], L = .62, pages = [];
   for (const s of [1, -1]) {
-    const dir = norm([0, 1.1, 1.04 * s]), inw = [0, dir[2] * s, -dir[1] * s];
+    const dir = norm([0, HH, 1.04 * s]), inw = [0, dir[2] * s, -dir[1] * s];
     const P = (u, x, off = 0) => add(add(add(spine, [x, 0, 0]), dir, u * L), inw, .03 + .07 * Math.sin(Math.PI * u) * (1 - .3 * u) - off);
     pages.push(P);
     const edge = (x, off, st) => b.poly(Array.from({ length: 21 }, (_, i) => P(i / 20, x, off)), st);
@@ -453,6 +453,43 @@ function dua(b) {
   });
 }
 
+/* Protection, "safety, seen and unseen": a small house (what is seen) under a dome no one can see.
+   Fine dust drifts down; where it meets the dome it brightens and slides off the curve, so the
+   shelter shows only by what it turns aside. A faint ring at its foot breathes now and then. */
+function shelter(b) {
+  platform(b, 2.05);
+  const R = 1.5, W = 1.24, H = .68, D = .98, RH = .44;
+  b.box([0, H / 2, 0], [W, H, D], ST.hi);
+  // the gable roof, its ridge running side to side
+  const e = .06, ry = H + RH;
+  for (const z of [D / 2 + e, -D / 2 - e]) b.poly([[-W / 2 - e, H, z], [0, ry, z], [W / 2 + e, H, z]], ST.hi);
+  b.line([0, ry, D / 2 + e], [0, ry, -D / 2 - e], ST.hi);
+  for (const x of [-W / 2 - e, W / 2 + e]) b.line([x, H, D / 2 + e], [x, H, -D / 2 - e], ST.md);
+  // a door and a lit window on the front
+  const zf = D / 2 + .006;
+  b.poly([[-.13, 0, zf], [-.13, .36, zf], [.13, .36, zf], [.13, 0, zf]], ST.md);
+  b.poly([[.28, .3, zf], [.28, .5, zf], [.48, .5, zf], [.48, .3, zf]], ST.lo, true);
+  b.line([.38, .3, zf], [.38, .5, zf], ST.fa); b.line([.28, .4, zf], [.48, .4, zf], ST.fa);
+  // the dome itself, barely there
+  for (const k of [.35, .65, .88]) { const y = R * Math.sin(k * Math.PI / 2), r = Math.sqrt(R * R - y * y); b.circle([0, y, 0], r, ST.fa, 'y', .35); }
+  for (let i = 0; i < 8; i++) { const a = i / 8 * TAU, P = []; for (let j = 0; j <= 24; j++) { const th = j / 24 * Math.PI / 2; P.push([Math.cos(a) * R * Math.sin(th), R * Math.cos(th), Math.sin(a) * R * Math.sin(th)]); } b.poly(P, ST.fa, false, .28); }
+  const Rr = rng(11), P = Array.from({ length: 150 }, () => { const r0 = Math.sqrt(Rr()) * R * .92, ph = Rr() * TAU; return { r0, ph, p: Rr(), v: .7 + Rr() * .6 }; });
+  b.dyn((t, e) => {
+    for (const k of P) {
+      const f = (t * .14 * k.v + k.p) % 1, top = 3.3, hs = Math.sqrt(R * R - k.r0 * k.r0), y = top - f * (top + .4);
+      if (y > hs) { e.pt(Math.cos(k.ph) * k.r0, y, Math.sin(k.ph) * k.r0, { d: 1, s: 1.3, a: 1 }, .55 * clamp((top - y) / .6)); continue; }
+      // touching the dome: it slides down the curve, brightest at the moment of contact
+      const th0 = Math.asin(k.r0 / R), th = th0 + (hs - y) / R * 1.15;
+      if (th > Math.PI / 2) continue;
+      const rr = R * 1.012, glow = Math.exp(-(th - th0) * 4);
+      e.pt(Math.cos(k.ph) * rr * Math.sin(th), rr * Math.cos(th), Math.sin(k.ph) * rr * Math.sin(th), { d: 1, s: 1.6, a: 1 }, (.35 + .65 * glow) * (1 - clamp((th - 1.3) / .27)));
+    }
+    // the ring at its foot breathes
+    const br = .5 + .5 * Math.sin(t * 1.3);
+    for (let i = 0; i < 90; i++) { const a = i / 90 * TAU; e.pt(Math.cos(a) * R, .01, Math.sin(a) * R, { d: 1, s: 1.2, a: 1 }, .15 + .45 * br * br); }
+  });
+}
+
 function plaza(b) {
   const R = 3.1;
   b.circle([0, 0, 0], R, ST.lo); b.circle([0, 0, 0], R * .95, ST.fa); b.circle([0, -.14, 0], R, ST.fa);
@@ -483,6 +520,7 @@ const SCENES = [
   { id: 'wudu', title: 'Wudu fountain', ar: 'وضوء', tag: 'Prayer', build: wudu, az: .4, el: .55, spin: .1, zoom: .92, desc: 'Water falls from eight taps into the octagonal basin, with a stool set at each tap for ablution.' },
   { id: 'rehal', title: 'Quran on a rehal', ar: 'القرآن', tag: 'Quran', build: quran, az: .9, el: .35, sway: .45, desc: 'The mushaf lies open on its folding stand, and points of light rise from the lines of recitation.' },
   { id: 'surah', title: 'Surah by surah', ar: 'سورة', tag: 'Quran', build: mushaf, az: .35, el: .75, sway: .25, zoom: .86, desc: 'Pages turn one at a time: Al-Fatihah, Al-Baqarah, Yasin, Al-Mulk and on to An-Nas.' },
+  { id: 'shelter', title: 'Shelter', ar: 'حفظ', tag: 'Protection', build: shelter, az: .62, el: .38, sway: .3, zoom: .92, desc: 'A small house under a dome no one can see: falling dust slides off its curve, so the shelter shows only by what it turns aside.' },
   { id: 'hizb', title: 'Rub el Hizb', ar: '۞ ربع الحزب', tag: 'Quran', build: rubElHizb, az: .3, el: .2, sway: .2, desc: 'The eight-pointed star that marks each quarter hizb of the mushaf, turning on its own axis.' },
   { id: 'tasbih', title: 'Tasbih', ar: 'تسبيح', tag: 'Zikir', build: tasbih, az: .2, el: .8, sway: .3, desc: 'The count moves bead by bead, 33 each of SubhanAllah, Alhamdulillah and Allahu Akbar.' },
   { id: 'dua', title: 'Dua', ar: 'دعاء', tag: 'Zikir', build: dua, az: .55, el: .3, sway: .35, desc: 'From where one stands, supplications rise as light through the mihrab arch and upwards.' },

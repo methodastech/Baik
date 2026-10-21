@@ -262,7 +262,8 @@ async function start() {
 
   /* ---------- size, visibility, loop ---------- */
   function resize() {
-    const r = host.getBoundingClientRect(); if (!r.width || !r.height) return;
+    // the canvas, not the host: on phones the chips sit under the scene and take their own room
+    const r = canvas.getBoundingClientRect(); if (!r.width || !r.height) return;
     renderer.setSize(r.width, r.height, false);
     camera.aspect = r.width / r.height;
     camera.fov = camera.aspect < 0.9 ? 40 : 30;     // a narrow phone needs a wider lens to fit the ring
@@ -274,7 +275,7 @@ async function start() {
     CAM.copy(LOOK).addScaledVector(dir, dist);
     scene.fog.near = dist - 1; scene.fog.far = dist + 9;
   }
-  new ResizeObserver(resize).observe(host); resize(); camera.position.copy(CAM); camera.lookAt(LOOK);
+  new ResizeObserver(resize).observe(canvas); resize(); camera.position.copy(CAM); camera.lookAt(LOOK);
   let onScreen = true;
   new IntersectionObserver(es => { onScreen = es[0].isIntersecting; }, { rootMargin: '60px' }).observe(host);
   deckEl.classList.add('gl'); document.documentElement.classList.remove('d3-pending');

@@ -6,7 +6,9 @@
  * as they were authored.
  */
 const site = "https://baikapp.com";
-const canonical = new URL(Astro.url.pathname, site).href.replace(/\/$/, "") || site;
+// the build writes pages as name.html; their public addresses carry no .html and the home page is just /
+const path = Astro.url.pathname.replace(/\.html$/, "").replace(/(^|\/)index$/, "/").replace(/\/+$/, "");
+const canonical = path ? new URL(path, site).href : site + "/";
 ---
 <!-- Google tag (gtag.js) · Google Analytics G-VP0JPM141Z, on every page that uses this head -->
 <script is:inline async src="https://www.googletagmanager.com/gtag/js?id=G-VP0JPM141Z"></script>
@@ -19,6 +21,16 @@ const canonical = new URL(Astro.url.pathname, site).href.replace(/\/$/, "") || s
 </script>
 
 <link rel="canonical" href={canonical} />
+
+<!-- link previews (WhatsApp, Telegram, Facebook, X): every address absolute, one share image for every page -->
+<meta property="og:url" content={canonical} />
+<meta property="og:image" content={site + "/og-baik.jpg"} />
+<meta property="og:image:secure_url" content={site + "/og-baik.jpg"} />
+<meta property="og:image:type" content="image/jpeg" />
+<meta property="og:image:width" content="1200" />
+<meta property="og:image:height" content="630" />
+<meta property="og:image:alt" content="Baik: the right dua for what you are facing. Three dua cards fanned beside the Baik wordmark." />
+<meta name="twitter:image" content={site + "/og-baik.jpg"} />
 
 <link rel="manifest" href="/manifest.webmanifest" />
 <link rel="apple-touch-icon" href="/icons/icon-180.png" />

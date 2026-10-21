@@ -2359,3 +2359,27 @@ button.ac-ava:focus-visible{outline:2px solid #1E2124;outline-offset:3px;}
  .ac,.pay{background:rgba(14,18,17,.46);backdrop-filter:blur(2px);-webkit-backdrop-filter:blur(2px);}
  .ac-in,.pay-in{min-height:min(80svh,calc(100svh - 56px));max-height:calc(100svh - 40px);border:0;box-shadow:0 -10px 40px -12px rgba(0,0,0,.35);}
 }
+
+/* ============ need colours on dua cards: ink, paper and a spectrum ============
+   Each dua card wears the colour of its first need (CATHUE: red, orange, amber, green, blue,
+   violet, magenta): a 5px band and a light tint on the title bar, the card number, and a wash
+   across the card. The need labels use the same seven colours, deeper (CATCOL). Pictures, the
+   Arabic and the text stay in ink. Cards with no need keep plain white. */
+.kind-dua[style*="--gc"].cut-faceted .face.front{background:color-mix(in srgb,var(--gc) 7%,#FFFFFF);}
+.kind-dua[style*="--gc"].cut-faceted .zone{border-color:color-mix(in srgb,var(--gc) 20%,#E6E6E6);}
+.kind-dua[style*="--gc"].cut-faceted .zone.titlebar{border-top:5px solid var(--gc);border-radius:5px 5px 0 0;background:color-mix(in srgb,var(--gc) 12%,#FFFFFF);}
+.kind-dua[style*="--gc"] .zone.titlebar>span:last-child,.kind-dua[style*="--gc"] .zone.titlebar .num{color:color-mix(in srgb,var(--gc) 75%,#1E2124);}
+/* the surah cards (black stock) wear their need's colour too: the same band, a tinted title bar,
+   the number in colour and a faint glow of it over the black */
+.card.kind-surah[style*="--gc"].cut-faceted .face.front{background:radial-gradient(120% 70% at 50% 0%,color-mix(in srgb,var(--gc) 16%,#1E2124),#1E2124 70%);}
+.kind-surah[style*="--gc"].cut-faceted .zone{border-color:color-mix(in srgb,var(--gc) 30%,rgba(255,255,255,.2));}
+.kind-surah[style*="--gc"].cut-faceted .zone.titlebar{border-top:5px solid var(--gc);border-radius:5px 5px 0 0;background:color-mix(in srgb,var(--gc) 22%,#1E2124);}
+.kind-surah[style*="--gc"] .zone.titlebar>span:last-child,.kind-surah[style*="--gc"] .zone.titlebar .num{color:color-mix(in srgb,var(--gc) 70%,#FFFFFF);}
+/* the bottom line (set and reference) in the card's need colour: deeper on paper, lighter on black */
+.kind-dua[style*="--gc"] .gfoot,.kind-dua[style*="--gc"] .gfoot .gsrc{color:color-mix(in srgb,var(--gc) 78%,#1E2124);}
+.kind-surah[style*="--gc"] .gfoot,.kind-surah[style*="--gc"] .gfoot .gsrc{color:color-mix(in srgb,var(--gc) 60%,#FFFFFF);}
+
+/* a card still waiting for its picture shows its need's mark on the pattern; the written art brief is
+   for the team only (dev mode), never for readers */
+body:not(.dev) .artbrief .abr{display:none;}
+body:not(.dev) .artbrief .awglyph{display:flex;}
