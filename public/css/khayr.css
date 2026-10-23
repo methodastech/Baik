@@ -299,24 +299,94 @@ body.public .sz-cutT .artbrief,.has-img .artbrief{min-height:0;height:var(--arth
 .kind-panduan .artwin{display:none;}
 .kind-panduan.cut-faceted .face.front{background:color-mix(in srgb,var(--gc,#4A4E8C) 5%,#FFFFFF);}
 .kind-panduan .zone.titlebar{border-top:3px solid var(--gc,#4A4E8C);border-radius:4px 4px 0 0;}
-.gd-viz{display:flex;align-items:center;gap:11px;margin:2px 0 12px;padding:13px 14px;
- border-radius:9px;background:color-mix(in srgb,var(--gc,#4A4E8C) 8%,#FFFFFF);color:var(--gc,#4A4E8C);}
-.gd-viz svg{width:30px;height:30px;flex:none;}
-.gd-viz .gv-k{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.16em;
- text-transform:uppercase;}
-.gd-k{font-family:'JetBrains Mono',monospace;font-size:8.6px;letter-spacing:.15em;
- text-transform:uppercase;color:var(--gc,#4A4E8C);margin:12px 0 4px;}
-.gd-k:first-child{margin-top:2px;}
-.gd-p{font-family:'Saira',sans-serif;font-size:12.2px;line-height:1.55;color:var(--txt);}
+/* the band: the group's hue as a deep field, its mark large and faint at the right edge, the
+   group name and how long the guide takes to read on the left */
+.gd-viz{position:relative;overflow:hidden;display:flex;align-items:center;justify-content:space-between;gap:10px;
+ margin:2px 0 16px;padding:14px 16px;min-height:62px;border-radius:12px;color:#FFFFFF;
+ background:linear-gradient(135deg,var(--gc,#4A4E8C) 0%,color-mix(in srgb,var(--gc,#4A4E8C) 72%,#000000) 100%);
+ box-shadow:inset 0 1px 0 rgba(255,255,255,.18),0 10px 22px -16px var(--gc,#4A4E8C);}
+.gd-viz::before{content:"";position:absolute;inset:0;pointer-events:none;opacity:.5;
+ background:radial-gradient(circle at 12% 0%,rgba(255,255,255,.28),transparent 55%),
+  repeating-linear-gradient(135deg,rgba(255,255,255,.05) 0 1px,transparent 1px 9px);}
+.gd-viz .gv-t{position:relative;display:flex;flex-direction:column;gap:5px;min-width:0;}
+.gd-viz .gv-k{font-family:'Space Grotesk',sans-serif;font-size:14px;font-weight:700;letter-spacing:.01em;line-height:1.15;}
+.gd-viz .gv-m{font-family:'JetBrains Mono',monospace;font-size:8.6px;letter-spacing:.14em;text-transform:uppercase;
+ color:rgba(255,255,255,.72);}
+.gd-viz svg{position:relative;width:54px;height:54px;flex:none;margin:-10px -6px -10px 0;opacity:.32;
+ transform:rotate(-8deg);}
+/* the steps: a number in the hue, a rail joining it to the next, the label in the hue */
+.gd-steps{list-style:none;margin:0;padding:0;}
+.gd-step{position:relative;padding:0 0 14px 34px;}
+.gd-step::before{content:"";position:absolute;left:11px;top:24px;bottom:2px;width:1.5px;
+ background:linear-gradient(var(--gc,#4A4E8C),color-mix(in srgb,var(--gc,#4A4E8C) 15%,transparent));opacity:.45;}
+.gd-step:last-child{padding-bottom:4px;}
+.gd-step:last-child::before{display:none;}
+.gd-n{position:absolute;left:0;top:0;width:23px;height:23px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+ font-family:'JetBrains Mono',monospace;font-size:10.5px;font-weight:700;color:var(--gc,#4A4E8C);
+ background:color-mix(in srgb,var(--gc,#4A4E8C) 12%,#FFFFFF);
+ box-shadow:inset 0 0 0 1.5px color-mix(in srgb,var(--gc,#4A4E8C) 45%,transparent);}
+.gd-step:first-child .gd-n{background:var(--gc,#4A4E8C);color:#FFFFFF;box-shadow:none;}
+.gd-k{font-family:'Saira',sans-serif;font-size:12.6px;font-weight:700;letter-spacing:.005em;line-height:1.3;
+ color:color-mix(in srgb,var(--gc,#4A4E8C) 85%,#1E2124);margin:3px 0 4px;}
+.gd-p{font-family:'Saira',sans-serif;font-size:12.2px;line-height:1.6;color:var(--txt);}
+/* posture diagrams inside a step: white pictograms on tiles of the hue, lit from the top corner */
+.gd-fig{display:grid;gap:8px;margin:12px 0 2px;}
+.gd-fig.c3{grid-template-columns:repeat(3,1fr);}
+.gd-fig.c2{grid-template-columns:repeat(2,1fr);}
+.gd-t{margin:0;display:flex;flex-direction:column;gap:7px;}
+.gd-t .gt-art{position:relative;aspect-ratio:1/0.92;border-radius:14px;display:grid;place-items:center;overflow:hidden;color:#FFFFFF;
+ background:radial-gradient(120% 90% at 20% 0%,color-mix(in srgb,var(--gc,#4A4E8C) 72%,#FFFFFF),transparent 60%),
+  linear-gradient(160deg,var(--gc,#4A4E8C),color-mix(in srgb,var(--gc,#4A4E8C) 68%,#000000));
+ box-shadow:inset 0 1px 0 rgba(255,255,255,.25),0 10px 18px -12px var(--gc,#4A4E8C);}
+.gd-t .gt-art::after{content:"";position:absolute;left:14%;right:14%;bottom:13%;height:5px;border-radius:50%;background:rgba(0,0,0,.18);filter:blur(2px);}
+.gd-t svg{position:relative;z-index:1;width:64%;height:auto;filter:drop-shadow(0 2px 3px rgba(0,0,0,.18));}
+.gd-t .gt-art b{position:absolute;left:7px;top:7px;z-index:2;width:17px;height:17px;border-radius:50%;display:grid;place-items:center;
+ background:rgba(255,255,255,.92);color:var(--gc,#4A4E8C);font-family:'JetBrains Mono',monospace;font-size:9px;font-weight:700;}
+.gd-t figcaption{font-family:'Saira',sans-serif;font-size:10.5px;font-weight:600;line-height:1.25;text-align:center;
+ color:color-mix(in srgb,var(--gc,#4A4E8C) 75%,#1E2124);}
+/* the ladder: each step a row, its tile one shade deeper than the one above, joined by a rail */
+.gd-lad{list-style:none;margin:12px 0 2px;padding:6px;border-radius:16px;
+ background:linear-gradient(180deg,color-mix(in srgb,var(--gc,#4A4E8C) 7%,#FFFFFF),#FFFFFF);
+ box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--gc,#4A4E8C) 14%,transparent);}
+.gd-r{position:relative;display:flex;align-items:center;gap:12px;padding:5px 8px 5px 6px;}
+.gd-r+.gd-r{margin-top:10px;}
+.gd-r+.gd-r::before{content:"";position:absolute;left:27px;top:-13px;width:0;height:16px;
+ border-left:1.5px dashed color-mix(in srgb,var(--gc,#4A4E8C) 40%,transparent);}
+.gd-r+.gd-r::after{content:"";position:absolute;left:23.5px;top:-7px;width:6px;height:6px;
+ border-right:1.5px solid color-mix(in srgb,var(--gc,#4A4E8C) 60%,transparent);border-bottom:1.5px solid color-mix(in srgb,var(--gc,#4A4E8C) 60%,transparent);
+ transform:rotate(45deg);background:color-mix(in srgb,var(--gc,#4A4E8C) 4%,#FFFFFF);}
+.gr-ic{flex:none;width:44px;height:44px;border-radius:13px;display:grid;place-items:center;color:#FFFFFF;
+ background:radial-gradient(110% 90% at 20% 0%,color-mix(in srgb,var(--gc,#4A4E8C) 70%,#FFFFFF),transparent 62%),
+  linear-gradient(160deg,color-mix(in srgb,var(--gc,#4A4E8C) var(--k,100%),#000000),color-mix(in srgb,var(--gc,#4A4E8C) calc(var(--k,100%) - 30%),#000000));
+ box-shadow:inset 0 1px 0 rgba(255,255,255,.25),0 6px 12px -8px var(--gc,#4A4E8C);}
+.gr-ic svg{width:31px;height:31px;filter:drop-shadow(0 1px 2px rgba(0,0,0,.2));}
+.gr-t{flex:1;min-width:0;display:flex;flex-direction:column;gap:1px;}
+.gr-t b{font-family:'Saira',sans-serif;font-size:12.6px;font-weight:700;line-height:1.25;color:#1E2124;}
+.gr-t span{font-family:'Saira',sans-serif;font-size:10.8px;line-height:1.3;color:var(--dim,#6E6E6E);}
+.gr-n{flex:none;font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:700;letter-spacing:.04em;
+ color:color-mix(in srgb,var(--gc,#4A4E8C) 55%,#FFFFFF);}
+.gd-r:first-child .gr-t b{color:color-mix(in srgb,var(--gc,#4A4E8C) 85%,#1E2124);}
 .gd-slots{margin-top:13px;padding-top:9px;border-top:1px solid var(--zone-line);}
-.gd-slot{display:flex;gap:7px;align-items:baseline;margin-bottom:4px;}
-.gd-slot code{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--mut);
+.gd-slots .gd-k{font-family:'JetBrains Mono',monospace;font-size:8.6px;font-weight:400;letter-spacing:.15em;
+ text-transform:uppercase;margin:0 0 6px;}
+.gd-slot{display:flex;flex-direction:column;align-items:flex-start;gap:3px;margin-bottom:8px;}
+.gd-slot code{max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--mut);
  border:1px dashed var(--zone-line);border-radius:4px;padding:1px 5px;flex:none;}
 .gd-slot span{font-size:11px;line-height:1.45;color:var(--mut);}
-.gd-note{margin-top:11px;padding:8px 10px;border-left:2px solid var(--gc,#4A4E8C);
- background:var(--zone2);font-size:11.4px;line-height:1.5;color:var(--dim);}
-.gd-rev{margin-top:12px;font-family:'JetBrains Mono',monospace;font-size:8.4px;
- letter-spacing:.14em;text-transform:uppercase;color:var(--mut);}
+/* the school's note: a callout in the hue, not a grey aside */
+.gd-note{display:flex;gap:9px;align-items:flex-start;margin-top:12px;padding:10px 12px;border-radius:10px;
+ background:color-mix(in srgb,var(--gc,#4A4E8C) 8%,#FFFFFF);
+ box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--gc,#4A4E8C) 18%,transparent);
+ font-size:11.4px;line-height:1.5;color:var(--dim);}
+.gd-note svg{width:15px;height:15px;flex:none;margin-top:1px;color:var(--gc,#4A4E8C);}
+/* awaiting review: a small amber pill, so the status reads as a status */
+.gd-rev{display:flex;width:fit-content;align-items:center;gap:7px;margin-top:12px;padding:5px 10px 5px 9px;border-radius:999px;
+ font-family:'JetBrains Mono',monospace;font-size:8.4px;letter-spacing:.14em;text-transform:uppercase;
+ color:#8A5A0E;background:#FBF1DC;box-shadow:inset 0 0 0 1px rgba(176,122,28,.28);}
+.gd-rev i{width:6px;height:6px;border-radius:50%;background:#D9952A;box-shadow:0 0 0 3px rgba(217,149,42,.18);
+ animation:gdPulse 2.4s ease-in-out infinite;}
+@keyframes gdPulse{0%,100%{opacity:1;}50%{opacity:.35;}}
+@media(prefers-reduced-motion:reduce){.gd-rev i{animation:none;}}
 /* Tags are wayfinding, not controls. As filled pills they wore the same shape as the situation
    chips in the masthead — rounded, tinted, icon and word — and those DO filter the deck, so the
    card was offering a button that does nothing. Two of them also ran the full width of the card
@@ -619,25 +689,61 @@ body.public .sz-cutT .artbrief,.has-img .artbrief{min-height:0;height:var(--arth
 /* The tasbih takes the whole first line and stands taller than the rest: it is tapped over
    and over, often one-handed, so it is the one control on the card sized for a thumb rather
    than for a pointer. The fill behind the number is the count, not decoration. */
-.deckacts .tas{grid-column:1 / -1;display:grid;grid-template-columns:1fr 42px;gap:6px;margin-bottom:2px;}
-.deckacts .tasb,.deckacts .tasr{position:relative;overflow:hidden;height:46px;border-radius:11px;cursor:pointer;
- border:1px solid color-mix(in srgb,#8A6A12 42%,transparent);background:color-mix(in srgb,#8A6A12 7%,#FFFFFF);
- color:#8A6A12;font-family:'Saira',sans-serif;font-weight:700;transition:.15s;
- display:inline-flex;align-items:center;justify-content:center;}
-.deckacts .tasb:hover,.deckacts .tasr:hover{background:color-mix(in srgb,#8A6A12 13%,#FFFFFF);}
-.deckacts .tasb:active{transform:scale(.985);}
-.deckacts .tasr svg{width:17px;height:17px;}
-.deckacts .tasfill{position:absolute;left:0;top:0;bottom:0;z-index:0;pointer-events:none;
- background:color-mix(in srgb,#8A6A12 20%,transparent);transition:width .18s ease;}
-.deckacts .tasn{position:relative;z-index:1;font-family:'JetBrains Mono',monospace;font-size:16px;
- font-weight:700;letter-spacing:.04em;}
-.deckacts .tas.done .tasb{background:color-mix(in srgb,#8A6A12 17%,#FFFFFF);
- border-color:color-mix(in srgb,#8A6A12 70%,transparent);}
-.deckacts .tas.done .tasfill{background:color-mix(in srgb,#8A6A12 26%,transparent);}
+.deckacts .tas{display:grid;grid-template-columns:1fr 46px;gap:6px;margin-bottom:2px;}
+/* the pad is a pill like Listen: a gold bead on the left, what to do in the middle, the count
+   on the right. Each tap moves the bead along its string and bumps the number. */
+.deckacts .tasb{position:relative;overflow:hidden;height:46px;padding:0 16px 0 12px;border:0;border-radius:999px;cursor:pointer;
+ display:flex;align-items:center;gap:10px;color:#8A6A12;font-family:'Saira',sans-serif;
+ background:linear-gradient(180deg,#FFFFFF,color-mix(in srgb,#8A6A12 9%,#FFFFFF));
+ box-shadow:inset 0 0 0 1px color-mix(in srgb,#8A6A12 30%,transparent),0 6px 14px -10px #8A6A12;
+ transition:transform .2s cubic-bezier(.3,1.6,.6,1),box-shadow .18s,background .18s;}
+.deckacts .tasb:hover{transform:translateY(-1px);
+ box-shadow:inset 0 0 0 1px color-mix(in srgb,#8A6A12 50%,transparent),0 10px 20px -10px #8A6A12;}
+.deckacts .tasb:active{transform:scale(.975);}
+.deckacts .tasb:focus-visible,.deckacts .tasr:focus-visible{outline:2px solid #8A6A12;outline-offset:2px;}
+.deckacts .tasfill{position:absolute;left:0;top:0;bottom:0;z-index:0;pointer-events:none;border-radius:999px;
+ background:linear-gradient(90deg,color-mix(in srgb,#8A6A12 10%,transparent),color-mix(in srgb,#8A6A12 24%,transparent));
+ transition:width .25s cubic-bezier(.3,1.3,.6,1);}
+/* the bead on its string: a thin line runs through it, so it reads as one bead of a tasbih */
+.deckacts .tasbead{position:relative;z-index:1;flex:none;width:24px;height:24px;}
+.deckacts .tasbead::before{content:"";position:absolute;left:50%;top:-12px;bottom:-12px;width:1.5px;margin-left:-.75px;
+ background:color-mix(in srgb,#8A6A12 35%,transparent);}
+.deckacts .tasbead::after{content:"";position:absolute;inset:3px;border-radius:50%;
+ background:radial-gradient(circle at 34% 30%,#FFF4D2 0,#D9A93A 38%,#8A6A12 100%);
+ box-shadow:0 2px 4px -1px rgba(90,64,6,.55);}
+.deckacts .tasl{position:relative;z-index:1;flex:1;text-align:left;font-size:12px;font-weight:600;letter-spacing:.02em;
+ color:color-mix(in srgb,#8A6A12 80%,#1E2124);}
+.deckacts .tasn{position:relative;z-index:1;font-family:'JetBrains Mono',monospace;font-size:19px;
+ font-weight:700;letter-spacing:.02em;color:#8A6A12;display:inline-block;}
+.deckacts .tasn small{font-size:11px;font-weight:600;margin-left:3px;opacity:.6;}
+.deckacts .tasb.tick .tasn{animation:tasBump .32s cubic-bezier(.3,1.6,.6,1);}
+.deckacts .tasb.tick .tasbead::after{animation:tasSlide .36s cubic-bezier(.3,1.2,.6,1);}
+@keyframes tasBump{0%{transform:scale(1);}40%{transform:scale(1.28);}100%{transform:scale(1);}}
+@keyframes tasSlide{0%{transform:translateY(-9px);opacity:.4;}100%{transform:translateY(0);opacity:1;}}
+/* reset: a round key like the ones under it; it turns back the way the count goes */
+.deckacts .tasr{height:46px;width:46px;padding:0;border:0;border-radius:50%;cursor:pointer;background:#FFFFFF;color:#8A6A12;
+ display:inline-flex;align-items:center;justify-content:center;
+ box-shadow:0 0 0 1px rgba(30,33,36,.08),0 5px 12px -8px rgba(30,33,36,.45);
+ transition:transform .2s cubic-bezier(.3,1.6,.6,1),background .18s,box-shadow .18s;}
+.deckacts .tasr svg{width:17px;height:17px;transition:transform .35s cubic-bezier(.3,1.4,.6,1);}
+.deckacts .tasr:hover{transform:translateY(-2px);background:color-mix(in srgb,#8A6A12 10%,#FFFFFF);
+ box-shadow:0 0 0 1px color-mix(in srgb,#8A6A12 35%,transparent),0 8px 16px -9px #8A6A12;}
+.deckacts .tasr:hover svg{transform:rotate(-200deg);}
+.deckacts .tasr:active{transform:scale(.92);}
+/* a finished round: the pad fills gold and the bead turns pearl */
+.deckacts .tas.done .tasb{background:linear-gradient(180deg,#A8821C,#8A6A12);
+ box-shadow:inset 0 1px 0 rgba(255,255,255,.25),0 8px 18px -9px #8A6A12;}
+.deckacts .tas.done .tasfill{display:none;}
+.deckacts .tas.done .tasl,.deckacts .tas.done .tasn{color:#FFFFFF;}
+.deckacts .tas.done .tasbead::before{background:rgba(255,255,255,.4);}
+.deckacts .tas.done .tasbead::after{background:radial-gradient(circle at 34% 30%,#FFFFFF 0,#F4E6C0 60%,#D9B65A 100%);}
 /* a zikir with no transmitted count has no proportion to show, so there is no bar: an empty
    track that never fills reads as a broken target rather than as an open tally */
 .deckacts .tas.free .tasfill{display:none;}
-@media(prefers-reduced-motion:reduce){.deckacts .tasfill{transition:none;}}
+@media(pointer:coarse){.deckacts .tasb,.deckacts .tasr{height:50px;}.deckacts .tas{grid-template-columns:1fr 50px;}.deckacts .tasr{width:50px;}}
+@media(prefers-reduced-motion:reduce){.deckacts .tasfill,.deckacts .tasb,.deckacts .tasr,.deckacts .tasr svg{transition:none;}
+ .deckacts .tasb.tick .tasn,.deckacts .tasb.tick .tasbead::after{animation:none;}
+ .deckacts .tasb:hover,.deckacts .tasr:hover,.deckacts .tasr:hover svg{transform:none;}}
 /* Zikir wears the gold on the card too, so a card meant to be repeated is distinct in the
    spread from one meant to be read once. */
 .kind-zikir.cut-faceted .face.front{background:color-mix(in srgb,#8A6A12 4%,#FFFFFF);}
@@ -675,13 +781,77 @@ body.public .sz-cutT .artbrief,.has-img .artbrief{min-height:0;height:var(--arth
 /* 2. The art window carries no frame of its own: no inset hairline, no corner ticks. The zone
    edge already says where the picture goes, and a second box around it only crowded the card. */
 
-/* 4. The action row: quieter, so the card leads and the controls follow it. */
-.deckacts{gap:5px;margin-top:8px;}
-.deckacts .dact{height:29px;border-radius:8px;font-size:11px;font-weight:600;
- border-color:rgba(30,33,36,.09);background:rgba(30,33,36,.028);color:#6E6E6E;}
-.deckacts .dact svg{width:13px;height:13px;opacity:.85;}
-.deckacts .dact:hover{background:rgba(30,33,36,.075);color:#6E6E6E;border-color:rgba(30,33,36,.2);}
-.deckacts .da{margin-top:1px;}
+/* 4. The action row is one dock under the card. Listen leads as a pill in the card's own need
+   colour (--ac, set per card), with the repeat count joined to its end; view, save and share
+   follow as round keys whose icons move a little under the pointer. The keys keep their words
+   for screen readers and the tooltip; the icons are the ones every phone already uses. */
+.deckacts{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin-top:10px;}
+.deckacts .tas{flex:0 0 100%;order:0;}
+.deckacts .dact{position:relative;height:36px;padding:0;border:0;border-radius:999px;
+ font-size:11.5px;font-weight:600;letter-spacing:.01em;
+ transition:transform .2s cubic-bezier(.3,1.6,.6,1),background-color .18s,box-shadow .18s,color .18s;}
+.deckacts .dact svg{width:15px;height:15px;opacity:1;transition:transform .25s cubic-bezier(.3,1.6,.6,1);}
+.deckacts .dact:active{transform:scale(.94);}
+.deckacts .dact:focus-visible{outline:2px solid var(--ac,#1E2124);outline-offset:2px;}
+/* Listen and repeat: one split pill */
+.deckacts .da{order:1;flex:1 1 auto;min-width:0;margin:0;gap:7px;padding:0 14px;
+ border-radius:999px 6px 6px 999px;background:var(--ac,#1E2124);color:#FFFFFF;
+ box-shadow:inset 0 1px 0 rgba(255,255,255,.2),0 7px 16px -9px var(--ac,#1E2124);}
+.deckacts .da svg{color:#FFFFFF;}
+.deckacts .da:hover{background:color-mix(in srgb,var(--ac,#1E2124) 86%,#FFFFFF);color:#FFFFFF;
+ transform:translateY(-1px);box-shadow:inset 0 1px 0 rgba(255,255,255,.22),0 10px 20px -10px var(--ac,#1E2124);}
+.deckacts .da:hover .wv1,.deckacts .da:hover .wv2,
+.deckacts .da.playing .wv1,.deckacts .da.playing .wv2{animation:wvPulse 1.1s ease-in-out infinite;}
+.deckacts .da:hover .wv2,.deckacts .da.playing .wv2{animation-delay:.18s;}
+/* playing: a slow light runs across the pill, so the row shows the recitation is live */
+.deckacts .da.playing{color:#FFFFFF;background-image:linear-gradient(100deg,transparent 30%,rgba(255,255,255,.22) 50%,transparent 70%);
+ background-size:250% 100%;animation:daSheen 2.2s linear infinite;}
+@keyframes daSheen{from{background-position:120% 0;}to{background-position:-120% 0;}}
+/* the say-back gap: the pill empties to an outline and breathes, because it is your turn */
+.deckacts .da.saying{background:color-mix(in srgb,var(--ac,#1E2124) 8%,#FFFFFF);color:var(--ac,#1E2124);
+ border:0;box-shadow:inset 0 0 0 1.5px var(--ac,#1E2124);animation:daBreath 1.6s ease-in-out infinite;}
+.deckacts .da.saying svg{color:var(--ac,#1E2124);}
+@keyframes daBreath{0%,100%{box-shadow:inset 0 0 0 1.5px var(--ac,#1E2124),0 0 0 0 color-mix(in srgb,var(--ac,#1E2124) 30%,transparent);}
+ 50%{box-shadow:inset 0 0 0 1.5px var(--ac,#1E2124),0 0 0 5px color-mix(in srgb,var(--ac,#1E2124) 0%,transparent);}}
+.deckacts .dr{order:2;flex:none;margin-left:-4px;padding:0 13px 0 11px;gap:5px;
+ border-radius:6px 999px 999px 6px;background:color-mix(in srgb,var(--ac,#1E2124) 78%,#000000);
+ color:rgba(255,255,255,.8);box-shadow:inset 0 1px 0 rgba(255,255,255,.12);}
+.deckacts .dr:hover{background:color-mix(in srgb,var(--ac,#1E2124) 70%,#000000);color:#FFFFFF;transform:translateY(-1px);}
+.deckacts .dr:hover svg{transform:rotate(180deg);}
+.deckacts .dr.on{color:#FFFFFF;background:color-mix(in srgb,var(--ac,#1E2124) 62%,#000000);}
+.deckacts .dr.on .rn{color:#FFFFFF;}
+/* view, save, share: round keys, each with its own hue, filled when it holds a state */
+.deckacts .dz,.deckacts .ds,.deckacts .dsh{flex:none;width:36px;background:#FFFFFF;color:var(--k);
+ box-shadow:0 0 0 1px rgba(30,33,36,.08),0 5px 12px -8px rgba(30,33,36,.45);}
+.deckacts .dz{order:3;--k:var(--ac,#1E2124);}
+.deckacts .ds{order:4;--k:#B07A1C;}
+.deckacts .dsh{order:5;--k:#2B6E93;}
+.deckacts .dz svg,.deckacts .ds svg,.deckacts .dsh svg{color:var(--k);}
+.deckacts .dz>span,.deckacts .ds>span,.deckacts .dsh>span{position:absolute;width:1px;height:1px;overflow:hidden;
+ clip:rect(0 0 0 0);clip-path:inset(50%);white-space:nowrap;}
+.deckacts .dz:hover,.deckacts .ds:hover,.deckacts .dsh:hover{transform:translateY(-2px);color:var(--k);
+ background:color-mix(in srgb,var(--k) 10%,#FFFFFF);
+ box-shadow:0 0 0 1px color-mix(in srgb,var(--k) 35%,transparent),0 8px 16px -9px var(--k);}
+.deckacts .dz:hover svg{transform:scale(1.18);}
+.deckacts .ds:hover svg{transform:translateY(-1px) rotate(-8deg);}
+.deckacts .dsh svg path:last-child{transition:transform .25s cubic-bezier(.3,1.6,.6,1);}
+.deckacts .dsh:hover svg path:last-child{transform:translateY(-2.5px);}
+.deckacts .ds.saved{background:var(--k);color:#FFFFFF;border:0;
+ box-shadow:inset 0 1px 0 rgba(255,255,255,.25),0 6px 14px -8px var(--k);}
+.deckacts .ds.saved svg{color:#FFFFFF;}
+.deckacts .ds.saved:hover{background:color-mix(in srgb,var(--k) 88%,#000000);}
+.deckacts .ds.pop svg{animation:dsPop .5s cubic-bezier(.3,1.6,.6,1);}
+@keyframes dsPop{0%{transform:scale(.6);}55%{transform:scale(1.35) rotate(-10deg);}100%{transform:scale(1);}}
+.deckacts .dact[disabled]{opacity:.45;cursor:default;transform:none;}
+@media(pointer:coarse){
+ .deckacts .dact{height:40px;min-height:0;}
+ .deckacts .dz,.deckacts .ds,.deckacts .dsh{width:40px;}
+}
+@media(prefers-reduced-motion:reduce){
+ .deckacts .dact,.deckacts .dact svg,.deckacts .dsh svg path:last-child{transition:none;}
+ .deckacts .da.playing,.deckacts .da.saying,.deckacts .ds.pop svg,.deckacts .da .wv1,.deckacts .da .wv2{animation:none;}
+ .deckacts .dact:hover,.deckacts .dact:hover svg,.deckacts .dsh:hover svg path:last-child{transform:none;}
+}
 
 
 /* ---- system view ---- */
@@ -1300,14 +1470,30 @@ body.app .bmws{display:none;}
 .arf-m button.on{background:#F3F3F3;}
 .arf-m button.on .sm-t b{color:#2E7D5B;}
 /* the menu and card-action icons carry the same hues as the deck's marks */
-#qibBtn svg{color:#2B6E93;}
-#qptBtn svg{color:#3E4FA3;}
-.ovf-m a[href="Codex.html"] svg{color:#1D7276;}
-.ovf-m a[href="Site.html"] svg{color:#2E7D5B;}
-.deckacts .dz svg{color:#1E2124;}
-.deckacts .ds svg{color:#B07A1C;}
-.deckacts .dsh svg{color:#2B6E93;}
-.deckacts .da svg{color:#2E7D5B;}
+/* The menu wears colour the way a phone's settings list does: each item has its own hue, its
+   icon on a small tinted tile, and the row takes a wash of that hue under the pointer. */
+.ovf-m{background:#FFFFFF;border-color:rgba(30,33,36,.12);box-shadow:0 24px 60px -20px rgba(30,33,36,.35);
+ /* never taller than the window under the header: the rest scrolls inside the menu */
+ max-height:calc(100vh - 96px);max-height:calc(100dvh - 96px);overflow-y:auto;overscroll-behavior:contain;scrollbar-width:thin;}
+.ovf-m a,.ovf-m button{padding:6px 10px;}
+.ovf-m a,.ovf-m button{--mc:#6E6E6E;color:#3A3D40;}
+.ovf-m a svg,.ovf-m button svg{box-sizing:content-box;width:15px;height:15px;padding:6px;border-radius:50%;opacity:1;
+ color:var(--mc);background:color-mix(in srgb,var(--mc) 13%,#FFFFFF);
+ transition:transform .2s cubic-bezier(.3,1.6,.6,1),background .15s,color .15s;}
+.ovf-m a:hover,.ovf-m button:hover{background:color-mix(in srgb,var(--mc) 8%,#FFFFFF);color:#1E2124;}
+.ovf-m a:hover svg,.ovf-m button:hover svg{background:var(--mc);color:#FFFFFF;transform:scale(1.08) rotate(-4deg);}
+.ovf-m [data-bx-open="collections"]{--mc:#C45A1E;}
+.ovf-m [data-bx-open="display"]{--mc:#345E9E;}
+.ovf-m [data-bx-open="learn"]{--mc:#634494;}
+.ovf-m [data-bx-open="library"]{--mc:#A06F0E;}
+.ovf-m #qibBtn{--mc:#1D7276;}
+.ovf-m #qptBtn{--mc:#3E4FA3;}
+.ovf-m a[href="/tasbih"]{--mc:#8A6A12;}
+.ovf-m a[href="/"]{--mc:#23864A;}
+.ovf-m #tourBtn{--mc:#BC4F9C;}
+.ovf-m a[href="/codex"]{--mc:#1D7276;}
+.ovf-m .adm{--mc:#6E6E6E;}
+@media(prefers-reduced-motion:reduce){.ovf-m a:hover svg,.ovf-m button:hover svg{transform:none;}}
 .ovf-plat{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:7px 12px 9px;}
 .ovf-plat>span:first-child{font-family:'Saira',sans-serif;font-size:12.5px;color:#6E6E6E;}
 .ovf-plat .plat{display:inline-flex;}
@@ -2360,24 +2546,37 @@ button.ac-ava:focus-visible{outline:2px solid #1E2124;outline-offset:3px;}
  .ac-in,.pay-in{min-height:min(80svh,calc(100svh - 56px));max-height:calc(100svh - 40px);border:0;box-shadow:0 -10px 40px -12px rgba(0,0,0,.35);}
 }
 
-/* ============ need colours on dua cards: ink, paper and a spectrum ============
-   Each dua card wears the colour of its first need (CATHUE: red, orange, amber, green, blue,
-   violet, magenta): a 5px band and a light tint on the title bar, the card number, and a wash
-   across the card. The need labels use the same seven colours, deeper (CATCOL). Pictures, the
-   Arabic and the text stay in ink. Cards with no need keep plain white. */
-.kind-dua[style*="--gc"].cut-faceted .face.front{background:color-mix(in srgb,var(--gc) 7%,#FFFFFF);}
-.kind-dua[style*="--gc"].cut-faceted .zone{border-color:color-mix(in srgb,var(--gc) 20%,#E6E6E6);}
-.kind-dua[style*="--gc"].cut-faceted .zone.titlebar{border-top:5px solid var(--gc);border-radius:5px 5px 0 0;background:color-mix(in srgb,var(--gc) 12%,#FFFFFF);}
-.kind-dua[style*="--gc"] .zone.titlebar>span:last-child,.kind-dua[style*="--gc"] .zone.titlebar .num{color:color-mix(in srgb,var(--gc) 75%,#1E2124);}
-/* the surah cards (black stock) wear their need's colour too: the same band, a tinted title bar,
-   the number in colour and a faint glow of it over the black */
-.card.kind-surah[style*="--gc"].cut-faceted .face.front{background:radial-gradient(120% 70% at 50% 0%,color-mix(in srgb,var(--gc) 16%,#1E2124),#1E2124 70%);}
-.kind-surah[style*="--gc"].cut-faceted .zone{border-color:color-mix(in srgb,var(--gc) 30%,rgba(255,255,255,.2));}
-.kind-surah[style*="--gc"].cut-faceted .zone.titlebar{border-top:5px solid var(--gc);border-radius:5px 5px 0 0;background:color-mix(in srgb,var(--gc) 22%,#1E2124);}
-.kind-surah[style*="--gc"] .zone.titlebar>span:last-child,.kind-surah[style*="--gc"] .zone.titlebar .num{color:color-mix(in srgb,var(--gc) 70%,#FFFFFF);}
-/* the bottom line (set and reference) in the card's need colour: deeper on paper, lighter on black */
-.kind-dua[style*="--gc"] .gfoot,.kind-dua[style*="--gc"] .gfoot .gsrc{color:color-mix(in srgb,var(--gc) 78%,#1E2124);}
-.kind-surah[style*="--gc"] .gfoot,.kind-surah[style*="--gc"] .gfoot .gsrc{color:color-mix(in srgb,var(--gc) 60%,#FFFFFF);}
+/* ============ need colours: the card's frame is the colour ============
+   Each dua and surah card wears the colour of its first need (CATHUE: red, orange, amber, green,
+   blue, violet, magenta) as the whole outer frame, lit at the top and deepening to the foot, the
+   way a collectible card shows its suit. The title and the bottom line sit on the colour in white;
+   the reading panel inside stays white paper for a dua and black stock for a surah, so the two
+   kinds are still told apart at a glance. Pictures, the Arabic and the text stay in ink. The need
+   labels keep the deeper CATCOL. Cards with no need keep their plain stock. */
+.card.kind-dua[style*="--gc"].cut-faceted .face.front,
+.card.kind-surah[style*="--gc"].cut-faceted .face.front{
+ background:linear-gradient(165deg,color-mix(in srgb,var(--gc) 92%,#FFFFFF) 0%,var(--gc) 45%,color-mix(in srgb,var(--gc) 62%,#000000) 100%);}
+.card.kind-dua[style*="--gc"].cut-faceted .zone,
+.card.kind-surah[style*="--gc"].cut-faceted .zone{border-color:transparent;}
+.card.kind-dua[style*="--gc"].cut-faceted .zone.titlebar,
+.card.kind-surah[style*="--gc"].cut-faceted .zone.titlebar{border-top:0;background:transparent;}
+.card.kind-dua[style*="--gc"] .zone.titlebar .name,.card.kind-dua[style*="--gc"] .zone.titlebar .pip,
+.card.kind-dua[style*="--gc"] .zone.titlebar .pipn,.card.kind-dua[style*="--gc"] .zone.titlebar>span:last-child,
+.card.kind-surah[style*="--gc"] .zone.titlebar .name,.card.kind-surah[style*="--gc"] .zone.titlebar .pip,
+.card.kind-surah[style*="--gc"] .zone.titlebar .pipn,.card.kind-surah[style*="--gc"] .zone.titlebar>span:last-child{color:#FFFFFF;}
+/* the reading panel: one rounded sheet set into the frame */
+.card.kind-dua[style*="--gc"] .fwrap{background:var(--zone1,#FFFFFF);border-radius:10px;overflow:hidden;box-shadow:0 8px 20px -12px rgba(0,0,0,.5);}
+.card.kind-surah[style*="--gc"] .fwrap{background:var(--zone1,#1E2124);border-radius:10px;overflow:hidden;box-shadow:0 8px 20px -12px rgba(0,0,0,.6);}
+/* the picture fills its window edge to edge: fitted whole, it left a sliver of the panel at each
+   side, invisible on the old pale card and a white line against the frame */
+/* the panel behind the sections is the sections' own colour, and the dividers inside it have no width:
+   a hairline of a different black showed through wherever the card lifted on hover or scrolled */
+.card.kind-dua[style*="--gc"] .zone,.card.kind-surah[style*="--gc"] .zone{border-width:0;}
+.card.kind-dua[style*="--gc"] .zone.artwin::after,.card.kind-surah[style*="--gc"] .zone.artwin::after{box-shadow:none;}
+.card.kind-dua[style*="--gc"] .artwin.artimg img,.card.kind-surah[style*="--gc"] .artwin.artimg img{object-fit:cover;}
+/* the bottom line (set and reference) in white on the colour */
+.card.kind-dua[style*="--gc"] .gfoot,.card.kind-dua[style*="--gc"] .gfoot .gsrc,
+.card.kind-surah[style*="--gc"] .gfoot,.card.kind-surah[style*="--gc"] .gfoot .gsrc{color:rgba(255,255,255,.88);}
 
 /* a card still waiting for its picture shows its need's mark on the pattern; the written art brief is
    for the team only (dev mode), never for readers */

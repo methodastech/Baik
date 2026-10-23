@@ -401,15 +401,81 @@ function duaBody(c){
   +'<div class="rd-b"><div class="rd-k">'+(LANG==='bm'?'Bila boleh dibaca':'When it may be read')+'</div><p>'+esc(lv(c,'ken'))+'</p>'
   +'<div class="rd-k">'+(LANG==='bm'?'Konteks penurunan':'Context of revelation')+'</div><p>'+esc(lv(c,'aen'))+'</p></div></details>';
 }
+/* Diagrams for guide steps that describe a posture: white pictograms on tiles of the card's hue,
+   drawn from what the step's own text says and nothing more. Keyed by the card's gk, then by step
+   index. A figure is any reader, never a named person. */
+var GFIG={
+ kaaba:function(x,y){return '<rect x="'+x+'" y="'+y+'" width="11" height="11" rx="1.5" fill="currentColor" stroke="none"/><path d="M'+x+' '+(y+3.6)+'h11" stroke="rgba(0,0,0,.35)" stroke-width="1.8"/>';},
+ head:function(x,y){return '<circle cx="'+x+'" cy="'+y+'" r="6.2" fill="currentColor" stroke="none"/>';},
+ stand:function(){return GFIG.head(32,10)+'<path d="M32 19v19M32 23l-6 7 10 0M32 38l-4 18M32 38l4 18"/>';},
+ sit:function(){return GFIG.head(25,17)+'<path d="M25 25l1 20M26 45l18 9H22M25 30l7 9 7 8"/>';},
+ side:function(){return GFIG.head(12,44)+'<path d="M19 46h22l7-6 8 7M24 46l5-7"/><path d="M12 35v-8M8.5 30.5l3.5-3.5 3.5 3.5"/>'+GFIG.kaaba(6.5,10);},
+ back:function(){return '<rect x="2" y="48" width="16" height="6" rx="3" fill="currentColor" stroke="none" opacity=".45"/>'+GFIG.head(10,40)+'<path d="M17 45l23 2h6v-7"/>'+GFIG.kaaba(51,40);},
+ nod:function(){return GFIG.head(28,28).replace('r="6.2"','r="11"')+'<path d="M46 16a16 16 0 0 1 0 22M41.5 34.5l4.5 4.5 4.5-4.5"/>';},
+ eyes:function(){return '<path d="M8 32q24-20 48 0q-24 20-48 0z"/><circle cx="32" cy="32" r="7" fill="currentColor" stroke="none"/>';},
+ heart:function(){return '<path d="M32 51S11 39 11 25a10.5 10.5 0 0 1 21-4 10.5 10.5 0 0 1 21 4c0 14-21 26-21 26z" fill="currentColor" stroke="none"/>';},
+ ruku:function(){return GFIG.head(41,23)+'<path d="M24 47l11-15M24 47l18 8H21M33 34l6 13"/>';},
+ sujud:function(){return GFIG.head(45,46)+'<path d="M22 48l14-9M22 48l18 7H20M36 39l3 16"/>';},
+ nopillow:function(){return GFIG.head(33,22)+'<path d="M18 47l11-17M18 47l18 8H15M28 33l4 12"/><rect x="40" y="31" width="15" height="7" rx="3.5" fill="currentColor" stroke="none" opacity=".55"/><path d="M47.5 38v17"/><circle cx="50" cy="12" r="7.5"/><path d="M44.7 17.3l10.6-10.6"/>';},
+ chair:'<path d="M33 42h17V21M35 42v14M50 42v14"/>',
+ chairstand:function(){return GFIG.head(17,10)+'<path d="M17 19v19M17 23l-6 7 10 0M17 38l-4 18M17 38l4 18"/>'+GFIG.chair;},
+ chairsit:function(){return GFIG.head(42,13)+'<path d="M43 21l1 19H29v16M43 26l-7 7 6 2"/>'+GFIG.chair;}
+};
+function gfSvg(inner){
+ return '<svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="4.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'+inner+'</svg>';
+}
+/* a scene tile: a square of the hue, lit from the top corner, the figure in white, a caption under it */
+function gfTile(svg,cap,n){
+ return '<figure class="gd-t"><div class="gt-art">'+(n?'<b>'+n+'</b>':'')+gfSvg(svg)+'</div><figcaption>'+cap+'</figcaption></figure>';
+}
+/* the ladder: one row per step, the tile deepening as it descends, a rail with a chevron between */
+function gfLadder(rows,label){
+ return '<ol class="gd-lad" aria-label="'+label+'">'+rows.map(function(r,i){
+  return '<li class="gd-r" style="--k:'+(100-i*6)+'%"><span class="gr-ic">'+gfSvg(r[0])+'</span>'
+   +'<span class="gr-t"><b>'+r[1]+'</b><span>'+r[2]+'</span></span><span class="gr-n">'+(i+1)+'</span></li>';
+ }).join('')+'</ol>';
+}
+var GUIDE_VIZ={
+ 'solat-sakit':{
+  0:function(bm){var g=GFIG;
+   return gfLadder([
+    [g.stand(),bm?'Berdiri':'Stand',bm?'Pilihan pertama':'The first choice'],
+    [g.sit(),bm?'Duduk':'Sit',bm?'Jika tidak mampu berdiri':'If you cannot stand'],
+    [g.side(),bm?'Mengiring ke kanan':'Lie on the right side',bm?'Menghadap kiblat':'Facing the qibla'],
+    [g.back(),bm?'Terlentang':'Lie on the back',bm?'Kaki ke arah kiblat, kepala diangkat':'Feet toward the qibla, head raised'],
+    [g.nod(),bm?'Isyarat kepala':'Gesture with the head',bm?'Mengisyaratkan setiap gerakan':'Indicating each movement'],
+    [g.eyes(),bm?'Isyarat mata':'Gesture with the eyes',bm?'Apabila kepala tidak mampu':'When the head cannot'],
+    [g.heart(),bm?'Dalam hati':'Through the heart',bm?'Solat dijalankan dalam hati':'The prayer run through the heart']
+   ],bm?'Tangga kemampuan, tujuh langkah':'The ladder of ability, seven steps');},
+  2:function(bm){var g=GFIG;
+   return '<div class="gd-fig c3" role="img" aria-label="'+(bm?'Rukuk dan sujud ketika duduk':'Ruku and sujud when seated')+'">'
+    +gfTile(g.ruku(),bm?'Rukuk: tunduk ke depan':'Ruku: bend forward')
+    +gfTile(g.sujud(),bm?'Sujud: lebih rendah':'Sujud: bend lower')
+    +gfTile(g.nopillow(),bm?'Jangan angkat bantal':'No raised pillow')
+    +'</div>';},
+  3:function(bm){var g=GFIG;
+   return '<div class="gd-fig c2" role="img" aria-label="'+(bm?'Menggunakan kerusi':'Using a chair')+'">'
+    +gfTile(g.chairstand(),bm?'Berdiri untuk takbir dan Fatihah':'Stand for takbir and Fatihah',1)
+    +gfTile(g.chairsit(),bm?'Duduk untuk yang tidak mampu':'Sit for what you cannot do',2)
+    +'</div>';}
+ }
+};
 function guideBody(c){
  var bm=LANG==='bm';
- var gk=(c.cats||[])[0];
- var h='<div class="gd-viz"><svg viewBox="0 0 24 24" fill="currentColor">'+(GLYPH24[gk]||'')+'</svg>'
-  +'<span class="gv-k">'+esc(catName(gk))+'</span></div>';
- h+=(c.body||[]).map(function(sec){
-  return '<div class="gd-k">'+esc(bm&&sec.kbm?sec.kbm:sec.ken)+'</div>'
-   +'<p class="gd-p">'+esc(bm&&sec.bm?sec.bm:sec.en)+'</p>';
- }).join('');
+ var gk=(c.cats||[])[0],body=c.body||[];
+ /* the band says what kind of guide this is and how long it takes, before the reader commits */
+ var words=0;body.forEach(function(sec){words+=String((bm&&sec.bm?sec.bm:sec.en)||'').split(/\s+/).length;});
+ var mins=Math.max(1,Math.round(words/200));
+ var h='<div class="gd-viz"><div class="gv-t"><span class="gv-k">'+esc(catName(gk))+'</span>'
+  +'<span class="gv-m">'+body.length+' '+(bm?'bahagian':(body.length===1?'section':'sections'))+' \u00b7 '+mins+' '+(bm?'minit bacaan':'min read')+'</span></div>'
+  +'<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">'+(GLYPH24[gk]||'')+'</svg></div>';
+ /* the sections are steps on one rail: numbered, so a reader can say "the third one" */
+ h+='<ol class="gd-steps">'+body.map(function(sec,i){
+  return '<li class="gd-step"><span class="gd-n" aria-hidden="true">'+(i+1)+'</span>'
+   +'<div class="gd-k">'+esc(bm&&sec.kbm?sec.kbm:sec.ken)+'</div>'
+   +'<p class="gd-p">'+esc(bm&&sec.bm?sec.bm:sec.en)+'</p>'
+   +(GUIDE_VIZ[c.gk]&&GUIDE_VIZ[c.gk][i]?GUIDE_VIZ[c.gk][i](bm):'')+'</li>';
+ }).join('')+'</ol>';
  /* Arabic is never written here. Each slot names what the pipeline still owes this card,
     so the gap is visible rather than quietly filled with something unverified. */
  if(c.arabic&&c.arabic.length){
@@ -417,8 +483,8 @@ function guideBody(c){
    +c.arabic.map(function(a){return '<div class="gd-slot"><code>'+esc(a.slot)+'</code><span>'+esc(a.need)+'</span></div>';}).join('')
    +'</div>';
  }
- if(c.madhhab)h+='<div class="gd-note">'+esc(c.madhhab)+'</div>';
- h+='<div class="gd-rev">'+(bm?'Menunggu semakan ilmiah':'Awaiting scholar review')+'</div>';
+ if(c.madhhab)h+='<div class="gd-note"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 7.5v.01"/></svg><span>'+esc(c.madhhab)+'</span></div>';
+ h+='<div class="gd-rev"><i></i>'+(bm?'Menunggu semakan ilmiah':'Awaiting scholar review')+'</div>';
  return h;
 }
 /* The kind and the needs were competing as equals, three pills deep, and the row wrapped to
@@ -597,9 +663,9 @@ function cardHTML(c,gi,noFab){
    +'<div class="bk-footrow"><span class="bk-code">'+esc(lv(c,'srcEn'))+'</span><span class="bk-code">'+st.code+'-'+num+'</span></div>'
   +'</div>';
  var fab='';   /* the hover cluster is gone: every card action lives in the row under the card */
- var acts=noFab?'':'<div class="deckacts">'+tasHTML(c,gi)
+ var acts=noFab?'':'<div class="deckacts" style="--ac:'+(kindOf(c)==='zikir'?'#8A6A12':(CATCOL[(c.cats||[])[0]]||'#1E2124'))+'">'+tasHTML(c,gi)
    +'<button class="dact dz" type="button" data-tip="Read large|Open the card big enough to read comfortably.|View"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M9 4H4v5M15 4h5v5M9 20H4v-5M15 20h5v-5"/></svg><span>'+(LANG==='bm'?'Besarkan':'Read large')+'</span></button>'
-   +'<button class="dact ds'+(isSaved(gi)?' saved':'')+'" type="button" data-tip="Save|Keep this card in your saved list.|Save"><svg viewBox="0 0 24 24" fill="'+(isSaved(gi)?'currentColor':'none')+'" stroke="currentColor" stroke-width="2"><path d="M6 3h12v18l-6-4.5L6 21z"/></svg><span>'+(LANG==='bm'?'Simpan':'Save')+'</span></button>'
+   +'<button class="dact ds'+(isSaved(gi)?' saved':'')+(JUST_SAVED===gi?' pop':'')+'" type="button" data-tip="Save|Keep this card in your saved list.|Save"><svg viewBox="0 0 24 24" fill="'+(isSaved(gi)?'currentColor':'none')+'" stroke="currentColor" stroke-width="2"><path d="M6 3h12v18l-6-4.5L6 21z"/></svg><span>'+(LANG==='bm'?'Simpan':'Save')+'</span></button>'
    +'<button class="dact dsh" type="button" data-tip="Share|Send the card with its source attached.|Share"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12v7a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-7"/><path d="M12 16V4M8 8l4-4 4 4"/></svg><span>'+(LANG==='bm'?'Kongsi':'Share')+'</span></button>'
    +'<button class="dact da" type="button" data-tip="Listen|Recitation by a qari, streamed for this verse.|Audio"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9v6h4l5 4V5L8 9H4z"/><path class="wv1" d="M16.5 8.8a4.5 4.5 0 0 1 0 6.4"/><path class="wv2" d="M19.2 6.2a8 8 0 0 1 0 11.6"/></svg><span>'+(LANG==='bm'?'Dengar':'Listen')+'</span></button>'
    +'<button class="dact dr'+(REP.n?' on':'')+'" type="button" aria-haspopup="dialog" aria-expanded="false" data-tip="'+(LANG==='bm'?'Ulang|Main doa beberapa kali, dengan jeda untuk anda mengulangnya sendiri.|Hafalan':'Repeat|Play the dua over, with a gap to say it back yourself.|Memorise')+'"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 2l3 3-3 3"/><path d="M20 5H8a4 4 0 0 0-4 4v1"/><path d="M7 22l-3-3 3-3"/><path d="M4 19h12a4 4 0 0 0 4-4v-1"/></svg><span class="rn">'+repLabel()+'</span></button>'
@@ -667,24 +733,30 @@ function tasHTML(c,gi){
    +' data-tip="'+(bm?'Kira|Ketik untuk mengira. Tempat anda disimpan pada kad ini.|Tasbih'
                      :'Count|Tap to count. Your place is kept on this card.|Tasbih')+'">'
    +'<i class="tasfill" style="width:'+(t?Math.round(n/t*100):0)+'%"></i>'
-   +'<span class="tasn">'+(t?n+' / '+t:n)+'</span></button>'
+   +'<span class="tasbead" aria-hidden="true"></span>'
+   +'<span class="tasl">'+tasLabel(!!t&&n>=t)+'</span>'
+   +'<span class="tasn">'+tasNum(n,t)+'</span></button>'
   +'<button class="tasr" type="button" aria-label="'+(bm?'Mula semula':'Start again')+'"'
    +' data-tip="'+(bm?'Mula semula|Kembali ke sifar.|Tasbih':'Start again|Back to zero.|Tasbih')+'">'
    +'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5v5h5"/><path d="M4.6 14a8 8 0 1 0 1.3-6"/></svg></button>'
   +'</div>';
 }
+function tasNum(n,t){return t?n+'<small>/ '+t+'</small>':String(n);}
+function tasLabel(done){var bm=LANG==='bm';return done?(bm?'Selesai':'Done'):(bm?'Ketik untuk kira':'Tap to count');}
 function tasPaint(sc,c,gi){
  var box=sc.querySelector('.tas');if(!box)return;
  var t=tasTarget(c),n=tasCount(gi);
  if(t)n=Math.min(n,t);
  box.classList.toggle('done',!!t&&n>=t);
  var f=box.querySelector('.tasfill');if(f)f.style.width=(t?Math.round(n/t*100):0)+'%';
- var s2=box.querySelector('.tasn');if(s2)s2.textContent=t?n+' / '+t:n;
+ var s2=box.querySelector('.tasn');if(s2)s2.innerHTML=tasNum(n,t);
+ var l=box.querySelector('.tasl');if(l)l.textContent=tasLabel(!!t&&n>=t);
 }
 function tasTick(sc,c,gi){
  var t=tasTarget(c),n=tasCount(gi);
  if(t&&n>=t)return;                       /* the set is finished; start again to go round */
  tasSet(gi,n+1);tasPaint(sc,c,gi);
+ var pad=sc.querySelector('.tasb');if(pad){pad.classList.remove('tick');void pad.offsetWidth;pad.classList.add('tick');}
  try{if(navigator.vibrate)navigator.vibrate(t&&n+1>=t?[12,40,12]:8);}catch(e){}
  if(t&&n+1>=t)toast(LANG==='bm'?'Selesai '+t+'. Ketik mula semula untuk pusingan lain.'
                                :'That is '+t+'. Start again for another round.');
@@ -1361,7 +1433,10 @@ function wire(){
 /* the masthead star: count, gold when anything is kept, opens the saved grid */
 function savUpd(){var b=document.getElementById('savBtn'),n=document.getElementById('savN');if(!b)return;b.classList.toggle('has',SAVED.length>0);n.hidden=!SAVED.length;n.textContent=SAVED.length;}
 document.getElementById('savBtn').addEventListener('click',function(){TMODE='saved';setView('table');var d=document.getElementById('deck');if(d)d.scrollIntoView({block:'start',behavior:'smooth'});});
+/* the card just saved gets one bounce of its bookmark after the re-render, then forgets it */
+var JUST_SAVED=-1;
 function toggleSave(gi){
+ JUST_SAVED=SAVED.indexOf(gi)<0?gi:-1;setTimeout(function(){JUST_SAVED=-1;},0);
  var at=SAVED.indexOf(gi);
  if(at>=0){SAVED.splice(at,1);store('baik.saved',SAVED);render();renderChips();return;}
  /* The cap is a Free-tier limit, not a limit on the feature. Premium was still being
