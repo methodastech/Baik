@@ -596,9 +596,6 @@ footer{border-top:1px solid var(--line);padding:36px 0 44px;}
 .hw-step p{font-size:15px;line-height:1.65;color:var(--dim);max-width:44ch;}
 .hw-stage{position:sticky;top:14vh;height:min(72vh,620px);border-radius:24px;background:radial-gradient(120% 90% at 50% 20%,#FFFFFF 0,#F4F3F0 78%);
  border:1px solid #ECECEC;overflow:hidden;align-self:start;}
-.hw-rail{position:absolute;left:22px;top:22px;bottom:22px;width:2px;border-radius:2px;background:#ECECEC;}
-.hw-rail i{display:block;width:100%;height:33.3%;background:#1E2124;border-radius:2px;transition:height .6s cubic-bezier(.16,1,.3,1);}
-.hw-stage[data-step="2"] .hw-rail i{height:66.6%;} .hw-stage[data-step="3"] .hw-rail i{height:100%;}
 /* step 1: the search */
 .hw-search{position:absolute;left:12%;right:12%;top:16%;height:52px;border-radius:14px;background:#fff;border:1px solid #DBDBDB;display:flex;align-items:center;gap:10px;padding:0 16px;
  color:#6E6E6E;box-shadow:0 10px 30px -18px rgba(30,33,36,.3);transition:transform .7s cubic-bezier(.16,1,.3,1),opacity .5s;}

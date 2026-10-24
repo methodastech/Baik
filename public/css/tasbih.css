@@ -47,11 +47,11 @@ body.tb-gl #tbGl{opacity:1;} body.tb-gl #tbCv{display:none;}
 .tb-row{display:flex;align-items:baseline;justify-content:space-between;gap:12px;margin-bottom:12px;}
 .tb-row b{font:700 17px 'Space Grotesk',sans-serif;} .tb-row b small{display:block;font:400 12.5px 'Saira',sans-serif;color:rgba(237,239,234,.55);margin-top:2px;}
 .tb-row button{border:0;background:none;color:#34D399;font:600 14px 'Saira',sans-serif;cursor:pointer;padding:4px 0;}
-.tb-beads{touch-action:pan-x;display:flex;gap:14px;overflow-x:auto;padding:4px 2px 6px;scrollbar-width:none;}
+.tb-beads{touch-action:pan-x;display:flex;gap:18px;overflow-x:auto;padding:9px 9px 8px;scrollbar-width:none;}
 .tb-beads::-webkit-scrollbar{display:none;}
 .tb-bd{flex:none;border:0;background:none;color:rgba(237,239,234,.65);display:flex;flex-direction:column;align-items:center;gap:6px;cursor:pointer;font:500 11px 'Saira',sans-serif;padding:0;}
 .tb-bd i{width:52px;height:52px;border-radius:50%;background:radial-gradient(circle at 32% 28%,var(--b0),var(--b1) 78%);box-shadow:inset -4px -6px 10px rgba(0,0,0,.35),0 4px 10px rgba(0,0,0,.4);outline:2px solid transparent;outline-offset:3px;transition:outline-color .2s,transform .2s;}
-.tb-bd.on i{outline-color:#34D399;transform:scale(1.04);} .tb-bd.on{color:#fff;}
+.tb-bd.on i{outline-color:#34D399;} .tb-bd.on{color:#fff;}
 .tb-panel>*{flex:none;}
 .tb-list{display:flex;touch-action:pan-y;flex:1 1 auto;min-height:0;flex-direction:column;gap:8px;overflow-y:auto;overscroll-behavior:contain;margin-top:14px;padding-bottom:4px;}
 .tb-dz{display:grid;grid-template-columns:1fr auto;align-items:center;gap:2px 12px;text-align:left;border:1px solid rgba(255,255,255,.1);background:rgba(255,255,255,.03);color:#EDEFEA;border-radius:14px;padding:12px 14px;cursor:pointer;}
@@ -89,7 +89,7 @@ body.tbpage .toast{bottom:calc(150px + env(safe-area-inset-bottom));}
 
 /* short phone screens (browser bars take a lot): a tighter panel */
 @media(max-height:720px){
- .tb-bd i{width:44px;height:44px;} .tb-beads{gap:12px;}
+ .tb-bd i{width:44px;height:44px;} .tb-beads{gap:15px;}
  .tb-row{margin-bottom:8px;} .tb-sounds{margin-top:8px;} .tb-sd{padding:6px 13px;}
 }
 /* too short to keep the hint under the words: it shows once as a toast instead (tasbih.js) */

@@ -826,6 +826,8 @@ body.public .sz-cutT .artbrief,.has-img .artbrief{min-height:0;height:var(--arth
 .deckacts .dz{order:3;--k:var(--ac,#1E2124);}
 .deckacts .ds{order:4;--k:#B07A1C;}
 .deckacts .dsh{order:5;--k:#2B6E93;}
+/* a guide card has no recitation: its three keys sit centred under it */
+.deckacts.noaud{justify-content:center;gap:10px;}
 .deckacts .dz svg,.deckacts .ds svg,.deckacts .dsh svg{color:var(--k);}
 .deckacts .dz>span,.deckacts .ds>span,.deckacts .dsh>span{position:absolute;width:1px;height:1px;overflow:hidden;
  clip:rect(0 0 0 0);clip-path:inset(50%);white-space:nowrap;}
@@ -1471,17 +1473,17 @@ body.app .bmws{display:none;}
 .arf-m button.on .sm-t b{color:#2E7D5B;}
 /* the menu and card-action icons carry the same hues as the deck's marks */
 /* The menu wears colour the way a phone's settings list does: each item has its own hue, its
-   icon on a small tinted tile, and the row takes a wash of that hue under the pointer. */
+   icon drawn in that hue with no tile behind it, and the row takes a wash of that hue under the pointer. */
 .ovf-m{background:#FFFFFF;border-color:rgba(30,33,36,.12);box-shadow:0 24px 60px -20px rgba(30,33,36,.35);
  /* never taller than the window under the header: the rest scrolls inside the menu */
  max-height:calc(100vh - 96px);max-height:calc(100dvh - 96px);overflow-y:auto;overscroll-behavior:contain;scrollbar-width:thin;}
-.ovf-m a,.ovf-m button{padding:6px 10px;}
+.ovf-m a,.ovf-m button{padding:9px 11px;gap:12px;}
 .ovf-m a,.ovf-m button{--mc:#6E6E6E;color:#3A3D40;}
-.ovf-m a svg,.ovf-m button svg{box-sizing:content-box;width:15px;height:15px;padding:6px;border-radius:50%;opacity:1;
- color:var(--mc);background:color-mix(in srgb,var(--mc) 13%,#FFFFFF);
- transition:transform .2s cubic-bezier(.3,1.6,.6,1),background .15s,color .15s;}
+.ovf-m a svg,.ovf-m button svg{width:18px;height:18px;opacity:1;
+ color:var(--mc);
+ transition:transform .2s cubic-bezier(.3,1.6,.6,1);}
 .ovf-m a:hover,.ovf-m button:hover{background:color-mix(in srgb,var(--mc) 8%,#FFFFFF);color:#1E2124;}
-.ovf-m a:hover svg,.ovf-m button:hover svg{background:var(--mc);color:#FFFFFF;transform:scale(1.08) rotate(-4deg);}
+.ovf-m a:hover svg,.ovf-m button:hover svg{transform:scale(1.12) rotate(-6deg);}
 .ovf-m [data-bx-open="collections"]{--mc:#C45A1E;}
 .ovf-m [data-bx-open="display"]{--mc:#345E9E;}
 .ovf-m [data-bx-open="learn"]{--mc:#634494;}

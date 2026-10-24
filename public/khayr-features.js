@@ -236,7 +236,7 @@ function memorised(gi) { var p = PROG[gi]; return p && (p.box >= 5 || p.mm >= 3 
 
 var fc = null; // flashcard session {list:[gi], i, show, mode}
 function fcDeck(src) {
-  var pool = (src === 'saved' ? SAVED.slice() : CARDS.map(function (c, i) { return i; })).filter(function (gi) { return learnable(CARDS[gi]); });
+  var pool = (src === 'saved' ? SAVED.slice() : CARDS.map(function (c, i) { return i; })).filter(function (gi) { return CARDS[gi] && !CARDS[gi].hidden && learnable(CARDS[gi]); });
   var now = Date.now(), DAY = 864e5, GAP = [0, 0, 1, 3, 7, 16];
   var due = pool.filter(function (gi) { var p = PROG[gi]; return !p || now - p.last >= GAP[p.box] * DAY; });
   due.sort(function (a, b) { return ((PROG[a] || {}).box || 0) - ((PROG[b] || {}).box || 0) || Math.random() - .5; });
@@ -469,7 +469,7 @@ function nlMatch(q) {
      the need itself ("my mum is in hospital" is about health first) */
   var WEIGHT = { rumah: 0.6, pagi: 0.7, hati: 0.8 };
   return Object.keys(hit).filter(function (k) {
-    return CATS[k] && CARDS.some(function (c) { return (c.cats || []).indexOf(k) >= 0; });
+    return CATS[k] && CARDS.some(function (c) { return !c.hidden && (c.cats || []).indexOf(k) >= 0; });
   }).sort(function (a, b) { return hit[b] * (WEIGHT[b] || 1) - hit[a] * (WEIGHT[a] || 1); });
 }
 var STOP = ' a an the i im i\'m me my mine is am are was were be been it its in on at to of for and or with about from this that can cant can\'t dont don\'t not no so very really just please help need want what how why when saya aku awak kamu di ke dari yang dan atau untuk tentang ini itu ada tak tidak sangat nak mahu boleh macam mana bila kenapa ';
@@ -525,7 +525,7 @@ var advWarned = false;
 function related(c, n) {
   var mine = c.cats || [], k = kindOf(c);
   return CARDS.map(function (x, i) { x._i = i; return x; }).filter(function (x) {
-    return x !== c && (kindOf(x) === 'panduan') === (k === 'panduan') && (x.cats || []).some(function (q) { return mine.indexOf(q) >= 0; });
+    return x !== c && !x.hidden && (kindOf(x) === 'panduan') === (k === 'panduan') && (x.cats || []).some(function (q) { return mine.indexOf(q) >= 0; });
   }).map(function (x) {
     return { c: x, s: (x.cats || []).filter(function (q) { return mine.indexOf(q) >= 0; }).length * 2 + ((x.cats || [])[0] === mine[0] ? 1 : 0) };
   }).sort(function (a, b) { return b.s - a.s; }).slice(0, n).map(function (r) { return r.c; });
@@ -541,7 +541,7 @@ function suggestions(n) {
   var top = Object.keys(score).sort(function (a, b) { return score[b] - score[a]; }).slice(0, 3);
   if (!top.length) return [];
   return CARDS.map(function (c, i) { c._i = i; return c; }).filter(function (c) {
-    return !seen[c._i] && kindOf(c) !== 'panduan' && (c.cats || []).some(function (k) { return top.indexOf(k) >= 0; });
+    return !seen[c._i] && !c.hidden && kindOf(c) !== 'panduan' && (c.cats || []).some(function (k) { return top.indexOf(k) >= 0; });
   }).sort(function (a, b) { return top.indexOf(a.cats[0]) - top.indexOf(b.cats[0]); }).slice(0, n);
 }
 
@@ -713,7 +713,7 @@ function wireTools(el) {
    Built only from cards already in the deck, each with its own source. Where the deck has no
    sourced dua for a need yet, the collection says so instead of borrowing an unrelated one
    (policy 043 / 124). Card numbers are CARDS indexes; new cards are always appended, so they hold. */
-function puasaCards(keys) { return CARDS.map(function (c, i) { return (c.cats || []).some(function (k) { return keys.indexOf(k) >= 0; }) ? i : -1; }).filter(function (i) { return i >= 0; }); }
+function puasaCards(keys) { return CARDS.map(function (c, i) { return !c.hidden && (c.cats || []).some(function (k) { return keys.indexOf(k) >= 0; }) ? i : -1; }).filter(function (i) { return i >= 0; }); }
 var FORGIVE = [21, 22, 23, 49, 52, 53, 63, 3, 27];
 var PROTECT = [25, 32, 33, 8, 9, 10, 15, 127];
 var HEAL = [120, 121, 122, 123, 124, 125, 126];
@@ -932,7 +932,7 @@ filtered = function () {
       var pos = function (c) { var best = 9; (c.cats || []).forEach(function (k) { var i = nl.indexOf(k); if (i >= 0 && i < best) best = i; }); return best; };
       var seen = {}; strongC.forEach(function (c) { seen[c._i] = 1; });
       var nlC = CARDS.map(function (c, i) { c._i = i; return c; }).filter(function (c) {
-        return !seen[c._i] && pos(c) < 9 && (S.kind === 'all' || kindOf(c) === S.kind);
+        return !seen[c._i] && !c.hidden && pos(c) < 9 && (S.kind === 'all' || kindOf(c) === S.kind);
       }).sort(function (x, y) { return pos(x) - pos(y) || (kindOf(x) === 'surah') - (kindOf(y) === 'surah'); });
       list = strongC.concat(nlC);
     } else if (strongC.length >= 3 && words.length < q.split(/\s+/).length) {
