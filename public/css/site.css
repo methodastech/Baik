@@ -183,6 +183,10 @@ section{padding:clamp(64px,9vw,120px) 0;}
 }
 @media(prefers-reduced-motion:reduce){.deck:hover .mini{transform:none;}}
 @media(min-width:1500px){.wrap{max-width:var(--maxw-wide);}}
+/* the page column runs to the same edges as the nav bar: one gutter from the window on each side */
+.wrap{max-width:none;}
+hr.divider{max-width:none;}
+.hero>.wrap{width:100%;}
 @media(max-width:900px){
  .hero{min-height:0;}
  .hero-in{grid-template-columns:1fr;}
