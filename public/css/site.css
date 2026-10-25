@@ -663,7 +663,10 @@ footer{border-top:1px solid var(--line);padding:36px 0 44px;}
 @media(max-width:900px){.zk-in{grid-template-columns:1fr;}.zk-stage{max-width:520px;}}
 
 /* ============ The open mushaf (mushaf3d.js) ============ */
-.mf{padding:clamp(70px,10vw,130px) 0;}
+/* the table and the mushaf sit either side of one dotted rule: each keeps only a short margin to it,
+   since the book's stage already opens with air above the book */
+#table{padding-bottom:clamp(36px,5vw,64px);}
+.mf{padding:clamp(28px,4vw,48px) 0 clamp(70px,10vw,130px);}
 .mf-in{display:grid;grid-template-columns:minmax(0,.7fr) minmax(0,1.3fr);gap:clamp(24px,4vw,56px);align-items:center;}
 .mf h2{font-size:clamp(32px,4.6vw,56px);line-height:1.03;letter-spacing:-.025em;margin:14px 0 16px;}
 .mf-lp{color:var(--dim);font-size:16px;line-height:1.6;max-width:40ch;margin-bottom:26px;}
