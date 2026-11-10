@@ -67,7 +67,12 @@ export default defineConfig({
   output: 'static',
   trailingSlash: 'never',
   build: { format: 'file' },
-  integrations: [sitemap({ filter: page => !INTERNAL.some(p => new URL(page).pathname.replace(/\.html$/, '') === '/' + p) }), versionAssets(), dropInternal()],
+  /* the home, pricing and FAQ pages are static files in public/ (Website 2), so the sitemap is told
+     about them by hand; the previous landing, kept as a backup at /classic, stays out of it */
+  integrations: [sitemap({
+    customPages: ['https://baikapp.com/', 'https://baikapp.com/pricing', 'https://baikapp.com/faq'],
+    filter: page => !INTERNAL.concat(['classic']).some(p => new URL(page).pathname.replace(/\.html$/, '') === '/' + p),
+  }), versionAssets(), dropInternal()],
   // keep the authored markup byte-for-byte: whitespace between inline
   // elements is rendered, so collapsing it would shift the design
   compressHTML: false,

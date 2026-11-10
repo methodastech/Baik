@@ -1,0 +1,1548 @@
+/* p2.css · 30 Oct 2026 · Web Prototype 2, its own sheet. Loaded on /web2 only; site.css and site-polish.css stay Prototype 1.
+   Bazil, 30 Oct: "follow the 52 frameworks", "look similar to our concept like Nak Gas or Jom Makcik", "really understand the brand",
+   "don't make it messy". The page order is the 52 Frameworks flow (Attention, Empathy, Trust, Solution, Offer, Proof, Reassurance,
+   Capture, Conversion, Close); the look is the house concept language seen on Nak Gas and Jom Makcik (white base, one accent on
+   the key phrase of every headline, real people in the market, the real app in a phone, numbered steps, hairline cards) in Baik's
+   own tokens: ink #1E2124, the card gold #8A6A12 as the one accent, the app's green #2E7D5B only for ticks and "live", Saira for
+   display, Space Grotesk for reading, JetBrains Mono for small labels, Scheherazade New for the Arabic. One corner: 8 px on cards,
+   6 px on buttons (Bazil: "too much curved"). No left stripes, no eyebrow lines, no dashes. Type floor 13 px. */
+
+:root{
+  --ink:#1E2124;--ink-2:#2B2F33;--mut:#6E6E6E;--mut-2:#8E8E8E;--line:#DBDBDB;--hair:#E8E8E6;--paper:#F5F5F3;--paper-2:#EFEFEC;
+  --gold:#8A6A12;--gold-2:#C9A54A;--green:#2E7D5B;--red:#B5473F;
+  --r:8px;--rb:6px;--sgx:clamp(20px,2.6vw,32px);--maxw:1200px;
+  --ease:cubic-bezier(.2,.8,.2,1);--bmx-bar:0px;
+  --disp:'Inter Tight','Inter',system-ui,sans-serif;--body:'Inter',system-ui,sans-serif;--mono:'Inter',system-ui,sans-serif;--ar:'Scheherazade New',serif;
+}
+*,*::before,*::after{box-sizing:border-box}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+body{margin:0;font:400 16px/1.55 var(--body);color:var(--ink);background:#fff;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+img{display:block;max-width:100%;height:auto}
+a{color:inherit;text-decoration:none}
+ul{margin:0;padding:0;list-style:none}
+p{margin:0}
+h1,h2,h3,h4{margin:0;font-family:var(--disp);font-weight:500;letter-spacing:-.045em;line-height:.98;text-wrap:balance}
+h1{font-size:clamp(38px,4.5vw,62px)}
+h2{font-size:clamp(30px,3.6vw,50px)}
+h3{font-size:19px;letter-spacing:-.02em;line-height:1.3;font-weight:500}
+em,.em{font-style:normal;color:var(--gold)}
+.wrap{max-width:var(--maxw);margin:0 auto;padding:0 var(--sgx)}
+section{padding:clamp(40px,4.8vw,68px) 0}
+.k{display:none}
+.lede{font-size:clamp(16px,1.25vw,19px);line-height:1.6;color:var(--ink-2);max-width:56ch}
+.sh{max-width:720px;margin-bottom:clamp(20px,2.4vw,32px)}
+.sh .lede{margin-top:16px}
+.sh.c{margin-left:auto;margin-right:auto;text-align:center}
+.ar{font-family:var(--ar);direction:rtl;unicode-bidi:isolate;font-size:1.5em;line-height:1.7}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+
+/* ---- buttons: one grammar, ink block or hairline, 6 px corner, no lip ---- */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;height:50px;padding:0 22px;border-radius:var(--rb);
+  font:600 15px/1 var(--body);letter-spacing:0;white-space:nowrap;cursor:pointer;border:1px solid transparent;transition:background .15s,border-color .15s,color .15s,transform .12s}
+.btn:active{transform:translateY(1px)}
+.btn-ink{background:var(--ink);color:#fff;border-color:var(--ink)}
+.btn-ink:hover{background:#000}
+.btn-line{background:#fff;color:var(--ink);border-color:var(--line)}
+.btn-line:hover{border-color:var(--ink)}
+.btn-sm{height:40px;padding:0 16px;font-size:14px}
+.arrow{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+
+/* ---- the announcement bar, framework 2: one time bound line above the navigation ---- */
+.ann{background:var(--ink);color:#fff;font-size:13.5px;line-height:1.4;text-align:center;padding:9px var(--sgx)}
+.ann a{color:#fff;font-weight:600;border-bottom:1px solid rgba(255,255,255,.45);margin-left:10px}
+.ann a:hover{border-color:#fff}
+
+/* ---- navigation: white, hairline on scroll, the one button ---- */
+.nav{position:sticky;top:var(--bmx-bar);z-index:50;display:flex;align-items:center;gap:28px;height:68px;padding:0 var(--sgx);background:#fff;border-bottom:1px solid transparent;transition:border-color .2s}
+.nav.is-solid{box-shadow:0 1px 0 rgba(30,33,36,.06)}
+.logo{display:inline-block;width:72px;height:26px;background:var(--ink);-webkit-mask:url(../assets/logo/baik-logo_caps.svg) left center/contain no-repeat;mask:url(../assets/logo/baik-logo_caps.svg) left center/contain no-repeat}
+h2+.lede{margin-top:16px}
+.nav-links{display:flex;gap:4px;margin-left:auto}
+.nav-links a{padding:8px 12px;border-radius:var(--rb);font-size:14.5px;font-weight:500;color:var(--ink-2)}
+.nav-links a:hover{background:var(--paper)}
+.lang{display:inline-flex;gap:6px}
+.lang button{width:30px;height:30px;padding:3px;border:1px solid transparent;border-radius:50%;background:none;cursor:pointer;opacity:.45;transition:opacity .15s,border-color .15s}
+.lang button svg{width:100%;height:100%;display:block}
+.lang button.on{opacity:1;border-color:var(--ink)}
+.lang button:hover{opacity:1}
+.nav-cta{display:flex;align-items:center;gap:12px}
+.burger{display:none}
+
+/* ---- hero, framework 1: the whole banner is video (real people, Pexels), the copy over a dark grade, the card beside it ---- */
+.hero{position:relative;overflow:hidden;background:var(--ink);color:#fff;min-height:min(78vh,760px);display:grid;align-items:end;padding:clamp(56px,7vw,110px) 0 clamp(36px,4.5vw,64px)}
+.hero-v{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center}
+.hero::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(18,20,22,.84) 0%,rgba(18,20,22,.55) 50%,rgba(18,20,22,.18) 100%),linear-gradient(180deg,rgba(18,20,22,.1),rgba(18,20,22,.35))}
+.hero-in{position:relative;z-index:1;display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,.85fr);gap:clamp(24px,4vw,64px);align-items:end}
+.hero h1{margin-bottom:18px;color:#fff;max-width:16ch;font-size:clamp(36px,4.2vw,58px)}
+.hero h1 em{color:var(--gold-2)}
+.hero .lede{color:rgba(255,255,255,.86);max-width:44ch}
+.hero-cta{display:flex;flex-wrap:wrap;gap:12px;margin-top:24px}
+.hero .btn-ink{background:#fff;color:var(--ink);border-color:#fff}
+.hero .btn-ink:hover{background:var(--paper)}
+.hero .btn-line{background:transparent;color:#fff;border-color:rgba(255,255,255,.6)}
+.hero .btn-line:hover{border-color:#fff}
+.hero-note{margin-top:14px;font-size:14px;color:rgba(255,255,255,.72)}
+.fcards{position:relative;justify-self:end;width:min(320px,100%);min-height:196px}
+.fcard{position:absolute;left:0;right:0;bottom:0;opacity:0;transform:translateY(10px);transition:opacity .5s var(--ease),transform .5s var(--ease);pointer-events:none}
+.fcard.on{opacity:1;transform:none;pointer-events:auto}
+.fcard{background:#fff;color:var(--ink);border:1px solid var(--line);border-radius:var(--r);padding:16px 18px 14px;box-shadow:0 30px 60px -30px rgba(0,0,0,.6)}
+.fcard .fk{display:flex;justify-content:space-between;font:500 13px/1 var(--mono);letter-spacing:.1em;text-transform:uppercase;color:var(--mut)}
+.fcard .fk i{font-style:normal;color:var(--gold)}
+.fcard .ft{font:500 16px/1.3 var(--disp);margin:10px 0 8px;letter-spacing:-.02em}
+.fcard .ar{font-size:24px;line-height:1.5;text-align:right}
+.fcard .fm{font-size:13.5px;color:var(--ink-2);margin-top:6px}
+.fcard .fs{display:flex;justify-content:space-between;margin-top:12px;font:500 13px/1.2 var(--mono);color:var(--mut)}
+.fcard .fs b{color:var(--green);font-weight:500}
+
+/* ---- authority strip, framework 4: what every card cites ---- */
+.cites{background:#fff}
+.cites-in{display:flex;flex-wrap:wrap;align-items:center;gap:10px 28px;padding:18px var(--sgx)}
+.cites ul{display:flex;flex-wrap:wrap;gap:8px 24px;font-size:14px;color:var(--ink-2)}
+.cites li{display:flex;align-items:center;gap:8px}
+.cites li::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--gold-2)}
+
+/* ---- stake, framework 3: the problem and its cost before the pitch ---- */
+.pains{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+.pain{border:1px solid var(--line);border-radius:var(--r);padding:20px 20px 18px;background:#fff}
+.pain .ic{width:40px;height:40px;border-radius:var(--rb);background:var(--paper);display:grid;place-items:center;margin-bottom:18px}
+.pain .ic svg{width:22px;height:22px;stroke:var(--ink);fill:none;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+.pain h3{margin-bottom:8px}
+.pain p{font-size:15px;color:var(--ink-2)}
+.turn{margin-top:28px;font-size:clamp(17px,1.4vw,21px);line-height:1.5;max-width:60ch;color:var(--ink)}
+.turn b{font-weight:600}
+
+/* ---- the plan, framework 7: three steps from the reader's side, the real app beside them ---- */
+.band{background:#fff}
+.plan-in{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:clamp(32px,5vw,72px);align-items:center}
+.steps{counter-reset:st;display:grid;gap:4px;margin-top:8px}
+.step{display:grid;grid-template-columns:40px 1fr;gap:14px;padding:12px 0}
+.step::before{counter-increment:st;content:counter(st,decimal-leading-zero);font:500 13px/1 var(--mono);color:var(--gold);padding-top:5px}
+.step h3{margin-bottom:6px}
+.step p{font-size:15px;color:var(--ink-2)}
+.plan-cta{display:flex;flex-wrap:wrap;align-items:center;gap:14px 18px;margin-top:26px}
+.plan-cta .note{font-size:14px;color:var(--mut)}
+
+/* the phone: a plain ink frame, the real screen inside */
+.phone{position:relative;width:min(312px,100%);margin:0 auto;aspect-ratio:390/844;background:#111;border-radius:40px;padding:10px;box-shadow:0 30px 60px -36px rgba(30,33,36,.55),inset 0 0 0 1px #2a2a2a}
+.phone .scr{position:relative;width:100%;height:100%;border-radius:31px;overflow:hidden;background:#fff}
+.phone .scr img{width:100%;height:100%;object-fit:cover;object-position:top}
+.phone .notch{position:absolute;top:10px;left:50%;transform:translateX(-50%);width:34%;height:26px;border-radius:0 0 16px 16px;background:#111;z-index:2}
+.phone.live .scr{background:#fff}
+.phone.live iframe{position:absolute;top:0;left:0;width:390px;height:844px;border:0;transform-origin:0 0}
+.callout{position:absolute;left:-30px;bottom:60px;background:#fff;border:1px solid var(--line);border-radius:var(--r);padding:10px 14px;font-size:13.5px;display:flex;align-items:center;gap:10px;box-shadow:0 18px 40px -26px rgba(30,33,36,.4);white-space:nowrap}
+.callout .dot{width:8px;height:8px;border-radius:50%;background:var(--green)}
+
+/* ---- product, framework 8: the sets as cards ---- */
+.sets{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+.set{position:relative;border:1px solid var(--line);border-radius:var(--r);padding:18px 18px 16px;background:#fff;display:grid;gap:10px;transition:border-color .2s,transform .2s var(--ease)}
+.set:hover{border-color:var(--ink);transform:translateY(-2px)}
+.set .sk{display:flex;justify-content:space-between;align-items:center;font:500 13px/1 var(--mono);letter-spacing:.1em;text-transform:uppercase;color:var(--mut)}
+.set .sk i{font-style:normal;display:inline-block;width:10px;height:10px;border-radius:2px;background:var(--sc,var(--ink))}
+.set h3{font-size:20px}
+.set p{font-size:14.5px;color:var(--ink-2)}
+.set .ar{font-size:22px;line-height:1.6;color:var(--ink);margin-top:4px;text-align:right}
+.set .sn{font:500 13px/1.2 var(--mono);color:var(--mut);margin-top:2px}
+.sets-more{margin-top:24px;display:flex;flex-wrap:wrap;align-items:center;gap:14px 20px;font-size:14.5px;color:var(--mut)}
+
+/* ---- statistics, framework 10: four numbers in large type ---- */
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:18px;padding:34px 0 4px}
+.stat b{display:block;font:600 clamp(40px,4.4vw,60px)/1 var(--disp);letter-spacing:-.04em;color:var(--ink)}
+.stat span{display:block;margin-top:8px;font-size:14.5px;color:var(--mut)}
+
+/* ---- before and after, framework 17: two matched states ---- */
+.ba-in{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:clamp(24px,4vw,56px);align-items:start}
+.ba{display:grid;gap:18px}
+.ba-col{border:1px solid var(--line);border-radius:var(--r);padding:22px 22px 18px;background:#fff}
+.ba-col.after{border-color:var(--ink)}
+.ba-col h3{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+.ba-col li{display:grid;grid-template-columns:20px 1fr;gap:10px;padding:7px 0;font-size:15px;color:var(--ink-2);align-items:start}
+.ba-col li svg{width:18px;height:18px;margin-top:3px;stroke-width:2;fill:none;stroke-linecap:round;stroke-linejoin:round}
+.before li svg{stroke:var(--red)}
+.after li svg{stroke:var(--green)}
+.ba-pic{position:relative}
+.ba-pic img{border-radius:12px;aspect-ratio:3/2;object-fit:cover;width:100%}
+.ba-pic .callout{left:auto;right:-18px;bottom:28px}
+
+/* ---- features, product continued: six cards with one line icons ---- */
+.feats{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+.feat{border:1px solid var(--line);border-radius:var(--r);padding:20px 20px 18px;background:#fff}
+.feat .ic{width:40px;height:40px;border-radius:var(--rb);background:var(--paper);display:grid;place-items:center;margin-bottom:16px}
+.feat .ic svg{width:22px;height:22px;stroke:var(--ink);fill:none;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+.feat h3{margin-bottom:8px;font-size:18px}
+.feat p{font-size:14.5px;color:var(--ink-2)}
+.feat .soon{display:inline-block;margin-top:10px;font:500 13px/1 var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--mut);border:1px solid var(--line);border-radius:4px;padding:5px 7px}
+
+/* ---- the story, frameworks 6 and 30: why it exists, in three beats ---- */
+.story-in{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:clamp(32px,5vw,72px);align-items:center}
+.beats{display:grid;gap:0;margin-top:8px}
+.beat{display:grid;grid-template-columns:44px 1fr;gap:14px;padding:12px 0}
+.beat .yr{font:500 13px/1.3 var(--mono);color:var(--gold);padding-top:4px}
+.beat h3{margin-bottom:6px}
+.beat p{font-size:15px;color:var(--ink-2)}
+.story-pic img{border-radius:12px;aspect-ratio:4/3;object-fit:cover;width:100%}
+
+/* ---- proof, framework 11: the words, honestly labelled while in beta ---- */
+.quotes{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+.quote{border:1px solid var(--line);border-radius:var(--r);padding:20px 20px 18px;background:#fff;display:grid;gap:14px;align-content:start}
+.quote .drew{font:500 13px/1.3 var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--gold)}
+.quote p{font-size:15.5px;line-height:1.55;color:var(--ink)}
+.quote .who{display:flex;align-items:center;gap:12px;padding-top:6px;font-size:13.5px;color:var(--mut)}
+.quote .who b{display:block;color:var(--ink);font-weight:600;font-size:14px}
+.quote .av{width:36px;height:36px;border-radius:50%;background:var(--paper-2);display:grid;place-items:center;font:600 14px/1 var(--disp);color:var(--ink)}
+.sample{display:inline-block;font:500 13px/1 var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--mut);border:1px solid var(--line);border-radius:4px;padding:5px 7px}
+.quotes-note{margin-top:16px;font-size:13.5px;color:var(--mut)}
+
+/* ---- pricing, frameworks 9 and 45: three plans, the middle recommended, the one time price beside ---- */
+.plans{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;align-items:stretch}
+.plan{position:relative;border:1px solid var(--line);border-radius:var(--r);padding:22px 20px 20px;background:#fff;display:grid;gap:14px;align-content:start}
+.plan.rec{border-color:var(--ink);box-shadow:0 24px 48px -36px rgba(30,33,36,.4)}
+.plan .tag{position:absolute;top:-13px;left:22px;background:var(--ink);color:#fff;font:500 13px/1 var(--mono);letter-spacing:.08em;text-transform:uppercase;padding:7px 9px;border-radius:4px}
+.plan .pn{font:500 13px/1.2 var(--mono);letter-spacing:.1em;text-transform:uppercase;color:var(--mut)}
+.plan .pv{font:600 clamp(32px,3vw,40px)/1 var(--disp);letter-spacing:-.03em}
+.plan .pv small{display:block;margin-top:8px;font:400 14px/1.4 var(--body);letter-spacing:0;color:var(--mut)}
+.plan .who{font-size:14.5px;color:var(--ink-2);padding-bottom:4px}
+.plan ul{display:grid;gap:8px}
+.plan li{display:grid;grid-template-columns:18px 1fr;gap:10px;font-size:14.5px;color:var(--ink-2);align-items:start}
+.plan li svg{width:16px;height:16px;margin-top:4px;stroke:var(--green);fill:none;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+.plan li .live,.plan li .soon{display:inline-block;white-space:nowrap;vertical-align:middle;font:500 13px/1 var(--mono);letter-spacing:.06em;text-transform:uppercase;margin-left:6px;padding:3px 5px;border-radius:4px;border:1px solid var(--hair)}
+.plan li .live{color:var(--green)}
+.plan li .soon{color:var(--mut)}
+.plan .btn{margin-top:6px;width:100%}
+.plan .fine{font-size:13px;color:var(--mut);line-height:1.5}
+.cancel{margin-top:22px;display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+.cancel div{font-size:14px;color:var(--ink-2);display:grid;grid-template-columns:18px 1fr;gap:10px}
+.cancel svg{width:16px;height:16px;margin-top:4px;stroke:var(--ink);fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+
+/* ---- the demo, framework 46: tap through the real app ---- */
+.demo-in{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:clamp(32px,5vw,72px);align-items:center}
+.ticks{display:grid;gap:12px;margin:22px 0 26px}
+.ticks li{display:grid;grid-template-columns:20px 1fr;gap:10px;font-size:15px;color:var(--ink-2)}
+.ticks li b{display:block;color:var(--ink);font-weight:600}
+.ticks svg{width:18px;height:18px;margin-top:3px;stroke:var(--green);fill:none;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+
+/* ---- who it is for, framework 16 ---- */
+.for-in{display:grid;grid-template-columns:repeat(2,1fr);gap:18px}
+.for{border:1px solid var(--line);border-radius:var(--r);padding:24px 22px 18px;background:#fff}
+.for h3{margin-bottom:10px}
+.for li{padding:7px 0;font-size:15px;color:var(--ink-2);display:grid;grid-template-columns:20px 1fr;gap:10px}
+.for li svg{width:18px;height:18px;margin-top:3px;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.for.yes li svg{stroke:var(--green)}
+.for.no li svg{stroke:var(--mut)}
+
+/* ---- guarantee, framework 38: one plain line, then what is covered ---- */
+.promise{border:1px solid var(--ink);border-radius:var(--r);padding:28px 26px;display:grid;grid-template-columns:minmax(0,1.2fr) minmax(0,1fr);gap:24px 40px;align-items:center;background:#fff}
+.promise h3{font-size:clamp(20px,2vw,26px);letter-spacing:-.02em}
+.promise p{font-size:15px;color:var(--ink-2);margin-top:8px}
+.promise ul{display:grid;gap:8px}
+.promise li{display:grid;grid-template-columns:18px 1fr;gap:10px;font-size:14.5px;color:var(--ink-2)}
+.promise li svg{width:16px;height:16px;margin-top:4px;stroke:var(--green);fill:none;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+
+/* ---- FAQ, framework 18: the biggest objection first, a way to ask the rest ---- */
+.faq-in{display:grid;grid-template-columns:minmax(0,.8fr) minmax(0,1.2fr);gap:clamp(28px,4vw,64px);align-items:start}
+.faq-in .sh{margin-bottom:0}
+.faq{display:grid;gap:10px}
+.faq details{border:1px solid var(--line);border-radius:var(--r);background:#fff}
+.faq details[open]{border-color:var(--ink)}
+.faq summary{list-style:none;cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:16px;padding:16px 18px;font:600 16px/1.35 var(--body)}
+.faq summary::-webkit-details-marker{display:none}
+.faq summary::after{content:"+";font:400 22px/1 var(--mono);color:var(--mut);flex:none}
+.faq details[open] summary::after{content:"\2212"}
+.faq .a{padding:0 18px 18px;font-size:15px;line-height:1.6;color:var(--ink-2)}
+.faq-ask{margin-top:22px;font-size:14.5px;color:var(--mut)}
+.faq-ask a{color:var(--ink);font-weight:600;border-bottom:1px solid var(--line)}
+
+/* ---- capture and conversion, frameworks 21 and 43: the app is coming ---- */
+.app-in{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:clamp(32px,5vw,72px);align-items:center}
+.wait{display:flex;gap:10px;margin-top:22px;max-width:460px}
+.wait input{flex:1;min-width:0;height:50px;border:1px solid var(--line);border-radius:var(--rb);padding:0 14px;font:400 15px var(--body);color:var(--ink);background:#fff}
+.wait input:focus{outline:none;border-color:var(--ink)}
+.wait-note{margin-top:12px;font-size:13.5px;color:var(--mut);max-width:48ch}
+.wait-note a{border-bottom:1px solid var(--line)}
+.stores{display:flex;flex-wrap:wrap;gap:10px;margin-top:22px}
+.store{display:inline-flex;align-items:center;gap:10px;height:48px;padding:0 16px;border:1px solid var(--line);border-radius:var(--rb);font-size:14px;color:var(--ink-2);background:#fff}
+.store svg{width:20px;height:20px;fill:var(--ink)}
+.store small{display:block;font:500 13px/1 var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--mut);margin-bottom:3px}
+.store b{display:block;font-weight:600;color:var(--ink)}
+
+/* ---- the close, framework 50: a last clear action on a real evening ---- */
+.close{position:relative;color:#fff;padding:0;overflow:hidden;background:var(--ink)}
+.close img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center 40%;opacity:.86}
+.close::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(20,22,24,.82) 0%,rgba(20,22,24,.55) 55%,rgba(20,22,24,.25) 100%)}
+.close-in{position:relative;z-index:1;padding:clamp(72px,9vw,140px) var(--sgx);max-width:var(--maxw);margin:0 auto}
+.close h2{color:#fff;max-width:14ch}
+.close p{margin-top:16px;font-size:17px;color:rgba(255,255,255,.8);max-width:46ch}
+.close .btn-ink{background:#fff;color:var(--ink);border-color:#fff}
+.close .btn-ink:hover{background:var(--paper)}
+.close .btn-line{background:transparent;color:#fff;border-color:rgba(255,255,255,.55)}
+.close .btn-line:hover{border-color:#fff}
+.close .hero-cta{margin-top:28px}
+
+/* ---- footer: description, columns, legal, the wordmark ---- */
+footer{padding:clamp(56px,6vw,80px) 0 0;background:var(--paper)}
+.foot-in{display:grid;grid-template-columns:minmax(0,1.4fr) repeat(3,minmax(0,.8fr));gap:32px}
+.foot-in .logo{width:64px;height:24px;margin-bottom:14px}
+.foot-desc{font-size:14.5px;color:var(--ink-2);max-width:36ch}
+.foot-col h4{font:500 13px/1.2 var(--mono);letter-spacing:.12em;text-transform:uppercase;color:var(--mut);margin-bottom:12px}
+.foot-col a{display:block;padding:5px 0;font-size:14.5px;color:var(--ink-2)}
+.foot-col a:hover{color:var(--ink)}
+.socials{display:flex;gap:8px;margin-top:16px}
+.soc{width:36px;height:36px;border:1px solid var(--line);border-radius:var(--rb);display:grid;place-items:center}
+.soc svg{width:16px;height:16px;fill:var(--ink)}
+.foot-legal{margin-top:36px;padding:0 0 20px;display:flex;flex-wrap:wrap;justify-content:space-between;gap:8px 24px;font-size:13px;color:var(--mut)}
+.foot-mark{overflow:hidden;line-height:0;padding:8px var(--sgx) 0}
+.foot-mark .big{display:block;width:100%;max-width:var(--maxw);margin:0 auto;aspect-ratio:118.13/45.82;background:#E6E6E2;-webkit-mask-image:url(../assets/logo/baik-logo_caps.svg);mask-image:url(../assets/logo/baik-logo_caps.svg);-webkit-mask-size:contain;mask-size:contain;-webkit-mask-position:center bottom;mask-position:center bottom;-webkit-mask-repeat:no-repeat;mask-repeat:no-repeat;transform:translateY(14%)}
+
+/* ---- reveal: everything visible by default; a gentle rise once JS is there ---- */
+.js .rv{opacity:0;transform:translateY(14px);transition:opacity .6s var(--ease),transform .6s var(--ease)}
+.js .rv.in{opacity:1;transform:none}
+@media(prefers-reduced-motion:reduce){.js .rv{opacity:1;transform:none;transition:none}}
+
+/* ---- widths ---- */
+@media(max-width:1060px){
+  .pains,.feats,.sets,.quotes,.plans,.cancel{grid-template-columns:repeat(2,1fr)}
+  .stats{grid-template-columns:repeat(2,1fr)}
+  .foot-in{grid-template-columns:1fr 1fr}
+}
+@media(max-width:860px){
+  .nav-links,.lang{display:none}
+  .burger{display:inline-flex}
+  .nav.open .nav-links{display:flex;position:absolute;top:68px;left:0;right:0;flex-direction:column;gap:0;padding:8px var(--sgx) 14px;background:#fff;border-bottom:1px solid var(--hair)}
+  .nav.open .nav-links a{padding:12px 0;border-radius:0}
+  .hero-in,.plan-in,.ba-in,.story-in,.demo-in,.app-in,.faq-in{grid-template-columns:1fr}
+  .hero{min-height:0;padding:72px 0 36px}
+  .fcards{justify-self:start}
+  .promise{grid-template-columns:1fr}
+  .for-in{grid-template-columns:1fr}
+  .phone{width:min(280px,86%)}
+  .callout{left:auto;right:-6px}
+  .ba-pic .callout{right:8px}
+}
+@media(max-width:600px){
+  section{padding:36px 0}
+  .pains,.feats,.sets,.quotes,.plans,.cancel{grid-template-columns:1fr}
+  .stats{gap:22px 16px}
+  .proof{gap:10px 20px}
+  .hero-cta .btn,.close .btn{width:100%}
+  .wait{flex-direction:column}
+  .wait .btn{width:100%}
+  .foot-in{grid-template-columns:1fr 1fr}
+  .fcard{width:min(300px,100%);padding:12px 14px}
+  .fcard .ar{font-size:21px}
+  .callout{white-space:normal;max-width:220px}
+}
+
+/* ---- inner pages: the title band ---- */
+.ph{padding:clamp(40px,5vw,64px) 0 clamp(20px,2.4vw,32px)}
+.ph h1{font-size:clamp(36px,4.4vw,60px);max-width:16ch}
+.ph .lede{margin-top:16px}
+.cmp{width:100%;border-collapse:collapse;font-size:14.5px;margin-top:8px}
+.cmp th,.cmp td{text-align:left;padding:10px 14px;vertical-align:top}
+.cmp th{font:500 13px/1.2 var(--mono);letter-spacing:.1em;text-transform:uppercase;color:var(--mut);border-top:0;padding-bottom:10px}
+.cmp td:first-child{color:var(--ink);font-weight:500;width:46%}
+.cmp td{color:var(--ink-2)}
+.cmp .y{color:var(--green)}
+.cmp .n{color:var(--mut-2)}
+.cmp tr.grp td{background:var(--paper);font:500 13px/1.2 var(--mono);letter-spacing:.1em;text-transform:uppercase;color:var(--mut);padding:9px 14px}
+@media(max-width:600px){.cmp{font-size:13.5px}.cmp th,.cmp td{padding:10px 8px}.cmp td:first-child{width:44%}}
+
+/* ---- the deck page: ten sets in three columns leave one alone, so the tenth, the surahs, runs the full width as a wide card ---- */
+@media(min-width:1061px){#sets .set:nth-child(10){grid-column:1/-1;grid-template-columns:minmax(0,1.2fr) minmax(0,.8fr);grid-template-areas:"k ar" "h ar" "p ar" "n ar";column-gap:40px;align-items:center}
+#sets .set:nth-child(10) .sk{grid-area:k}#sets .set:nth-child(10) h3{grid-area:h}#sets .set:nth-child(10) p{grid-area:p}#sets .set:nth-child(10) .ar{grid-area:ar;font-size:30px;text-align:right}#sets .set:nth-child(10) .sn{grid-area:n}}
+
+/* ---- the side by side table on phones: it scrolls sideways, the first column stays ---- */
+.cmp-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch}
+@media(max-width:760px){.cmp{min-width:680px}.cmp td:first-child,.cmp th:first-child{position:sticky;left:0;background:#fff;width:200px;min-width:200px;box-shadow:8px 0 12px -10px rgba(30,33,36,.25)}.cmp tr.grp td{position:static;box-shadow:none}}
+
+
+/* ================================================================================================
+   The premium pass, 30 Oct 2026 evening (Bazil: "the alignments are all off", "design everything properly", "doesn't look
+   premium", "refer to Duolingo, Messenger, WhatsApp, Headspace, Tony Robbins, the professional easy to understand style").
+   One container for everything, one left edge; the boxes go; small labels in sentence case; more air, fewer elements.
+   ================================================================================================ */
+:root{--wrap:1180px}
+.wrap{max-width:calc(var(--wrap) + 2*var(--sgx));margin:0 auto;padding:0 var(--sgx)}
+.ann{padding:10px 0;text-align:left}
+.ann .wrap{display:flex;flex-wrap:wrap;gap:4px 10px;align-items:center}
+.nav{padding:0;height:72px}
+.nav-in{display:flex;align-items:center;gap:28px;height:72px}
+.nav-links{margin-left:auto}
+.nav.open .nav-links{padding-left:var(--sgx);padding-right:var(--sgx)}
+.logo{width:78px;height:28px}
+
+/* the hero: one left edge with the page, a calmer block */
+.hero{min-height:min(74vh,700px);padding:clamp(48px,6vw,96px) 0 clamp(40px,5vw,64px)}
+.hero-in{grid-template-columns:minmax(0,1.1fr) minmax(0,.9fr);align-items:end}
+.hero h1{font-size:clamp(38px,4.6vw,66px);max-width:14ch;margin-bottom:16px}
+.hero .lede{font-size:clamp(16px,1.3vw,19px);max-width:42ch;color:rgba(255,255,255,.88)}
+.hero-cta{margin-top:26px}
+.hero-note{margin-top:12px}
+.fcards{min-height:200px}
+.fcard{border:0;box-shadow:0 30px 60px -28px rgba(0,0,0,.55);padding:18px 20px 16px}
+
+/* the authority strip: one line, left edge, no dots */
+.cites-in{justify-content:flex-start;padding:16px 0 0;gap:8px 22px}
+.cites{padding:0 0 8px}
+.cites ul{gap:6px 22px;color:var(--mut)}
+.cites li::before{content:none}
+.cites li+li::before{content:"";width:3px;height:3px;border-radius:50%;background:var(--line);margin-right:0}
+
+/* sections: an even rhythm, headings with air under them */
+section{padding:clamp(56px,6.5vw,96px) 0}
+.sh{margin-bottom:clamp(26px,3vw,40px)}
+h2{font-size:clamp(30px,3.8vw,52px)}
+.lede{color:var(--mut)}
+
+/* small labels: sentence case, grey, nothing boxed */
+.fcard .fk,.fcard .fs,.set .sk,.set .sn,.plan .pn,.plan .tag,.foot-col h4,.cmp th,.cmp tr.grp td,.store small,.feat .soon,.plan li .live,.plan li .soon,.quote .drew,.sample,.beat .yr,.step::before,.callout,.ba-col h3{letter-spacing:0;text-transform:none}
+.fcard .fk,.fcard .fs,.set .sk,.set .sn,.plan .pn,.foot-col h4,.cmp th,.cmp tr.grp td,.store small,.quote .drew,.sample,.beat .yr,.step::before{font:500 13px/1.3 var(--body);color:var(--mut)}
+.feat .soon,.plan li .live,.plan li .soon,.sample{border:0;padding:0;background:none;font:500 13px/1.4 var(--body)}
+.feat .soon{display:block;margin-top:10px;color:var(--mut)}
+.plan li .live{color:var(--green)}.plan li .soon{color:var(--mut)}
+.plan .tag{font:500 13px/1 var(--body);padding:7px 10px;border-radius:var(--rb);letter-spacing:0}
+.fcard .fk i{color:var(--gold)}
+.step::before{color:var(--gold);padding-top:4px}
+.beat .yr{color:var(--gold)}
+.fcard .ft{font:500 17px/1.3 var(--disp)}
+
+/* the problem, the features: columns, not boxes; the icon bare */
+.pains,.feats{gap:28px 36px}
+.pain,.feat{border:0;padding:0;background:transparent}
+.pain .ic,.feat .ic{width:auto;height:auto;background:none;display:block;margin-bottom:14px}
+.pain .ic svg,.feat .ic svg{width:26px;height:26px;stroke-width:1.5}
+.pain h3,.feat h3{font-size:20px;margin-bottom:8px}
+.pain p,.feat p{font-size:15.5px;color:var(--ink-2)}
+.turn{margin-top:36px;font-size:clamp(18px,1.5vw,22px);max-width:56ch}
+
+/* the sets: the product keeps its cards, quieter */
+.sets{gap:20px}
+.set{border-color:var(--hair);padding:22px 22px 18px;box-shadow:0 1px 2px rgba(30,33,36,.03)}
+.set:hover{border-color:var(--line);box-shadow:0 18px 40px -30px rgba(30,33,36,.3)}
+.set .ar{font-size:24px;margin-top:8px}
+
+/* the words: no card, a gold opening mark, the person under */
+.quotes{gap:36px 40px}
+.quote{border:0;padding:0;gap:12px;background:transparent}
+.quote::before{content:"\201C";font:600 56px/.6 var(--disp);color:var(--gold-2);height:28px;display:block}
+.quote p{font-size:17px;line-height:1.5}
+.quote .who{padding-top:4px}
+.quote .av{display:none}
+.sample{order:5;color:var(--mut-2)}
+.quotes-note{margin-top:28px}
+
+/* the plans: three quiet cards, the middle one held */
+.plans{gap:20px}
+.plan{border-color:var(--hair);padding:28px 26px 26px;gap:16px}
+.plan.rec{border-color:var(--ink);box-shadow:0 30px 60px -40px rgba(30,33,36,.35)}
+.plan .pv{font-size:clamp(34px,3.2vw,44px)}
+.plan .pv small{margin-top:10px}
+.plan .who{padding-bottom:6px}
+.plan li{font-size:15px}
+.cancel{margin-top:28px}
+
+/* before and after, who it is for, the promise: hairline cards become quiet panels */
+.ba-col,.for{border:0;background:var(--paper);padding:24px 24px 20px}
+.ba-col.after{background:#fff;border:1px solid var(--ink)}
+.promise{border:0;background:var(--paper);padding:32px 30px}
+
+/* steps, beats, callouts */
+.steps{gap:6px}
+.step{padding:14px 0}
+.step h3,.beat h3{font-size:20px}
+.callout{font-size:13.5px;border:0;box-shadow:0 18px 40px -22px rgba(30,33,36,.45);padding:12px 16px}
+.phone{box-shadow:0 40px 80px -40px rgba(30,33,36,.6)}
+
+/* the FAQ: quieter rows */
+.faq details{border-color:var(--hair)}
+.faq summary{font-size:17px;padding:18px 20px}
+.faq .a{padding:0 20px 20px;font-size:15.5px}
+
+/* the close and the footer */
+.close::after{background:linear-gradient(90deg,rgba(18,20,22,.86) 0%,rgba(18,20,22,.6) 50%,rgba(18,20,22,.2) 100%)}
+.foot-in{gap:40px}
+.foot-desc{font-size:15px}
+.foot-col a{font-size:15px}
+
+@media(max-width:860px){
+  .nav,.nav-in{height:64px}
+  .nav.open .nav-links{top:64px}
+  .hero{min-height:0;padding:64px 0 32px}
+  .pains,.feats{gap:26px}
+  .quotes{gap:30px}
+}
+
+/* fixes after the measure at 1440: the nav wrap must not shrink inside a flex header, the strip keeps the page gutter */
+.nav{display:block}
+.cites-in{padding:16px var(--sgx) 0}
+.hero-in{width:100%}
+
+/* the language switch in the Leadersclass shape: 26 by 18, a 4 px corner, the active one at full strength */
+.lang{gap:8px}
+.lang button{width:26px;height:18px;padding:0;border:0;border-radius:4px;overflow:hidden;box-shadow:0 0 0 1px rgba(30,33,36,.12);opacity:.5}
+.lang button.on{opacity:1;box-shadow:0 0 0 1px rgba(30,33,36,.35)}
+.lang button svg{width:26px;height:18px;display:block}
+
+/* the hero copy sits in the middle of the banner, not at its foot (Bazil, 30 Oct) */
+.hero{align-items:center;padding:clamp(56px,7vw,110px) 0}
+.hero-in{align-items:center}
+@media(max-width:860px){.hero{padding:56px 0 40px}}
+
+/* ---- the opening dua: a quiet block, the deck's own card before anything is sold ---- */
+.opening{padding:clamp(40px,5vw,72px) 0 clamp(16px,2vw,28px)}
+.opening-in{text-align:center;max-width:720px}
+.op-lead{font-size:15px;color:var(--mut)}
+.op-ar{font-size:clamp(34px,4vw,52px);line-height:1.6;margin:10px 0 6px;color:var(--ink);text-align:center}
+.op-mean{font:500 clamp(18px,1.6vw,22px)/1.4 var(--disp);letter-spacing:-.01em;color:var(--ink)}
+.op-src{margin-top:8px;font-size:14px;color:var(--mut)}
+
+/* ---- the footer, complete: the wordmark whole, with air under it (Bazil: "footer not nice and not complete") ---- */
+footer{padding:clamp(56px,6vw,80px) 0 0}
+.foot-legal{margin-top:36px;padding:0}
+.foot-mark{padding:40px var(--sgx) 36px}
+.foot-mark .big{transform:none;aspect-ratio:118.13/45.82;background:#E9E9E5;max-width:var(--wrap);-webkit-mask-size:contain;mask-size:contain;-webkit-mask-position:center;mask-position:center}
+
+.foot-legal{padding:0 var(--sgx)}
+
+/* ---- 30 Oct, late: less padding again; success and failure as a crisp pair ---- */
+section{padding:clamp(36px,4.2vw,60px) 0}
+.sh{margin-bottom:clamp(18px,2.2vw,28px)}
+.hero{padding:clamp(40px,5vw,80px) 0;min-height:min(70vh,660px)}
+.opening{padding:clamp(28px,3.5vw,48px) 0 clamp(8px,1.2vw,16px)}
+.turn{margin-top:26px}
+footer{padding:clamp(40px,4.5vw,56px) 0 0}
+.foot-mark{padding:28px var(--sgx) 24px}
+.ba-in{align-items:center}
+.ba{gap:14px}
+.ba-col{padding:20px 22px 16px;border-radius:var(--r)}
+.ba-col.before{background:var(--paper)}
+.ba-col.after{background:var(--ink);color:#fff;border:0}
+.ba-col.after h3,.ba-col.after li{color:#fff}
+.ba-col h3{font-size:16px;margin-bottom:6px;gap:8px}
+.ba-col li{font-size:16px;padding:6px 0;color:var(--ink-2)}
+.ba-col.before li{color:var(--mut)}
+.ba-col.before li svg{stroke:var(--mut-2)}
+.ba-col.after li svg{stroke:var(--gold-2)}
+@media(max-width:600px){section{padding:32px 0}.hero{padding:48px 0 32px}}
+
+/* ---- 30 Oct, late: the card as a dialog at the banner's foot, a lighter gold on the dark, no pips, the badges strip moving,
+   one flag dropdown, the nav that hides on the way down ---- */
+.hero h1 em{color:#EAD27C}
+.hero-in{grid-template-columns:minmax(0,1fr) minmax(0,.9fr);align-items:center}
+.fcards{align-self:end;justify-self:end;margin-bottom:calc(-1 * clamp(16px,2vw,32px));min-height:0}
+.fcard{position:absolute;left:auto;right:0;bottom:0;width:min(340px,100%);padding:16px 18px 14px;border-radius:12px;box-shadow:0 30px 60px -24px rgba(0,0,0,.6)}
+.fcard::after{content:"";position:absolute;right:28px;bottom:-9px;width:18px;height:18px;background:#fff;transform:rotate(45deg);border-radius:2px}
+.fcard .fk{font:500 13px/1.3 var(--body);color:var(--mut);justify-content:flex-start}
+.fcard .ft{font:500 17px/1.3 var(--disp);margin:6px 0 6px}
+.fcard .ar{font-size:22px;line-height:1.55;text-align:right}
+.fcard .fs{margin-top:8px;padding:0;font:500 13px/1.3 var(--body);color:var(--mut);justify-content:flex-start}
+.fcards{position:relative;height:200px}
+.fcards .fcard{position:absolute;bottom:0}
+.hero{padding:clamp(40px,5vw,80px) 0 clamp(56px,6vw,96px)}
+@media(max-width:860px){.hero-in{grid-template-columns:1fr}.fcards{justify-self:start;margin-bottom:0;height:auto;min-height:200px}.fcard{left:0;right:auto}}
+.nav{transition:transform .28s var(--ease),box-shadow .2s}
+.nav.nav-hide{transform:translateY(-100%)}
+.cites{overflow:hidden;padding:10px 0 4px}
+.cites-track{display:flex;width:max-content;animation:cites-move 38s linear infinite}
+.cites-track:hover{animation-play-state:paused}
+.cites-track ul{display:flex;gap:0;padding:0;margin:0;list-style:none}
+.cites-track li{display:flex;align-items:center;gap:10px;padding:10px 26px 10px 0;margin-right:26px;font-size:13.5px;color:var(--mut);white-space:nowrap}
+.cites-track li svg{width:22px;height:22px;stroke:var(--gold);fill:none;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round;flex:none}
+.cites-track li b{display:block;font-weight:600;color:var(--ink);font-size:14px}
+@keyframes cites-move{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+@media(prefers-reduced-motion:reduce){.cites-track{animation:none}}
+.lang{position:relative;display:block}
+.lang-b{display:inline-flex;align-items:center;gap:8px;height:40px;padding:0 10px 0 8px;border:1px solid var(--line);border-radius:var(--rb);background:#fff;cursor:pointer;font:500 14px var(--body);color:var(--ink)}
+.lang-b .flag,.lang-m .flag{width:24px;height:17px;border-radius:3px;box-shadow:0 0 0 1px rgba(30,33,36,.12);display:block}
+.lang-b .chev{width:14px;height:14px;stroke:var(--mut);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.lang-m{position:absolute;top:calc(100% + 6px);right:0;min-width:190px;margin:0;padding:6px;list-style:none;background:#fff;border:1px solid var(--line);border-radius:var(--r);box-shadow:0 18px 40px -22px rgba(30,33,36,.4);z-index:60}
+.lang-m li{display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:var(--rb);cursor:pointer;font-size:14.5px}
+.lang-m li:hover{background:var(--paper)}
+.lang-m li[aria-selected="true"]{font-weight:600}
+.step::before,.beat .yr{display:none}
+.step,.beat{grid-template-columns:1fr}
+.steps{counter-reset:none}
+
+/* the dialog card pinned to the banner's foot: the row fills the hero, the copy stays centred, the card sits at the end */
+.hero{align-items:stretch;padding-bottom:48px}
+.hero-in{align-items:center}
+.hero-copy{align-self:center}
+.fcards{align-self:end;margin-bottom:-24px}
+@media(max-width:860px){.hero{padding-bottom:32px}.fcards{margin-bottom:0}}
+
+/* the opening: Bismillah first, then the dua, as recited */
+.op-bism{font-size:clamp(26px,2.8vw,36px);line-height:1.6;color:var(--mut);text-align:center;margin-bottom:4px}
+.op-ar{margin-top:0}
+
+/* the language button, after the old flag-button rule caught it: full size, its flag visible */
+.lang .lang-b{width:auto;height:40px;padding:0 10px 0 8px;border:1px solid var(--line);border-radius:var(--rb);opacity:1;overflow:visible;box-shadow:none;background:#fff}
+.lang .lang-b svg.flag{width:24px;height:17px;display:block}
+.lang .lang-b svg.chev{width:14px;height:14px}
+.lang .lb{font:500 14px var(--body);color:var(--ink)}
+
+/* ===== pass: transparent header over the film, flag-only switch, the dialogue box (Bazil, 30 Oct night:
+   "no need banner when at top, I mean transparent header", "flag no need EN", "do it like a dating sim dialogue, not like this",
+   "the surah or what etc" as the name plate) ===== */
+.nav{background:transparent;transition:background .25s,transform .28s var(--ease),box-shadow .2s}
+.nav.is-solid,.nav.open{background:#fff}
+body.home .nav:not(.is-solid):not(.open) .logo{background:#fff}
+body.home .nav:not(.is-solid):not(.open) .nav-links a{color:#fff}
+body.home .nav:not(.is-solid):not(.open) .nav-links a:hover{background:rgba(255,255,255,.12)}
+body.home .nav:not(.is-solid):not(.open) .lang .lang-b{background:transparent;border-color:rgba(255,255,255,.45)}
+body.home .nav:not(.is-solid):not(.open) .lang .lang-b .chev{stroke:#fff}
+body.home .nav:not(.is-solid):not(.open) .btn-ink{background:#fff;color:var(--ink);border-color:#fff}
+body.home .nav:not(.is-solid):not(.open) .burger{background:transparent;color:#fff;border-color:rgba(255,255,255,.55)}
+body:not(.home) .nav{background:#fff}
+body.home .hero{margin-top:-72px;padding-top:calc(72px + clamp(32px,4vw,64px));padding-bottom:28px}
+@media(max-width:860px){body.home .hero{margin-top:-64px;padding-top:calc(64px + 40px);padding-bottom:20px}}
+
+.lang .lb{display:none}
+.lang .lang-b{padding:0 8px;gap:6px}
+
+/* the hero: copy in the middle, the dialogue box along the foot of the frame like a visual novel */
+.hero-in{grid-template-columns:1fr;grid-template-rows:1fr auto;align-items:center;row-gap:clamp(28px,4vw,56px)}
+.hero-copy{align-self:center;max-width:720px}
+.fcards{display:none}
+.dlg{position:relative;width:100%;background:rgba(255,255,255,.94);-webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px);color:var(--ink);
+  border-radius:12px;padding:26px 56px 22px 24px;box-shadow:0 30px 60px -28px rgba(0,0,0,.6);min-height:112px}
+.dlg-name{position:absolute;top:0;left:20px;transform:translateY(-50%);background:var(--ink);color:#fff;font:500 13px/1 var(--body);
+  padding:9px 14px;border-radius:6px;letter-spacing:0;white-space:nowrap}
+.dlg-ar{font-size:24px;line-height:1.55;direction:rtl;text-align:left;margin:0 0 6px;transition:opacity .35s var(--ease)}
+.dlg.is-sw .dlg-ar{opacity:0}
+.dlg-txt{font-size:17px;line-height:1.45;color:var(--ink-2);margin:0;min-height:1.45em}
+.dlg-txt.typing::after{content:"";display:inline-block;width:2px;height:1em;background:var(--ink);margin-left:3px;vertical-align:-.15em;animation:dlg-caret .8s steps(1) infinite}
+.dlg-next{position:absolute;right:22px;bottom:16px;width:0;height:0;border-left:7px solid transparent;border-right:7px solid transparent;border-top:9px solid var(--gold);
+  opacity:0;animation:dlg-bob 1.1s var(--ease) infinite}
+.dlg.done .dlg-next{opacity:1}
+@keyframes dlg-caret{0%,100%{opacity:1}50%{opacity:0}}
+@keyframes dlg-bob{0%,100%{transform:translateY(0)}50%{transform:translateY(4px)}}
+@media(max-width:860px){.dlg{padding:22px 40px 18px 18px;border-radius:10px}.dlg-name{left:14px;font-size:13px;padding:8px 12px}.dlg-ar{font-size:21px}.dlg-txt{font-size:15px}.dlg-next{right:16px;bottom:14px}}
+@media(prefers-reduced-motion:reduce){.dlg-next,.dlg-txt.typing::after{animation:none}}
+/* the opening block smaller (Bazil, 30 Oct night: "bismillah too big") */
+.opening{padding:clamp(24px,3vw,40px) 0 clamp(8px,1vw,12px)}
+.op-bism{font-size:clamp(20px,1.9vw,26px);line-height:1.6;margin-bottom:2px}
+.op-ar{font-size:clamp(26px,2.6vw,36px);line-height:1.5;margin:0 0 2px}
+.op-mean{font:500 clamp(16px,1.25vw,18px)/1.4 var(--disp)}
+.op-src{margin-top:4px;font-size:13px}
+/* the phone header: the logo never shrinks, the nav CTA steps aside for the hero's own button under 600 */
+.nav .logo{flex:none}
+@media(max-width:600px){.nav-cta .btn-ink{display:none}.ann{font-size:13px}}
+/* the isometric icon set (made on ChatGPT, Identity tab) in the pains, the features and the steps; white-ground JPGs on white */
+.pain .ic img,.feat .ic img{width:84px;height:84px;display:block;mix-blend-mode:multiply;margin:-6px 0 8px -6px}
+.step{grid-template-columns:64px 1fr;gap:16px;align-items:start}
+.step .ic{display:block;width:64px;height:64px}
+.step .ic img{width:64px;height:64px;display:block;mix-blend-mode:multiply;margin:-4px 0 0 -4px}
+.step .ic:empty{width:0;height:0}
+.steps .step:has(.ic:empty){grid-template-columns:1fr}
+@media(max-width:600px){.pain .ic img,.feat .ic img{width:64px;height:64px}}
+/* icons flush left with their column, larger; the steps list without its indent */
+.pain .ic,.feat .ic{display:flex;justify-content:flex-start;align-items:flex-start;width:auto;height:auto}
+.pain .ic img,.feat .ic img{width:96px;height:96px;margin:-10px 0 6px -10px}
+.steps{padding-left:0;margin-left:0}
+.step{grid-template-columns:72px 1fr;gap:14px}
+.step .ic,.step .ic img{width:72px;height:72px}
+.step .ic img{margin:-8px 0 0 -8px}
+@media(max-width:600px){.pain .ic img,.feat .ic img{width:80px;height:80px}.step{grid-template-columns:60px 1fr}.step .ic,.step .ic img{width:60px;height:60px}}
+/* the source emblems in the moving strip (made on ChatGPT; white-ground JPGs, round) */
+.cites-track li img.bdg{width:46px;height:46px;border-radius:50%;flex:none;mix-blend-mode:multiply;object-fit:cover}
+.cites-track li{gap:12px}
+/* the dialogue box on the right side of the frame, under the person (Bazil, 30 Oct night: "put this on the right side") */
+.dlg{width:min(640px,100%);justify-self:end}
+@media(max-width:860px){.dlg{width:100%}}
+/* the pains as cards (Bazil, 30 Oct night: "remake this well, like cards"); the steps with drawn icons in a soft tile */
+.pains{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
+.pain,.pain.rv{background:var(--paper);border:0;border-radius:14px;padding:26px 24px 24px}
+.pain .ic img{width:96px;height:96px;margin:-8px 0 10px -8px;mix-blend-mode:multiply}
+.pain h3{font-size:20px;margin-bottom:6px}
+.pain p{font-size:15px;color:var(--ink-2)}
+.step{grid-template-columns:56px 1fr;gap:18px;align-items:start}
+.step .ic{display:grid;place-items:center;width:56px;height:56px;border-radius:50%;background:var(--paper)}
+.step .ic svg{width:26px;height:26px;stroke:var(--ink);fill:none;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+.step .ic svg .g{fill:var(--gold);stroke:none}
+@media(max-width:860px){.pains{grid-template-columns:1fr}}
+@media(max-width:600px){.pain{padding:22px 20px 20px}.pain .ic img{width:80px;height:80px}.step{grid-template-columns:48px 1fr;gap:14px}.step .ic{width:48px;height:48px}.step .ic svg{width:22px;height:22px}}
+
+/* ===== pass: the sections redone on 30 Oct night (Bazil: "more premium, bad to good", "rolling cards left right with custom icon
+   animation", "shorter and custom icon", "15 reviews scrolling left right with character icons like Duolingo in our style",
+   "no square behind icon", "use Claude") ===== */
+/* icons without a tile behind them */
+.step .ic{background:none;width:40px;height:40px;place-items:start}
+.step{grid-template-columns:40px 1fr;gap:16px}
+.step .ic svg{width:30px;height:30px}
+.beat{grid-template-columns:40px 1fr;gap:16px;padding:14px 0}
+.beat .ic{display:block;width:40px;height:40px}
+.beat .ic svg{width:30px;height:30px;stroke:var(--ink);fill:none;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+.beat .ic svg .g{fill:var(--gold);stroke:none}
+.beat p{font-size:16px}
+
+/* bad to good: two glass cards over the night-desk frame, a gold arrow between them */
+.ba2{position:relative;border-radius:16px;overflow:hidden;min-height:440px;display:grid;align-items:end;background:var(--ink)}
+.ba2-pic{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center 30%}
+.ba2::before{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,0) 20%,rgba(0,0,0,.55) 100%)}
+.ba2-in{position:relative;display:grid;grid-template-columns:minmax(0,1fr) 64px minmax(0,1fr);gap:16px;align-items:center;padding:clamp(20px,3vw,36px)}
+.ba2-col{border-radius:12px;padding:20px 22px 16px;-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px)}
+.ba2-col.before{background:rgba(255,255,255,.9);color:var(--ink)}
+.ba2-col.after{background:rgba(30,33,36,.86);color:#fff}
+.ba2-col h3{font-size:17px;margin-bottom:10px}
+.ba2-col ul{list-style:none;margin:0;padding:0}
+.ba2-col li{display:grid;grid-template-columns:20px 1fr;gap:10px;padding:6px 0;font-size:15px;align-items:start}
+.ba2-col.before li{color:var(--mut)}
+.ba2-col li svg{width:18px;height:18px;margin-top:2px;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.ba2-col.before li svg{stroke:var(--mut-2)}
+.ba2-col.after li svg{stroke:#EAD27C}
+.ba2-arrow{width:56px;height:56px;border-radius:50%;background:var(--gold);display:grid;place-items:center;justify-self:center;box-shadow:0 12px 30px -10px rgba(0,0,0,.6);animation:ba2-nudge 1.6s var(--ease) infinite}
+.ba2-arrow svg{width:26px;height:26px;stroke:#fff;fill:none;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+@keyframes ba2-nudge{0%,100%{transform:translateX(0)}50%{transform:translateX(5px)}}
+@media(max-width:860px){.ba2{min-height:0}.ba2-in{grid-template-columns:1fr;gap:12px}.ba2-arrow{transform:rotate(90deg);animation:none;width:44px;height:44px}}
+
+/* rolling rows: a track twice as long as its content, moved by half; pauses under the pointer */
+.roll{overflow:hidden;padding:8px 0 12px;-webkit-mask-image:linear-gradient(90deg,transparent,#000 6%,#000 94%,transparent);mask-image:linear-gradient(90deg,transparent,#000 6%,#000 94%,transparent)}
+.roll-track{display:flex;gap:18px;width:max-content;animation:roll-left 48s linear infinite}
+.roll:hover .roll-track{animation-play-state:paused}
+.roll-back .roll-track{animation-name:roll-right}
+@keyframes roll-left{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+@keyframes roll-right{from{transform:translateX(-50%)}to{transform:translateX(0)}}
+.feat{width:340px;flex:none;background:var(--paper);border-radius:14px;padding:24px 24px 22px;border:0}
+.feat .ic{display:block;width:56px;height:56px;margin:0 0 14px;background:none}
+.feat .ic svg.fi{width:56px;height:56px;stroke:var(--ink);fill:none;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round;overflow:visible}
+.feat .ic svg .g{stroke:var(--gold)}
+.feat h3{font-size:19px;margin-bottom:6px}
+.feat p{font-size:14.5px}
+/* the drawn icons move: transform and opacity only */
+.fi-shield .tick{stroke-dasharray:24;stroke-dashoffset:24;animation:fi-draw 2.6s var(--ease) infinite}
+@keyframes fi-draw{0%{stroke-dashoffset:24}35%,80%{stroke-dashoffset:0}100%{stroke-dashoffset:0;opacity:0}}
+.fi-read .ln{opacity:.25;animation:fi-line 3s linear infinite}
+.fi-read .l2{animation-delay:.3s}.fi-read .l3{animation-delay:.6s}.fi-read .l4{animation-delay:1.2s}.fi-read .l5{animation-delay:1.5s}.fi-read .l6{animation-delay:1.8s}
+@keyframes fi-line{0%,20%{opacity:.25}35%,70%{opacity:1}85%,100%{opacity:.25}}
+.fi-table .lift{animation:fi-lift 2.8s var(--ease) infinite}
+@keyframes fi-lift{0%,100%{transform:translateY(0)}50%{transform:translateY(-4px)}}
+.fi-share .fly{animation:fi-fly 2.2s var(--ease) infinite}
+@keyframes fi-fly{0%,100%{transform:translateX(0);opacity:1}50%{transform:translateX(5px);opacity:.6}}
+.fi-hear .w{opacity:.3;animation:fi-wave 2.1s linear infinite}
+.fi-hear .w2{animation-delay:.3s}.fi-hear .w3{animation-delay:.6s}
+@keyframes fi-wave{0%,15%{opacity:.3}35%,60%{opacity:1}80%,100%{opacity:.3}}
+.fi-times .hand{transform-origin:22px 25px;animation:fi-hand 12s linear infinite}
+@keyframes fi-hand{to{transform:rotate(360deg)}}
+
+/* reviews: Duolingo-like characters in the house palette, five gold stars, the words */
+.rev{width:360px;flex:none;background:var(--paper);border-radius:14px;padding:20px 22px 18px}
+.rev-top{display:flex;align-items:center;gap:12px;margin-bottom:10px}
+.rev-top .av{width:48px;height:48px;flex:none;border-radius:50%}
+.rev-top b{display:block;font-weight:600;font-size:15px;color:var(--ink)}
+.rev-top span{display:block;font-size:13px;color:var(--mut)}
+.stars{display:flex;gap:2px;margin-bottom:8px}
+.stars svg{width:14px;height:14px;fill:var(--gold)}
+.rev p{font-size:15px;line-height:1.5;color:var(--ink-2);margin:0}
+.roll-rev{padding:6px 0}
+.sample{margin-top:14px;font-size:13px;color:var(--mut)}
+#words .sh{margin-bottom:8px}
+
+/* the footer: bare social icons, tighter columns, the wordmark bleeding off the foot */
+.socials{display:flex;gap:14px;margin-top:16px}
+.soc{width:auto;height:auto;border:0;background:none;border-radius:0;padding:0}
+.soc svg{width:22px;height:22px;fill:var(--ink)}
+.soc:hover svg{fill:var(--gold)}
+.foot-desc{max-width:34ch}
+.foot-col a{display:block;padding:5px 0;font-size:15px;color:var(--ink-2)}
+.foot-col a:hover{color:var(--gold)}
+.foot-mark{height:clamp(110px,15vw,210px);overflow:hidden;margin-top:28px;padding-top:0;padding-bottom:0}
+.foot-mark .big{transform:none;-webkit-mask-position:center top;mask-position:center top}
+@media(prefers-reduced-motion:reduce){.roll-track,.fi-shield .tick,.fi-read .ln,.fi-table .lift,.fi-share .fly,.fi-hear .w,.fi-times .hand,.ba2-arrow{animation:none}}
+@media(max-width:600px){.feat{width:290px;padding:20px}.rev{width:300px;padding:18px}}
+/* the dialogue box a little higher in the frame (Bazil, 30 Oct night: "a bit to the top") */
+body.home .hero{padding-bottom:clamp(52px,5.5vw,80px)}
+@media(max-width:860px){body.home .hero{padding-bottom:40px}}
+/* the dialogue box names what the dua is for; the hero copy sits a little lower (Bazil: "push to the bottom a bit") */
+.dlg-for{font:600 13px/1.3 var(--body);color:var(--gold);margin:0 0 6px}
+.dlg{padding-top:24px}
+.hero-copy{margin-top:clamp(28px,4vw,56px)}
+@media(max-width:860px){.hero-copy{margin-top:16px}}
+/* the hero: copy and dialogue box side by side, on the same level (Bazil: "dialogue above will be same level as this") */
+.hero-in{grid-template-columns:minmax(0,1.05fr) minmax(0,.95fr);grid-template-rows:1fr;align-items:end;column-gap:clamp(24px,4vw,56px)}
+.hero-copy{align-self:end;margin-top:0}
+.dlg{width:100%;justify-self:stretch;align-self:end}
+body.home .hero{padding-top:calc(72px + clamp(48px,6vw,96px))}
+@media(max-width:860px){.hero-in{grid-template-columns:1fr;grid-template-rows:auto auto;row-gap:24px}.hero-copy{margin-top:16px}}
+/* the pain cards: drawn icons that move, a quiet lift under the pointer */
+.pain{transition:transform .35s var(--ease),box-shadow .35s var(--ease)}
+.pain:hover{transform:translateY(-4px);box-shadow:0 24px 50px -30px rgba(30,33,36,.35)}
+.pain .ic{display:block;width:56px;height:56px;margin:0 0 16px}
+.pain .ic svg.pi{width:56px;height:56px;stroke:var(--ink);fill:none;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round;overflow:visible}
+.pain .ic svg .g{stroke:var(--gold)}
+.pi-book .hand{transform-origin:38px 16px;animation:fi-hand 8s linear infinite}
+.pi-fwd .fwd{animation:fi-fly 2.2s var(--ease) infinite}
+.pi-ads .ad{animation:pi-ad 2.4s var(--ease) infinite}
+@keyframes pi-ad{0%,100%{opacity:1;transform:translateY(0)}50%{opacity:.35;transform:translateY(2px)}}
+@media(prefers-reduced-motion:reduce){.pi-book .hand,.pi-fwd .fwd,.pi-ads .ad{animation:none}}
+
+/* ===== pass: the Prototype 1 marks and phone, comments, photos (30 Oct, later: "check Jom Makcik and Tenthpin", "go into the app
+   folder", "isometric exactly", "better character design", "like real comments", "2 visuals", "a good visual for the FAQ",
+   "better phone visuals", "some UI direction is good" from Web Prototype 1) ===== */
+/* the isometric marks from src/pages/iso-icons.astro: 30° iso, three tones and ink, same extrude everywhere */
+.ic svg.iso{width:auto;height:64px;max-width:110px;display:block;overflow:visible}
+.pain .ic,.feat .ic,.beat .ic,.step .ic{width:auto;height:auto;background:none;margin:0 0 14px}
+.step{grid-template-columns:84px 1fr;gap:12px}
+.step .ic{display:flex;align-items:flex-start;width:84px;height:72px}
+.step .ic svg.iso{height:60px}
+.beat{grid-template-columns:84px 1fr;gap:12px}
+.beat .ic{display:flex;width:84px;height:72px}
+.beat .ic svg.iso{height:60px}
+.feat .ic svg.iso{height:60px}
+.ba2-col .ic{display:block;margin:-6px 0 8px}
+.ba2-col .ic svg.iso{height:56px}
+.ba2-col.after .ic svg.iso polygon,.ba2-col.after .ic svg.iso path{filter:brightness(1.12)}
+.pain:hover .ic svg.iso,.feat:hover .ic svg.iso{transform:translateY(-3px)}
+.ic svg.iso{transition:transform .4s var(--ease)}
+@media(max-width:600px){.ic svg.iso{height:52px}.step,.beat{grid-template-columns:68px 1fr}.step .ic,.beat .ic{width:68px;height:60px}.step .ic svg.iso,.beat .ic svg.iso{height:50px}}
+
+/* the phone from Prototype 1, without the island; the screen is the app scroll film */
+.iphone{position:relative;width:min(292px,74vw);margin:0 auto;padding:11px;border-radius:54px;background:linear-gradient(145deg,#4A4D53 0%,#2A2C31 18%,#17181B 55%,#2E3035 100%);
+  box-shadow:inset 0 0 0 1.5px rgba(255,255,255,.14),inset 0 0 0 4px #0B0C0E,0 1px 1px rgba(0,0,0,.2),0 30px 60px -22px rgba(20,22,26,.45),0 60px 90px -60px rgba(20,22,26,.5);animation:ph-float 7s ease-in-out infinite}
+.iphone::after{content:"";position:absolute;inset:4px;border-radius:50px;pointer-events:none;box-shadow:inset 0 0 0 1px rgba(255,255,255,.06)}
+.ip-screen{position:relative;border-radius:43px;overflow:hidden;background:#fff;aspect-ratio:740/1516;isolation:isolate}
+.app-vid{display:block;width:100%;height:100%;object-fit:cover}
+.ip-status{position:absolute;left:0;right:0;top:0;height:42px;display:flex;align-items:center;justify-content:space-between;padding:0 26px 0 30px;z-index:1;color:#111;background:#fff;font:600 13.5px -apple-system,"SF Pro Text","Segoe UI",sans-serif;letter-spacing:-.01em}
+.ip-icons{display:flex;align-items:center;gap:5px}
+.ip-home{position:absolute;left:50%;bottom:7px;transform:translateX(-50%);width:36%;height:4.5px;border-radius:3px;background:#111;opacity:.85;z-index:2}
+.ip-key{position:absolute;width:3.5px;border-radius:2px;background:linear-gradient(90deg,#1A1B1E,#3A3C41)}
+.ip-action{left:-3px;top:17%;height:5%}.ip-vol1{left:-3px;top:26%;height:9.5%}.ip-vol2{left:-3px;top:38%;height:9.5%}
+.ip-power{right:-3px;left:auto;top:29%;height:14%;background:linear-gradient(270deg,#1A1B1E,#3A3C41)}
+@keyframes ph-float{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+.plan-in>div:last-child,.app-in>div:last-child{position:relative}
+.plan-in .callout{position:absolute;right:-8px;bottom:12%;z-index:3}
+@media(max-width:860px){.iphone{width:min(260px,74vw)}}
+
+/* who it is for: a photo on each card */
+.for{padding:0;overflow:hidden}
+.for .for-pic{display:block;width:100%;aspect-ratio:16/9;object-fit:cover;object-position:center 30%}
+.for h3,.for ul{padding-left:24px;padding-right:24px}
+.for h3{margin-top:20px}
+.for ul{padding-bottom:22px}
+
+/* the FAQ: a photo under the questions' lead */
+.faq-pic{display:block;width:100%;aspect-ratio:4/3;object-fit:cover;border-radius:14px;margin-top:24px}
+@media(max-width:860px){.faq-pic{display:none}}
+
+/* the close: centred, one button, the store buttons with Coming soon tabs (Prototype 1's direction) */
+.close .wrap{text-align:center}
+.close h2{margin-left:auto;margin-right:auto}
+.close .lede{margin-left:auto;margin-right:auto}
+.close .hero-cta,.close .close-cta{justify-content:center}
+.close .stores{justify-content:center;margin-top:22px}
+.stores{display:flex;flex-wrap:wrap;gap:12px;margin-top:18px}
+.store{position:relative;display:inline-flex;align-items:center;gap:10px;height:54px;padding:0 18px 0 14px;border-radius:10px;border:1px solid var(--line);background:#fff;color:var(--ink);text-align:left}
+.close .store{border-color:rgba(255,255,255,.25);background:rgba(255,255,255,.06);color:#fff}
+.store svg{width:22px;height:22px;fill:currentColor;flex:none}
+.store span span{display:flex;flex-direction:column;line-height:1.15}
+.store small{font-size:11px;color:var(--mut);letter-spacing:0}
+.close .store small{color:rgba(255,255,255,.65)}
+.store b{font-weight:600;font-size:14.5px}
+.store .soon{position:absolute;top:-10px;left:12px;font:600 10.5px/1 var(--body);letter-spacing:.02em;padding:4px 7px;border-radius:5px;background:var(--ink);color:#fff}
+.close .store .soon{background:#fff;color:var(--ink)}
+
+/* the reviews as comments: character, name, when, the words, helpful */
+.rev{width:360px;padding:18px 20px 16px;background:#fff;border:1px solid var(--hair);border-radius:14px}
+.rev-top{display:flex;align-items:center;gap:12px;margin-bottom:10px}
+.rev-top .av{width:44px;height:44px;flex:none}
+.rev-top>div{flex:1;min-width:0}
+.rev-top .ago{font-size:13px;color:var(--mut-2);flex:none;align-self:flex-start;padding-top:2px}
+.rev p{font-size:15px;line-height:1.5;color:var(--ink)}
+.rev-foot{display:flex;align-items:center;gap:6px;margin-top:10px;font-size:13px;color:var(--mut)}
+.rev-foot svg{width:15px;height:15px;fill:none;stroke:var(--gold);stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.rev-foot span:first-of-type{color:var(--ink);font-weight:600}
+.stars{display:none}
+/* the marks sized by their own bounds: a fixed box, left of its card */
+.ic svg.iso{width:72px;height:64px;max-width:none}
+.pain .ic,.feat .ic{display:block;width:72px;height:64px}
+.step .ic svg.iso,.beat .ic svg.iso{width:68px;height:60px}
+.ba2-col .ic svg.iso{width:64px;height:56px}
+.close .store b,.close .store small{color:#fff}
+.close .store small{opacity:.7}
+@media(max-width:600px){.ic svg.iso{width:58px;height:52px}.step .ic svg.iso,.beat .ic svg.iso{width:56px;height:50px}}
+/* the close lede centred; the typed-exam chip stays a chip beside the phone */
+.close .lede,.close p{text-align:center;margin-left:auto;margin-right:auto}
+.plan-in .callout{left:auto;right:-8px;width:max-content;max-width:88%}
+/* the marks a touch larger, at the kit's thin stroke (Bazil: "too thick") */
+.ic svg.iso{width:80px;height:70px}
+.pain .ic,.feat .ic{width:80px;height:70px}
+/* ===== pass: breathing room, narrower rolling cards, the for/not visuals (Bazil, 30 Oct: "increase vertical spacing",
+   "reduce horizontal sizing", "this does not reflect correctly, create visuals and animate it, and create icons") ===== */
+section{padding:clamp(56px,6.5vw,104px) 0}
+.sh{margin-bottom:clamp(28px,3vw,44px)}
+.rev{width:320px}
+.feat{width:300px}
+.roll{padding:14px 0 18px}
+.roll-rev{padding:10px 0}
+.for{padding:0 0 8px}
+.for-vis{display:flex;align-items:flex-end;justify-content:center;gap:clamp(18px,3vw,40px);height:150px;padding:18px 24px 0;background:#fff;border-radius:14px 14px 0 0}
+.for.no .for-vis{background:var(--paper-2)}
+.for-vis .fv{display:block;animation:fv-float 5.5s ease-in-out infinite}
+.for-vis .fv svg.iso{width:84px;height:76px}
+.for-vis .fv2{animation-delay:-1.8s}.for-vis .fv3{animation-delay:-3.6s}
+.for-vis .fv2 svg.iso{width:100px;height:90px}
+@keyframes fv-float{0%,100%{transform:translateY(0)}50%{transform:translateY(-9px)}}
+.for h3{margin-top:22px}
+.for li{display:grid;grid-template-columns:34px 1fr;gap:12px;align-items:start;padding:8px 0}
+.for .li-ic{display:block;width:34px;height:30px;margin-top:-2px}
+.for .li-ic svg.iso{width:34px;height:30px}
+@media(prefers-reduced-motion:reduce){.for-vis .fv{animation:none}}
+@media(max-width:600px){section{padding:44px 0}.for-vis{height:120px}.for-vis .fv svg.iso{width:64px;height:58px}.for-vis .fv2 svg.iso{width:76px;height:68px}}
+/* the store badges in their accurate form: black, white type, the logo left, a small Coming soon chip above (Bazil: "accurate, the right visual") */
+.stores{gap:12px;margin-top:22px}
+.store{height:56px;padding:0 18px 0 14px;border-radius:9px;border:1px solid #1E2124;background:#1E2124;color:#fff;gap:10px}
+.store svg{width:24px;height:24px;fill:#fff}
+.store small{font-size:10.5px;color:rgba(255,255,255,.75);line-height:1;margin-bottom:3px;letter-spacing:0}
+.store b{font-size:17px;line-height:1;font-weight:600;color:#fff;letter-spacing:-.01em}
+.store .soon{top:-11px;left:12px;background:var(--gold);color:#fff;font-size:10.5px;padding:4px 8px;border-radius:5px}
+.close .store{background:#fff;border-color:#fff;color:var(--ink)}
+.close .store svg{fill:var(--ink)}
+.close .store small{color:var(--mut)}
+.close .store b{color:var(--ink)}
+.close .store .soon{background:var(--gold);color:#fff}
+/* the FAQ page photo rule is unused now; the FAQ lives on its own page */
+.faq-pic{display:none}
+/* the opening: its own quiet band with room around it, each line arriving in turn (Bazil, 30 Oct: "more vertical spacing",
+   "is there something better for the website than this") */
+.opening{padding:clamp(72px,8vw,128px) 0 clamp(64px,7vw,112px);background:var(--paper)}
+.opening-in{max-width:760px}
+.op-bism{font-size:clamp(22px,2.1vw,30px);color:var(--mut);margin-bottom:10px}
+.op-ar{font-size:clamp(34px,3.4vw,50px);line-height:1.5;margin:0 0 10px}
+.op-mean{font:500 clamp(18px,1.45vw,22px)/1.4 var(--disp);letter-spacing:-.01em}
+.op-src{margin-top:10px;font-size:14px}
+.js .opening-in>*{opacity:0;transform:translateY(10px);transition:opacity .9s var(--ease),transform .9s var(--ease)}
+.js .opening-in.in>*{opacity:1;transform:none}
+.js .opening-in.in .op-ar{transition-delay:.35s}.js .opening-in.in .op-mean{transition-delay:.7s}.js .opening-in.in .op-src{transition-delay:.95s}
+@media(prefers-reduced-motion:reduce){.js .opening-in>*{opacity:1;transform:none;transition:none}}
+@media(max-width:600px){.opening{padding:56px 0 48px}}
+/* ===== pass: the Brand Method card, four pains, the close dua, the FAQ page photo, the whole wordmark (30 Oct, late:
+   "make this card better like the Brand Method card", "is there 4 information", "better information", "no need this tab",
+   "put a doa that's good, centre the title, no need the app buttons", "Baik can be seen fully, © 2024") ===== */
+.pains.four{grid-template-columns:repeat(4,minmax(0,1fr));gap:16px}
+.pain,.pain.rv{position:relative;background:#fff;border:1px solid var(--hair);border-radius:12px;padding:26px 22px 24px;overflow:hidden;box-shadow:0 4px 16px rgba(30,33,36,.04);transition:transform .45s var(--ease),box-shadow .45s var(--ease)}
+.pain::before{content:"";position:absolute;inset:8px;border:1px solid rgba(138,106,18,.22);border-radius:7px;pointer-events:none}
+.pain .sheen{position:absolute;inset:0;background:radial-gradient(360px circle at 50% 0%,rgba(138,106,18,.12),transparent 60%);opacity:0;transition:opacity .4s;pointer-events:none}
+.pain:hover{transform:translateY(-4px);box-shadow:0 18px 40px -22px rgba(30,33,36,.3)}
+.pain:hover .sheen{opacity:1}
+.pain .corner{position:absolute;width:5px;height:5px;background:var(--gold);transform:rotate(45deg);opacity:.7}
+.pain .corner.tl{top:15px;left:15px}.pain .corner.br{bottom:15px;right:15px}
+.pain .ic{margin:6px 0 18px}
+.pain h3{font-size:19px}
+.pain p{font-size:14.5px}
+@media(max-width:1000px){.pains.four{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:600px){.pains.four{grid-template-columns:1fr}}
+.close .wrap,.close-in{text-align:center}
+.close h2{text-align:center}
+.close-ar{font-size:clamp(26px,2.6vw,36px);line-height:1.7;color:#fff;max-width:28ch;margin:0 auto 10px;text-align:center;direction:rtl}
+.close-mean{font:500 clamp(16px,1.3vw,19px)/1.45 var(--disp);color:rgba(255,255,255,.92);max-width:56ch;margin:0 auto 6px;letter-spacing:-.01em}
+.close-src{font-size:14px;color:rgba(255,255,255,.7);margin:0 auto clamp(28px,3vw,44px)}
+.close h2{font-size:clamp(30px,3.4vw,46px)}
+body.inner .faq-pic{display:block;max-width:560px;aspect-ratio:4/3;object-fit:cover;border-radius:14px;margin-top:28px}
+@media(max-width:860px){body.inner .faq-pic{display:none}}
+.foot-mark{height:auto;overflow:visible;padding:36px var(--sgx) 40px}
+.foot-mark .big{width:100%;max-width:var(--wrap);aspect-ratio:118.13/45.82;transform:none;-webkit-mask-size:contain;mask-size:contain;-webkit-mask-position:center;mask-position:center}
+/* ===== the playing card (brandmethod.co, "Risk on us": a white face with an inner frame, corner numbers with the diamond, the
+   mark centred, the title, one line, More +; it turns on hover to an ink back with a plaque). Baik is a card deck, so the
+   section cards take the deck's own form (Bazil, 30 Oct late: "proper card bro, check brandmethod.co") ===== */
+.pcard{position:relative;width:300px;flex:none;aspect-ratio:1/1.18;perspective:1700px}
+.pcard-inner{position:absolute;inset:0;transform-style:preserve-3d;transition:transform .75s cubic-bezier(.4,.1,.2,1)}
+.pcard:hover .pcard-inner,.pcard:focus-visible .pcard-inner,.pcard.is-flipped .pcard-inner{transform:rotateY(180deg)}
+.pcard-face{position:absolute;inset:0;-webkit-backface-visibility:hidden;backface-visibility:hidden;padding:clamp(18px,1.9vw,24px);display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;overflow:hidden;border-radius:8px}
+.pcard-face.front{background:#fff;border:1px solid var(--hair);box-shadow:0 4px 16px rgba(30,33,36,.04)}
+.pcard-face.front::before{content:"";position:absolute;inset:8px;border:1px solid rgba(138,106,18,.28);border-radius:4px;pointer-events:none}
+.pcard-face.back{background:var(--ink);color:#fff;transform:rotateY(180deg);box-shadow:0 16px 40px rgba(30,33,36,.32)}
+.pcard-face.back::before{content:"";position:absolute;inset:8px;border:1px solid rgba(255,255,255,.3);border-radius:4px;pointer-events:none}
+.pcard-face.back::after{content:"";position:absolute;inset:0;background:radial-gradient(circle at 50% 0%,rgba(255,255,255,.08),transparent 60%);pointer-events:none}
+.pcard .sheen{position:absolute;inset:0;background:radial-gradient(360px circle at 50% 0%,rgba(138,106,18,.12),transparent 60%);opacity:0;transition:opacity .4s;pointer-events:none}
+.pcard:hover .front .sheen{opacity:1}
+.pcard .corner{position:absolute;display:flex;flex-direction:column;align-items:center;gap:4px;line-height:1}
+.pcard .corner b{font:600 12px/1 var(--body);color:var(--gold)}
+.pcard .dia{display:block;width:6px;height:6px;background:var(--gold);transform:rotate(45deg)}
+.pcard .corner.tl{top:14px;left:15px}.pcard .corner.br{bottom:14px;right:15px;transform:rotate(180deg)}
+.pcard .back .corner b{color:#EAD27C}.pcard .back .dia{background:#EAD27C}
+.pcard .ic{display:block;width:84px;height:74px;margin:0 auto 12px}
+.pcard .ic svg.iso{width:84px;height:74px}
+
+.pcard h3{font:500 20px/1.2 var(--disp);letter-spacing:-.025em;margin:0 0 8px;max-width:22ch}
+.pcard p{font-size:14.5px;line-height:1.45;color:var(--ink-2);margin:0;max-width:26ch}
+.pcard .hint{position:absolute;bottom:18px;left:0;right:0;font:500 12px/1 var(--body);letter-spacing:.06em;color:var(--gold);text-transform:uppercase}
+.pcard .plaque{position:relative;display:flex;flex-direction:column;align-items:center;gap:10px;padding:0 6px}
+.pcard .plaque .dia{width:8px;height:8px;background:#EAD27C;margin-bottom:4px}
+.pcard .btag{font:500 12px/1 var(--body);letter-spacing:.06em;text-transform:uppercase;color:#EAD27C}
+.pcard .back p{color:#fff;font-size:15px;line-height:1.5;max-width:28ch}
+/* the pains: the same face, standing still, in a grid */
+.pains.four{grid-template-columns:repeat(4,minmax(0,1fr));gap:18px}
+.pcard.pain{width:auto;aspect-ratio:1/1.18;border:0;background:none;padding:0;box-shadow:none;overflow:visible;transition:transform .45s var(--ease)}
+.pcard.pain:hover{transform:translateY(-4px)}
+.pcard.pain .front.still{position:absolute;inset:0}
+.pcard.pain::before{display:none}
+.pcard.pain .sheen{opacity:0}.pcard.pain:hover .sheen{opacity:1}
+.pcard.pain .ic{margin:6px auto 14px}
+.pcard.pain h3{font-size:19px}
+.pcard.pain p{font-size:14px}
+.roll .pcard{margin:6px 0}
+@media(max-width:1000px){.pains.four{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:600px){.pains.four{grid-template-columns:1fr 1fr;gap:12px}.pcard{width:260px}.pcard .ic,.pcard .ic svg.iso{width:64px;height:56px}.pcard h3{font-size:17px}.pcard p{font-size:13.5px}}
+@media(prefers-reduced-motion:reduce){.pcard-inner{transition:none}}
+/* the hero: the copy a little higher, the green chip beside the source */
+.hero-copy{align-self:center;margin-top:-28px}
+.chip-green{display:inline-block;vertical-align:middle;margin-left:8px;padding:6px 11px;border-radius:6px;background:var(--green);color:#fff;font:600 13px/1 var(--body);letter-spacing:0;white-space:nowrap}
+@media(max-width:860px){.hero-copy{margin-top:8px}.chip-green{display:inline-block;margin:8px 0 0}}
+/* the close dua on one line at desktop; the for cards carry the realistic pictures again */
+.close-ar{max-width:none;font-size:clamp(28px,2.9vw,40px);line-height:1.6}
+.for .for-pic{display:block;width:100%;aspect-ratio:16/9;object-fit:cover}
+.for-vis{display:none}
+/* bad to good as two picture cards (Bazil, 30 Oct late: "I want the ChatGPT visual", "proper realistic visual"): the cluttered desk at
+   2 am against the card that came up, a gold arrow between them */
+.ba3{display:grid;grid-template-columns:minmax(0,1fr) 64px minmax(0,1fr);gap:18px;align-items:center}
+.ba3-card{border-radius:16px;overflow:hidden;background:var(--paper)}
+.ba3-card.after{background:var(--ink);color:#fff}
+.ba3-card>img,.ba3-pic>img{display:block;width:100%;aspect-ratio:16/9;object-fit:cover}
+.ba3-card.before>img{filter:saturate(.85)}
+.ba3-pic{position:relative}
+.ba3-dlg{position:absolute;right:14px;bottom:14px;width:min(300px,78%);background:rgba(255,255,255,.95);color:var(--ink);border-radius:10px;padding:20px 16px 14px 16px;box-shadow:0 20px 50px -24px rgba(0,0,0,.6)}
+.ba3-dlg .dlg-name{position:absolute;top:0;left:12px;transform:translateY(-50%);font:500 12px/1 var(--body);padding:7px 10px}
+.ba3-dlg .dlg-for{font:600 12px/1.3 var(--body);color:var(--gold);margin:0 0 4px}
+.ba3-dlg .dlg-ar{font-size:20px;line-height:1.5;margin:0 0 4px;text-align:left;direction:rtl}
+.ba3-dlg .dlg-txt{font-size:14px;line-height:1.4;color:var(--ink-2);margin:0;min-height:0}
+.ba3-in{padding:22px 24px 20px}
+.ba3-in h3{font-size:18px;margin-bottom:10px}
+.ba3-in ul{list-style:none;margin:0;padding:0}
+.ba3-in li{display:grid;grid-template-columns:20px 1fr;gap:10px;padding:6px 0;font-size:15px;align-items:start}
+.ba3-card.before li{color:var(--mut)}
+.ba3-in li svg{width:18px;height:18px;margin-top:2px;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.ba3-card.before li svg{stroke:var(--mut-2)}
+.ba3-card.after li svg{stroke:#EAD27C}
+.ba3-arrow{width:56px;height:56px;border-radius:50%;background:var(--gold);display:grid;place-items:center;justify-self:center;box-shadow:0 12px 30px -10px rgba(0,0,0,.4);animation:ba2-nudge 1.6s var(--ease) infinite}
+.ba3-arrow svg{width:26px;height:26px;stroke:#fff;fill:none;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+@media(max-width:860px){.ba3{grid-template-columns:1fr;gap:12px}.ba3-arrow{transform:rotate(90deg);animation:none;width:44px;height:44px}.ba3-dlg{width:min(260px,80%)}}
+/* the real app on the blank phone in the With picture (the screen measured at 57.9 to 73.7% across, 12.1 to 73.5% down) */
+.ba3-screen{position:absolute;left:58.1%;top:12.6%;width:15.4%;height:60.4%;object-fit:cover;object-position:top;border-radius:4% / 2%}
+/* the screen overlay must beat the picture rule (.ba3-pic>img sets width 100% and 16/9) */
+.ba3-pic>img.ba3-screen{position:absolute;left:58.1%;top:12.6%;width:15.4%;height:60.4%;aspect-ratio:auto;object-fit:cover;object-position:top;border-radius:4% / 2%}
+/* the hero copy spans the frame: the headline on the top line, the buttons on the dialogue box's bottom line (Bazil, 30 Oct late,
+   the annotated screenshot: "align position properly") */
+.hero-in{align-items:stretch}
+.hero-copy{display:flex;flex-direction:column;align-self:stretch;margin-top:0;max-width:720px}
+.hero-copy .hero-cta{margin-top:auto;padding-top:28px}
+.dlg{align-self:end}
+@media(max-width:860px){.hero-copy{display:block;margin-top:16px}.hero-copy .hero-cta{margin-top:24px;padding-top:0}}
+/* the pain cards without the corner numbers and diamonds (Bazil: "no need the number and shape corner") */
+.pcard.pain .corner{display:none}
+.pcard.pain .front.still{padding:26px 22px}
+/* the phone without side keys and the home bar (Bazil: "no need the buttons on the side and the bottom swipe bar") */
+.ip-key,.ip-home{display:none}
+/* the playing card, richer: a paper-to-white ground behind the 3D icon, the icon large, the type tighter (Bazil: "design is a bit bad") */
+.pcard-face.front{background:linear-gradient(180deg,#F7F6F2 0%,#FFFFFF 58%)}
+.pcard .ic{width:150px;height:150px;margin:0 auto 6px}
+.pcard .ic img{width:150px;height:150px;display:block;mix-blend-mode:multiply;transition:transform .5s var(--ease)}
+.pcard:hover .ic img{transform:translateY(-4px) scale(1.03)}
+
+.pcard h3{font-size:21px}
+.pcard.pain .ic{width:140px;height:140px}
+.pcard.pain .ic img{width:140px;height:140px}
+.step .ic img,.beat .ic img{width:76px;height:76px;display:block;mix-blend-mode:multiply}
+.step .ic,.beat .ic{width:76px;height:76px}
+.step,.beat{grid-template-columns:92px 1fr}
+@media(max-width:600px){.pcard .ic,.pcard .ic img,.pcard.pain .ic,.pcard.pain .ic img{width:110px;height:110px}.step .ic img,.beat .ic img,.step .ic,.beat .ic{width:60px;height:60px}.step,.beat{grid-template-columns:72px 1fr}}
+/* the comments, better: same height in a row, a larger character with a thin gold ring, the words first, Helpful as a quiet chip
+   (Bazil: "make look better"); the sample note is gone */
+.roll-rev .roll-track{align-items:stretch}
+.rev{display:flex;flex-direction:column;width:340px;padding:20px 22px 18px;background:linear-gradient(180deg,#FAFAF8,#FFFFFF 40%);border:1px solid var(--hair);border-radius:16px;box-shadow:0 4px 16px rgba(30,33,36,.04)}
+.rev-top{gap:14px;margin-bottom:12px}
+.rev-top .av{width:52px;height:52px;box-shadow:0 0 0 2px #fff,0 0 0 3px rgba(138,106,18,.35);border-radius:50%}
+.rev-top b{font-size:15.5px}
+.rev-top span{font-size:12.5px}
+.rev p{font-size:15.5px;line-height:1.5;flex:1}
+.rev-foot{margin-top:14px;gap:6px;font-size:12.5px}
+.rev-foot svg{width:14px;height:14px}
+.rev-foot span:first-of-type{background:var(--paper);padding:4px 8px;border-radius:5px;font-weight:600;color:var(--ink)}
+/* the for/not heading centred (Bazil: "middle align"); the close headline on two lines, the Arabic big enough to read */
+#for .sh{text-align:center}#for .sh h2{margin-left:auto;margin-right:auto;max-width:none}
+.close h2{max-width:none;font-size:clamp(32px,3.6vw,50px)}
+.close-ar{font-size:clamp(34px,3.6vw,52px);line-height:1.6;max-width:none}
+.close-mean{font-size:clamp(17px,1.5vw,22px)}
+/* the footer: columns, the wordmark, then the legal row at the very bottom (Bazil: "the 2024 needs to be bottom"), more room */
+footer{padding-top:clamp(64px,7vw,104px)}
+.foot-in{padding-bottom:clamp(40px,4vw,64px)}
+.foot-mark{padding:24px var(--sgx) 8px}
+.foot-legal{padding:28px var(--sgx) 40px;border-top:0}
+/* the steps: room under the heading, the 3D icon a touch larger */
+.plan-in .steps{margin-top:28px;gap:10px}
+.step{grid-template-columns:104px 1fr;gap:14px}
+.step .ic,.step .ic img{width:88px;height:88px}
+.beat .ic,.beat .ic img{width:84px;height:84px}
+.beat{grid-template-columns:100px 1fr}
+/* the close dua at reading size (the earlier .close p rule outranked .close-ar) */
+.close p.close-ar{font-size:clamp(34px,3.6vw,52px);line-height:1.6;max-width:none;margin:0 auto 12px}
+.close p.close-mean{font:500 clamp(17px,1.5vw,22px)/1.45 var(--disp);max-width:60ch;margin:0 auto 6px}
+.close p.close-src{font-size:14px;max-width:none;margin:0 auto clamp(28px,3vw,44px)}
+/* the green chip on its own line under the description (Bazil: "below the last line of the description") */
+.hero-chip{margin:14px 0 0}
+.hero-chip .chip-green{margin-left:0}
+@media(max-width:860px){.hero-chip{margin-top:12px}}
+/* the hero a little taller (Bazil, the hero selected: "just a bit taller") */
+body.home .hero{min-height:min(82vh,780px);padding-bottom:clamp(64px,7vw,96px)}
+@media(max-width:860px){body.home .hero{min-height:0;padding-bottom:44px}}
+/* ===== the dialogue as a chat message (Bazil, 30 Oct late: "improve it to be professional and look like a chatbox", "the top box can
+   be a different colour depending on what it's used for"): a header row with the Baik tile, the name and a tone pill naming the
+   surah; the pill's colour follows what the dua is for, from the app's own set colours ===== */
+.dlg{padding:14px 18px 18px;border-radius:14px;background:#fff;box-shadow:0 24px 60px -28px rgba(0,0,0,.55),0 0 0 1px rgba(30,33,36,.06);min-height:0}
+.dlg::after{content:"";position:absolute;left:28px;bottom:-9px;width:18px;height:18px;background:#fff;transform:rotate(45deg);border-radius:2px}
+.dlg-head{display:flex;align-items:center;gap:10px;margin:0 0 10px;padding-bottom:10px;border-bottom:1px solid var(--hair)}
+.dlg-av{width:26px;height:26px;border-radius:7px;background:var(--ink);color:#fff;font:600 14px/26px var(--disp);text-align:center;letter-spacing:-.02em;flex:none}
+.dlg-who{font:600 14px/1 var(--body);color:var(--ink)}
+.dlg .dlg-head .dlg-name{position:static;transform:none;margin-left:auto;font:600 12px/1 var(--body);letter-spacing:0;padding:7px 10px;border-radius:999px;background:var(--ink);color:#fff;white-space:nowrap}
+.dlg .dlg-for{font:600 13px/1.3 var(--body);color:var(--gold);margin:0 0 6px}
+.dlg .dlg-ar{font-size:26px;line-height:1.5;margin:0 0 6px;direction:rtl;text-align:left}
+.dlg .dlg-txt{font-size:16px;line-height:1.45;color:var(--ink-2);margin:0}
+.dlg-next{right:18px;bottom:16px}
+/* tones: the pill and the "for" line */
+.dlg[data-tone="heart"] .dlg-name{background:var(--ink)}.dlg[data-tone="heart"] .dlg-for{color:var(--ink-2)}
+.dlg[data-tone="knowledge"] .dlg-name{background:#8A6A12}.dlg[data-tone="knowledge"] .dlg-for{color:#8A6A12}
+.dlg[data-tone="journey"] .dlg-name{background:#4A4E8C}.dlg[data-tone="journey"] .dlg-for{color:#4A4E8C}
+.dlg[data-tone="surah"] .dlg-name{background:#634494}.dlg[data-tone="surah"] .dlg-for{color:#634494}
+.dlg[data-tone="protection"] .dlg-name{background:#2E7D5B}.dlg[data-tone="protection"] .dlg-for{color:#2E7D5B}
+.dlg[data-tone="world"] .dlg-name{background:#C45A1E}.dlg[data-tone="world"] .dlg-for{color:#C45A1E}
+.dlg[data-tone="family"] .dlg-name{background:#C0352F}.dlg[data-tone="family"] .dlg-for{color:#C0352F}
+@media(max-width:860px){.dlg{padding:12px 14px 16px}.dlg .dlg-ar{font-size:22px}.dlg .dlg-txt{font-size:15px}.dlg .dlg-head .dlg-name{font-size:11.5px;padding:6px 9px}}
+
+/* ===== pass, 30 Oct late (Bazil: "intricate detail premium animated icon that make sense", "don't use Higgsfield always",
+   "grey outline" (the phone), "make the visual taller", "red to green, but suit the look", "reduced round corners", "no corner
+   number and icon", "profile a lot more premium and detailed", "one is branded with Baik colour, the other shows people",
+   "switch side horizontally") ===== */
+/* corners, smaller everywhere */
+:root{--r:6px;--rb:4px}
+.pcard-face,.pcard-face.front,.pcard-face.back{border-radius:5px}.pcard-face.front::before,.pcard-face.back::before{border-radius:2px}
+.rev{border-radius:6px}.dlg{border-radius:8px}.ba3-card,.ba3-pic>img{border-radius:8px}.ba3-dlg{border-radius:6px}.for{border-radius:8px}
+.feat{border-radius:5px}.chip-green{border-radius:4px}.story-pic img,.faq-pic,body.inner .faq-pic{border-radius:8px}.ba3-card.after .ba3-pic>img{border-radius:8px 8px 0 0}
+.dlg .dlg-head .dlg-name{border-radius:4px}.rev-foot span:first-of-type{border-radius:3px}.store{border-radius:6px}
+/* 2 Nov 2026 (Bazil: "no eyebrow"): the gold word above each feature title is gone, markup and rules */
+/* the feature cards without corner marks */
+.pcard .corner{display:none}
+/* the drawn icons: fine ink line, white and paper fills, gold for the idea, a ground shadow; parts that move */
+.ix{width:100%;height:100%;overflow:visible;fill:none;stroke:#1E2124;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round}
+.ix .sh{fill:#1E2124;opacity:.07;stroke:none}
+.ix .fw{fill:#fff}.ix .fp{fill:#F5F5F3}.ix .fi{fill:#1E2124}.ix .fg{fill:#8A6A12}.ix .fgl{fill:#C9A94A}.ix .fgs{fill:#8A6A12;opacity:.14}
+.ix .sg{stroke:#8A6A12}.ix .sgl{stroke:#C9A94A}.ix .sw{stroke:#fff}.ix .sn{stroke:none}
+.ix .ln{opacity:.5}.ix .t2{stroke-width:2}.ix .t3{stroke-width:3}
+.ix [class*="a-"]{transform-box:fill-box;transform-origin:center}
+.ic .ix{display:block}
+.pcard .ic{width:150px;height:150px;margin:0 auto 4px}.pcard.pain .ic{width:140px;height:140px}
+.step .ic,.beat .ic{width:88px;height:88px}
+@media(max-width:600px){.pcard .ic,.pcard.pain .ic{width:110px;height:110px}.step .ic,.beat .ic{width:64px;height:64px}}
+.a-flip{transform-origin:right center;animation:ix-flip 4s var(--ease) infinite}
+@keyframes ix-flip{0%,55%{transform:scaleX(1)}70%{transform:scaleX(.08)}85%,100%{transform:scaleX(1)}}
+.a-glow{animation:ix-glow 3s ease-in-out infinite}@keyframes ix-glow{0%,100%{opacity:.14}50%{opacity:.3}}
+.a-ghost{animation:ix-ghost 3.2s ease-in-out infinite}@keyframes ix-ghost{0%,100%{opacity:.5;transform:translate(0,0)}50%{opacity:.25;transform:translate(3px,-3px)}}
+.a-fwd{animation:ix-fwd 2.2s var(--ease) infinite}@keyframes ix-fwd{0%,100%{transform:translateX(0)}50%{transform:translateX(5px)}}
+.a-fade1{animation:ix-fade 3s ease-in-out infinite}.a-fade2{animation:ix-fade 3s ease-in-out .4s infinite}.a-fade3{animation:ix-fade 3s ease-in-out .8s infinite}
+@keyframes ix-fade{0%,100%{opacity:.5}50%{opacity:.08}}
+.a-dot1{animation:ix-dot 1.6s ease-in-out infinite}.a-dot2{animation:ix-dot 1.6s ease-in-out .25s infinite}.a-dot3{animation:ix-dot 1.6s ease-in-out .5s infinite}
+@keyframes ix-dot{0%,100%{opacity:.25;transform:translateY(0)}50%{opacity:1;transform:translateY(-2px)}}
+.a-ad{transform-origin:bottom center;animation:ix-ad 3.4s var(--ease) infinite}@keyframes ix-ad{0%,15%{transform:translateY(26px)}35%,85%{transform:translateY(0)}100%{transform:translateY(26px)}}
+.a-pulse{animation:ix-pulse 2s ease-in-out infinite}@keyframes ix-pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.18)}}
+.a-type{transform-origin:left center;animation:ix-type 3.6s steps(14) infinite}@keyframes ix-type{0%{transform:scaleX(0)}60%,100%{transform:scaleX(1)}}
+.a-caret{animation:ix-caret .9s steps(1) infinite}@keyframes ix-caret{0%,100%{opacity:1}50%{opacity:0}}
+.a-chip1{animation:ix-chip 3.6s ease-in-out infinite}.a-chip2{animation:ix-chip 3.6s ease-in-out 1.2s infinite}.a-chip3{animation:ix-chip 3.6s ease-in-out 2.4s infinite}
+@keyframes ix-chip{0%,20%,100%{fill:#F5F5F3}8%{fill:#EAD27C}}
+.a-spark{animation:ix-spark 2.4s ease-in-out infinite}@keyframes ix-spark{0%,100%{transform:scale(.7) rotate(0deg);opacity:.5}50%{transform:scale(1.1) rotate(45deg);opacity:1}}
+.a-lift{animation:ix-lift 3.2s var(--ease) infinite}@keyframes ix-lift{0%,100%{transform:translateY(0) rotate(0deg)}50%{transform:translateY(-6px) rotate(-3deg)}}
+.a-drop{animation:ix-drop 3s var(--ease) infinite}@keyframes ix-drop{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
+.a-dash{stroke-dasharray:22;animation:ix-dash 2.4s linear infinite}@keyframes ix-dash{from{stroke-dashoffset:44}to{stroke-dashoffset:0}}
+.a-tick{stroke-dasharray:46;stroke-dashoffset:46;animation:ix-tick 3s var(--ease) infinite}@keyframes ix-tick{0%{stroke-dashoffset:46}35%,80%{stroke-dashoffset:0}100%{stroke-dashoffset:0;opacity:0}}
+.a-seal{animation:ix-pulse 2.6s ease-in-out infinite}
+.a-knob{animation:ix-knob 3.6s var(--ease) infinite}@keyframes ix-knob{0%,40%{transform:translateX(0)}50%,90%{transform:translateX(20px)}100%{transform:translateX(0)}}
+.a-hlL{animation:ix-hl 3.6s var(--ease) infinite}.a-hlR{animation:ix-hl 3.6s var(--ease) 1.8s infinite}@keyframes ix-hl{0%,40%{opacity:1}50%,90%{opacity:0}100%{opacity:1}}
+.a-sun{animation:ix-sun 4s ease-in-out infinite}@keyframes ix-sun{0%,100%{transform:translateY(6px);opacity:.6}50%{transform:translateY(-4px);opacity:1}}
+.a-arc{stroke-dasharray:4 6;animation:ix-dash 2.6s linear infinite}
+.a-fly{animation:ix-fly 2.6s var(--ease) infinite}@keyframes ix-fly{0%{transform:translate(0,0);opacity:0}15%{opacity:1}70%{transform:translate(30px,-6px);opacity:1}85%,100%{transform:translate(34px,-4px);opacity:0}}
+.a-bar1,.a-bar2,.a-bar3,.a-bar4,.a-bar5{transform-origin:center bottom;animation:ix-bar 1.4s ease-in-out infinite}
+.a-bar2{animation-delay:.15s}.a-bar3{animation-delay:.3s}.a-bar4{animation-delay:.45s}.a-bar5{animation-delay:.6s}
+@keyframes ix-bar{0%,100%{transform:scaleY(.45)}50%{transform:scaleY(1)}}
+.a-hh{transform-origin:46px 60px;animation:ix-turn 60s linear infinite}.a-mh{transform-origin:46px 60px;animation:ix-turn 8s linear infinite}@keyframes ix-turn{to{transform:rotate(360deg)}}
+.a-needle{transform-origin:center;animation:ix-needle 4s var(--ease) infinite}@keyframes ix-needle{0%,100%{transform:rotate(-18deg)}50%{transform:rotate(12deg)}}
+.a-mag{animation:ix-mag 4s ease-in-out infinite}@keyframes ix-mag{0%,100%{transform:translate(-8px,4px)}50%{transform:translate(8px,-4px)}}
+.a-r1,.a-r2,.a-r3,.a-r4{animation:ix-rows 4s ease-in-out infinite}.a-r2{animation-delay:.3s}.a-r3{animation-delay:.6s}.a-r4{animation-delay:.9s}
+@keyframes ix-rows{0%{opacity:0;transform:translateY(3px)}20%,80%{opacity:1;transform:translateY(0)}100%{opacity:0}}
+.a-col1,.a-col2,.a-col3{transform-origin:center bottom;animation:ix-col 4.5s var(--ease) infinite}.a-col2{animation-delay:.25s}.a-col3{animation-delay:.5s}
+@keyframes ix-col{0%{transform:scaleY(.2)}25%,85%{transform:scaleY(1)}100%{transform:scaleY(.2)}}
+.a-ring{stroke-dasharray:70;animation:ix-ring 3s var(--ease) infinite}@keyframes ix-ring{0%{stroke-dashoffset:70}50%,80%{stroke-dashoffset:0}100%{stroke-dashoffset:-70}}
+@media(prefers-reduced-motion:reduce){.ix [class*="a-"]{animation:none}}
+/* the phone with a grey bezel */
+.iphone{background:linear-gradient(145deg,#E6E6E2 0%,#CFCFCA 40%,#BDBDB8 70%,#D8D8D4 100%);box-shadow:inset 0 0 0 1.5px rgba(255,255,255,.7),inset 0 0 0 4px #B4B4AF,0 1px 1px rgba(0,0,0,.08),0 30px 60px -22px rgba(20,22,26,.3),0 60px 90px -60px rgba(20,22,26,.35)}
+.iphone::after{box-shadow:inset 0 0 0 1px rgba(255,255,255,.5)}
+.ip-screen{border-radius:38px}.iphone{border-radius:48px}
+/* bad to good: taller pictures; the without card warm and dim, the with card the brand's green */
+.ba3-card>img,.ba3-pic>img{aspect-ratio:4/3;object-position:center 35%}
+.ba3-card.before{background:#F5EFEB}.ba3-card.before h3{color:#8C3F36}.ba3-card.before li{color:#6E5A55}.ba3-card.before li svg{stroke:#B5534A}
+.ba3-card.after{background:#1F4D3A;color:#fff}.ba3-card.after h3{color:#fff}.ba3-card.after li svg{stroke:#EAD27C}
+.ba3-arrow{background:var(--gold)}
+/* the steps: the phone on the left, the three moves on the right */
+.plan-in>div:first-child{order:2}.plan-in>div:last-child{order:1}
+@media(max-width:860px){.plan-in>div:first-child{order:1}.plan-in>div:last-child{order:2}}
+/* who it is for: the left card in the brand's own colour, the right card with a person */
+.for.yes{background:var(--ink);color:#fff}
+.for.yes h3{color:#fff}.for.yes li{color:rgba(255,255,255,.88)}
+.for-brand{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:28px 24px 10px}
+.for-brand .logo{width:110px;height:40px;background:#fff}
+.for-kick{font:600 13px/1 var(--body);color:var(--ink);background:#EAD27C;padding:7px 10px;border-radius:4px;white-space:nowrap}
+.for li{grid-template-columns:22px 1fr;gap:12px}
+.for .li-mark{width:18px;height:18px;margin-top:3px;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.for.yes .li-mark{stroke:#EAD27C}.for.no .li-mark{stroke:var(--mut-2)}
+.for.no .for-pic{aspect-ratio:16/9}
+/* the comment cards: a verified mark on the name, the words with a gold quote mark, the character larger */
+.rev{padding:22px 22px 18px}
+.rev-top .av{width:56px;height:56px;box-shadow:none}
+.rev-top b{display:flex;align-items:center;gap:5px}
+.rev-top .vf{width:15px;height:15px;fill:var(--gold);stroke:#fff;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.rev-top .vf circle{stroke:none}
+.rev p{position:relative;padding-left:0}
+.rev p::before{content:"\201C";font:500 34px/0 var(--disp);color:var(--gold);margin-right:4px;vertical-align:-10px}
+/* the drawn icons at their slot size (the older .pain .ic svg / .step .ic svg rules set 26 and 30 px and outranked .ix) */
+.pain .ic svg.ix,.feat .ic svg.ix,.step .ic svg.ix,.beat .ic svg.ix{width:100%;height:100%;stroke:#1E2124;stroke-width:1.5;fill:none}
+.pcard .ic{width:150px;height:150px}.pcard.pain .ic{width:140px;height:140px}
+.step .ic,.beat .ic{display:block;width:88px;height:88px;background:none}
+/* the branded card: the mark as a faint signature in its empty corner */
+.for.yes{position:relative;overflow:hidden}
+.for.yes::after{content:"";position:absolute;right:-8%;bottom:-6%;width:72%;aspect-ratio:118.13/45.82;background:#fff;opacity:.05;-webkit-mask:url(../assets/logo/baik-logo_caps.svg) center/contain no-repeat;mask:url(../assets/logo/baik-logo_caps.svg) center/contain no-repeat;pointer-events:none}
+/* the drawn icons a touch larger beside the steps and beats, with room under the heading */
+.step .ic,.beat .ic{width:100px;height:100px}
+.step,.beat{grid-template-columns:116px 1fr}
+/* the dialogue head: the surah pill alone, on the left (Bazil: "no need the Baik logo, just push the surah to the left") */
+.dlg-head{justify-content:flex-start;padding-bottom:10px}
+.dlg .dlg-head .dlg-name{margin-left:0}
+/* the box names what the dua is for; the surah sits as a quiet line right above the ayat (Bazil: "the surah is on top of the
+   ayat, the one in the box is what it's for") */
+.dlg .dlg-for{font:500 13px/1.3 var(--body);margin:0 0 2px}
+.ba3-dlg .dlg-for{font:500 12px/1.3 var(--body);margin:0 0 2px}
+/* ===== pass (Bazil: "design is all over the place and not premium" (pain cards), "a better premium subtle arrow than something on a
+   button", "clear and easier to understand" (the panel headline), "where's the visual" (the branded card)) ===== */
+/* the pain and feature cards, quieter: white face, one fine frame, a fixed icon stage, even rhythm */
+.pcard-face.front{background:#fff}
+.pcard-face.front::before{border-color:rgba(138,106,18,.16)}
+.pcard .sheen{display:none}
+.pcard .ic{display:flex;align-items:center;justify-content:center;width:150px;height:150px;margin:0 auto 8px}
+.pcard.pain .ic{width:136px;height:136px;margin:4px auto 10px}
+.pcard h3{margin:0 0 6px}
+.pcard p{min-height:2.9em}
+.pcard.pain p{min-height:2.9em}
+.pains.four{gap:16px}
+/* the arrow: a long thin gold line with a small head, drawing itself */
+.ba3-arrow{width:72px;height:24px;border-radius:0;background:none;box-shadow:none;animation:none;display:block;justify-self:center}
+.ba3-arrow svg{width:72px;height:24px;stroke:var(--gold);fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.ba3-arrow .ln{stroke-dasharray:60;animation:ba3-draw 2.8s var(--ease) infinite}
+.ba3-arrow .hd{animation:ba3-head 2.8s var(--ease) infinite}
+@keyframes ba3-draw{0%{stroke-dashoffset:60;opacity:0}15%{opacity:1}45%,85%{stroke-dashoffset:0;opacity:1}100%{stroke-dashoffset:0;opacity:0}}
+@keyframes ba3-head{0%,30%{opacity:0;transform:translateX(-6px)}45%,85%{opacity:1;transform:translateX(0)}100%{opacity:0}}
+@media(max-width:860px){.ba3-arrow{transform:rotate(90deg);width:48px;height:24px}}
+/* the branded card: the platform picture under the wordmark, fading into the ink */
+.for.yes .for-pic{display:block;width:100%;aspect-ratio:16/9;object-fit:cover;object-position:center 30%;filter:saturate(.9)}
+.for.yes .for-brand{position:relative;margin-top:-72px;padding:48px 24px 10px;background:linear-gradient(180deg,rgba(30,33,36,0) 0%,rgba(30,33,36,.92) 46%,var(--ink) 100%)}
+.for.yes::after{opacity:.04}
+/* ===== pass (Bazil: "no need the box" (the flag button), "small Bismillah at the top" and "zoom out, darken a bit more" (the close),
+   "Open Baik must have icon") ===== */
+.lang .lang-b{border:0;background:transparent;padding:0 4px;box-shadow:none}
+.lang .lang-b:hover{background:transparent}
+body.home .nav:not(.is-solid):not(.open) .lang .lang-b{border:0;background:transparent}
+.close{min-height:min(96vh,860px);display:grid;align-items:center}
+.close img{object-position:center 42%;opacity:1}
+.close::before{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.5) 0%,rgba(0,0,0,.62) 55%,rgba(0,0,0,.72) 100%);z-index:0}
+.close-in{z-index:1}
+.close p.close-bism{font-size:clamp(18px,1.6vw,22px);line-height:1.6;color:rgba(255,255,255,.75);margin:0 auto 6px;max-width:none;direction:rtl;text-align:center}
+.btn .bi{width:18px;height:18px;margin-left:2px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;transition:transform .3s var(--ease)}
+.btn:hover .bi{transform:translateX(3px)}
+/* the dialogue head without its rule (Bazil: "no line") */
+.dlg-head{border-bottom:0;padding-bottom:4px;margin-bottom:8px}
+/* the drawn icons, bolder: a 2 px line, no ground shadow, the pain icons larger (Bazil: "picture 2 looks very bad, make it look better") */
+.ix{stroke-width:2}.ix .sh{display:none}.ix .ln{opacity:.42}
+.pain .ic svg.ix,.feat .ic svg.ix,.step .ic svg.ix,.beat .ic svg.ix{stroke-width:2}
+.pcard.pain .ic{width:128px;height:128px;margin:10px auto 16px}
+.a-glow{animation:ix-glow2 3s ease-in-out infinite}@keyframes ix-glow2{0%,100%{opacity:.85}50%{opacity:1}}
+/* the arrow between the two cards: a long gold arrow, always whole, a slow nudge (Bazil: "looks too lame") */
+.ba3{grid-template-columns:minmax(0,1fr) 110px minmax(0,1fr);gap:12px}
+.ba3-arrow{width:110px;height:32px;animation:ba2-nudge 2.4s var(--ease) infinite}
+.ba3-arrow svg{width:110px;height:32px;stroke:var(--gold);stroke-width:2.4}
+.ba3-arrow .ln,.ba3-arrow .hd{stroke-dasharray:none;animation:none;opacity:1;transform:none}
+@media(max-width:860px){.ba3{grid-template-columns:1fr}.ba3-arrow{transform:rotate(90deg);width:64px;height:32px;animation:none;margin:0 auto}.ba3-arrow svg{width:64px}}
+/* the opening dua on two lines at reading size */
+.opening-in{max-width:880px}
+.op-ar{font-size:clamp(28px,2.9vw,40px);line-height:1.75}
+/* the panel: the two cards closer, a shorter arrow, a symbol on every line (Bazil: "closer to each other, icons symbolising them,
+   arrow shorter") */
+.ba3{grid-template-columns:minmax(0,1fr) 56px minmax(0,1fr);gap:10px}
+.ba3-arrow{width:56px;height:24px}
+.ba3-arrow svg{width:56px;height:24px;stroke-width:2.2}
+.ba3-in li{grid-template-columns:24px 1fr;gap:12px}
+.ba3-in li .li-sym{width:21px;height:21px;margin-top:1px;fill:none;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+.ba3-card.before li .li-sym{stroke:#8C3F36}
+.ba3-card.after li .li-sym{stroke:#EAD27C}
+@media(max-width:860px){.ba3{grid-template-columns:1fr}}
+/* ===== the icon family as fine monoline marks (Bazil, 30 Oct late: "looks bad, take your time, finer line, a reference that
+   works better"): the Linear and Stripe product icon style, a 48 grid, one 1.5 stroke, no fills, one gold accent that breathes ===== */
+.ix,.pain .ic svg.ix,.feat .ic svg.ix,.step .ic svg.ix,.beat .ic svg.ix{stroke:#1E2124;stroke-width:1.5;fill:none;stroke-linecap:round;stroke-linejoin:round;overflow:visible}
+.ix .g{stroke:#8A6A12}.ix .gf{fill:#8A6A12;stroke:none}
+.ix .br{animation:ix-breathe 3.2s ease-in-out infinite}
+@keyframes ix-breathe{0%,100%{opacity:.75}50%{opacity:1}}
+.ix [class*="a-"]{animation:none}
+.pcard .ic{width:76px;height:76px;margin:14px auto 18px}.pcard.pain .ic{width:76px;height:76px;margin:18px auto 22px}
+.pcard .ic svg.ix{width:76px;height:76px}
+.step .ic,.beat .ic{width:60px;height:60px;margin-top:2px}
+.step .ic svg.ix,.beat .ic svg.ix{width:60px;height:60px}
+.step,.beat{grid-template-columns:76px 1fr;gap:14px}
+.pcard:hover .ic svg.ix{transform:none}
+
+@media(max-width:600px){.pcard .ic,.pcard.pain .ic,.pcard .ic svg.ix{width:60px;height:60px}.step .ic,.beat .ic,.step .ic svg.ix,.beat .ic svg.ix{width:48px;height:48px}.step,.beat{grid-template-columns:60px 1fr}}
+@media(prefers-reduced-motion:reduce){.ix .br{animation:none}}
+/* ===== pass (Bazil, 30 Oct late: "no Baik at background, surround with golden edges" (the branded card), "the phone edges look too
+   complex", "Apple and Google buttons the correct colour and design, Coming soon at the top of the rectangle", "zoom out more the
+   visuals" (the close), "the people look bad, focus on their face") ===== */
+.for.yes::after{display:none}
+.for.yes{box-shadow:0 0 0 1.5px var(--gold2,#C9A94A),0 24px 50px -30px rgba(30,33,36,.5)}
+.iphone{background:#CFCFCA;box-shadow:inset 0 0 0 2px #B8B8B3;border-radius:46px;padding:10px;animation:none}
+.iphone::after{display:none}
+.ip-screen{border-radius:38px}
+.store{position:relative;height:60px;padding:14px 18px 0 14px;border-radius:7px;border:1px solid #000;background:#000;color:#fff;gap:10px;overflow:hidden;align-items:flex-end;padding-bottom:9px}
+.store .st-logo{width:24px;height:24px;fill:#fff;flex:none;margin-bottom:1px}
+.store .st-play{fill:none}
+.store span span{display:flex;flex-direction:column;line-height:1.1}
+.store small{font-size:10px;color:rgba(255,255,255,.85);margin-bottom:2px;letter-spacing:.01em}
+.store b{font-size:17px;font-weight:600;color:#fff;letter-spacing:-.01em}
+.store .soon{position:absolute;top:0;left:0;right:0;transform:none;background:var(--gold);color:#fff;font:600 9.5px/1 var(--body);letter-spacing:.04em;text-transform:uppercase;padding:3px 0;border-radius:0;text-align:center}
+.close .store{background:#000;border-color:#000;color:#fff}.close .store .st-logo{fill:#fff}.close .store .st-play{fill:none}.close .store small,.close .store b{color:#fff}
+.close{min-height:0;aspect-ratio:16/9;display:grid;align-items:center}
+.close img{object-position:center center}
+@media(max-width:860px){.close{aspect-ratio:auto;min-height:min(88vh,720px)}}
+.rev-top .av{width:60px;height:60px}
+/* the store badges: the Coming soon strip inside the top of the rectangle, in sentence case; the close shows the whole picture */
+.store{height:64px;padding:18px 18px 10px 14px}
+.store .soon{font:600 10px/1 var(--body);letter-spacing:.02em;text-transform:none;padding:4px 0;background:var(--gold)}
+.close{aspect-ratio:auto;min-height:0;height:auto}
+.close img{position:relative;display:block;width:100%;height:auto;object-fit:contain;object-position:center;opacity:1}
+.close-in{position:absolute;inset:0;display:grid;align-items:center;justify-items:center;padding:0 var(--sgx);max-width:none}
+@media(max-width:860px){.close img{min-height:720px;object-fit:cover}}
+/* the close copy stacked and centred over the whole picture */
+.close-in{display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center}
+.close-in>*{margin-left:auto;margin-right:auto}
+/* the wide close picture: the copy sits in the calm room above the family, a touch darker so the white type reads */
+.close::before{background:linear-gradient(180deg,rgba(0,0,0,.52) 0%,rgba(0,0,0,.42) 50%,rgba(0,0,0,.6) 100%)}
+.close-in{justify-content:flex-start;padding-top:clamp(40px,6vw,88px)}
+.close p.close-src{margin-bottom:clamp(16px,2vw,28px)}
+@media(max-width:860px){.close-in{justify-content:center;padding-top:0}}
+/* the feature cards without their More hint (Bazil: "no need the more"); the cards still turn on hover */
+.pcard .hint{display:none}
+/* the readers' portraits: one flat illustrated set made on ChatGPT (31 Oct, Bazil: "the people look bad", "this looks quite bad"),
+   cut from one sheet so the fifteen share a style; a thin gold ring */
+.rev-top .av{width:60px;height:60px;border-radius:50%;object-fit:cover;object-position:center 30%;background:#F5F5F3;box-shadow:0 0 0 1.5px rgba(138,106,18,.35)}
+/* ===== the icons as live particle scenes (31 Oct, Bazil: "remake isometric and look premium", "check Prototype 1"): the
+   engine behind Prototype 1's set cards draws each object as dotted 3D edges that gather and keep moving ===== */
+.ic canvas.pcv{display:block;width:100%;height:100%;--dot:#1E2124;--glow:rgba(138,106,18,.16);--label:#6E6E6E}
+.pcard .ic{width:170px;height:140px;margin:6px auto 4px}.pcard.pain .ic{width:170px;height:140px;margin:10px auto 8px}
+.step .ic,.beat .ic{width:112px;height:96px;margin-top:-6px}
+.step,.beat{grid-template-columns:124px 1fr;gap:12px}
+@media(max-width:600px){.pcard .ic,.pcard.pain .ic{width:140px;height:116px}.step .ic,.beat .ic{width:88px;height:76px}.step,.beat{grid-template-columns:100px 1fr}}
+/* the scenes with headroom: taller stages so a crescent or a sun is never cut */
+.pcard .ic,.pcard.pain .ic{width:176px;height:164px;margin:0 auto 0}
+.step .ic,.beat .ic{width:120px;height:110px}
+.step,.beat{grid-template-columns:132px 1fr}
+/* ===== pass, 31 Oct (Bazil: "make the transition black better and perfect", "refine better" (store badges)) ===== */
+/* the branded card: the photo melts into the ink, no band, no edge */
+.for.yes{background:var(--ink)}
+.for.yes .for-pic{-webkit-mask-image:linear-gradient(180deg,#000 0%,#000 52%,rgba(0,0,0,.55) 72%,transparent 100%);mask-image:linear-gradient(180deg,#000 0%,#000 52%,rgba(0,0,0,.55) 72%,transparent 100%);aspect-ratio:16/10}
+.for.yes .for-brand{background:none;margin-top:-96px;padding:0 28px 6px;position:relative;z-index:1}
+.for.yes .for-brand .logo{width:118px;height:42px}
+.for.yes h3{margin-top:18px}
+/* the store badges: the official proportions, a hairline edge, the type set like Apple's and Google's own badges,
+   Coming soon as a quiet band inside the top in gold on a deeper black */
+.stores{gap:12px}
+.store{height:62px;min-width:176px;padding:20px 16px 8px 12px;border-radius:10px;border:1px solid #3A3A3C;background:#000;gap:10px;align-items:center;box-shadow:none}
+.store .soon{top:0;left:0;right:0;height:17px;padding:0;display:flex;align-items:center;justify-content:center;background:#16181A;border-bottom:1px solid #2A2C2E;color:#D4B55A;font:600 9.5px/1 var(--body);letter-spacing:.08em;text-transform:uppercase;border-radius:0}
+.store .st-logo{width:26px;height:26px;margin:0}
+.store span span{gap:1px}
+.store small{font:500 10px/1 -apple-system,"SF Pro Text",Inter,sans-serif;color:#fff;letter-spacing:.01em;margin:0}
+.store b{font:600 19px/1.05 -apple-system,"SF Pro Display",Inter,sans-serif;letter-spacing:-.02em;color:#fff}
+.close .store{background:#000;border-color:#3A3A3C}
+/* ===== pass, 31 Oct (Bazil: "drag this to the bottom a bit" (the close copy), "a bit more vertical space" (footer),
+   "more minimalist border, less thick" (phone), "thicker, match the Free forever chip", "that chip in white type") ===== */
+.close-in{padding-top:clamp(96px,12vw,180px)}
+@media(max-width:860px){.close-in{padding-top:0}}
+.foot-mark{padding-top:40px;padding-bottom:32px}
+.foot-legal{padding:36px var(--sgx) 64px}
+.iphone{padding:6px;border-radius:44px;background:#E4E4E0;box-shadow:inset 0 0 0 1px #CFCFCA,0 30px 60px -34px rgba(20,22,26,.28)}
+.ip-screen{border-radius:38px}
+.for.yes{box-shadow:0 0 0 2.5px var(--gold),0 24px 50px -30px rgba(30,33,36,.5)}
+.for-kick{background:var(--gold);color:#fff;font-weight:600}
+/* ===== the flat icon family (31 Oct, Bazil: "I like it flat, the charm comes from premium design and subtle animation and
+   visual"): illustrations in the portraits' hand, each floating a few pixels on its own slow rhythm, lifting under the pointer ===== */
+.ic img.fx{display:block;width:100%;height:100%;object-fit:contain;mix-blend-mode:multiply;animation:fx-float 6s ease-in-out infinite;transition:transform .5s var(--ease)}
+@keyframes fx-float{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}
+.pain:nth-child(2) .fx,.feat:nth-child(2) .fx,.step:nth-child(2) .fx,.beat:nth-child(2) .fx{animation-delay:-1.5s}
+.pain:nth-child(3) .fx,.feat:nth-child(3) .fx,.step:nth-child(3) .fx,.beat:nth-child(3) .fx{animation-delay:-3s}
+.pain:nth-child(4) .fx,.feat:nth-child(4) .fx{animation-delay:-4.5s}
+.feat:nth-child(5) .fx{animation-delay:-2.2s}.feat:nth-child(6) .fx{animation-delay:-3.7s}
+.pcard:hover .fx{animation-play-state:paused;transform:translateY(-8px) scale(1.04)}
+.pcard .ic,.pcard.pain .ic{width:178px;height:178px;margin:2px auto 10px}   /* 2 Nov 2026 evening (Bazil: "get better"): the isometric family needs room */
+.step .ic,.beat .ic{width:96px;height:96px;margin-top:-4px}
+.step,.beat{grid-template-columns:112px 1fr;gap:14px;align-items:center}
+@media(max-width:600px){.pcard .ic,.pcard.pain .ic{width:132px;height:132px}.step .ic,.beat .ic{width:72px;height:72px}.step,.beat{grid-template-columns:84px 1fr}}
+@media(prefers-reduced-motion:reduce){.ic img.fx{animation:none}}
+.ic img.fx{mix-blend-mode:normal}
+
+/* ---- 31 Oct 2026, the Baik is for card aligned (Bazil: "align properly the gold bar etc", "and thicker borders"): the chip sits on the
+   wordmark's baseline and its right edge mirrors the left inset; the wordmark, the heading and the ticks share one left edge; the gold ring
+   is 4 px ---- */
+.for.yes .for-brand{align-items:flex-end;padding:0 27.5px 6px 28px}
+.for.yes .for-kick{margin-bottom:1px}
+.for.yes h3{margin-left:2px}
+.for.yes{box-shadow:0 0 0 4px var(--gold),0 24px 50px -30px rgba(30,33,36,.5)}
+
+/* ---- 31 Oct 2026, the close lifted a little (Bazil: "push a bit to the top, just a bit") so the button has room above the section's foot ---- */
+.close-in{padding-top:clamp(64px,8.5vw,128px)}
+@media(max-width:860px){.close-in{padding-top:0}}
+
+/* ---- 31 Oct 2026, the wordmark is the word (Bazil: "Baik logo then the is for wording"): the card heading is the logo plus "is for",
+   set on one baseline, the chip on the same baseline at the right; the separate "Baik is for" line is gone ---- */
+.for.yes .for-lock{display:flex;align-items:baseline;gap:12px;margin:0;padding:0;font:500 30px/1 var(--display,'Inter Tight'),'Inter Tight',Inter,sans-serif;letter-spacing:-.01em;color:#fff}
+.for.yes .for-lock .logo{display:inline-block;flex:none}
+.for.yes .for-is{white-space:nowrap}
+.for.yes .for-brand{padding-bottom:16px}
+@media(max-width:520px){.for.yes .for-lock{font-size:24px;gap:9px}.for.yes .for-brand .logo{width:96px;height:34px}}
+
+/* ---- 31 Oct 2026, "Made for the moment, not for the shelf" in the middle (Bazil: "supposed to be in middle"): the block is centred, not only its text ---- */
+#for .sh{margin-left:auto;margin-right:auto}
+/* the heading's line box ends a few px under the baseline; the chip rises by that much so its foot is on the wordmark's baseline */
+.for.yes .for-kick{margin-bottom:4px}
+@media(max-width:520px){.for.yes .for-kick{margin-bottom:3px}}
+/* the logo box takes the wordmark's own proportions, so "is for" sits one word-space after the k, not after empty mask */
+.for.yes .for-lock .logo{width:auto!important;aspect-ratio:118.13/45.82;height:42px}
+.for.yes .for-lock{gap:10px}
+@media(max-width:520px){.for.yes .for-lock .logo{height:34px}.for.yes .for-lock{gap:8px}}
+
+/* ---- flat_vec.py (31 Oct 2026, Bazil: "is this really premium and easy to understand", "create a great icon symbolizing each doa
+   type", "simple flat minimalist but super premium high end icons that animates to make sense but also detialed enough"): the four
+   pains as solid ink silhouettes with white cut detail and one gold part, the motion telling each story; a solid glyph for each kind
+   of dua at the head of the tone pill. Written by tools/ws/p2/flat_vec.py, rerun it rather than editing here ---- */
+/* the old line-icon rule ".pain .ic svg" (26 px, ink stroke on everything) outranks a plain ".ic .fv", so this one names the svg and the pain */
+.ic svg.fv,.pain .ic svg.fv,.feat .ic svg.fv{display:block;width:100%;height:100%;overflow:visible;stroke:none;animation:none;transition:transform .5s var(--ease)}
+.pcard:hover .fv{transform:translateY(-4px)}
+.fv [class*="fv-"]{transform-box:fill-box;transform-origin:center}
+/* the book: a page turns over the spine, again and again */
+.fv .fv-flip{transform-origin:0 50%;animation:fv-flip 3.4s cubic-bezier(.45,.05,.35,1) infinite}
+@keyframes fv-flip{0%{transform:scaleX(1);opacity:0}10%{transform:scaleX(1);opacity:1}55%{transform:scaleX(-1);opacity:1}70%,100%{transform:scaleX(-1);opacity:0}}
+.fv-tw{animation:fv-tw 2.8s ease-in-out infinite}@keyframes fv-tw{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.3;transform:scale(.6)}}
+/* the forward: copies peel off and drift away; the question pulses */
+.fv-ghost{animation:fv-ghost 2.8s ease-out infinite}.fv-ghost.fv-d2{animation-delay:-1.4s}
+@keyframes fv-ghost{0%{transform:translate(0,0);opacity:0}12%{opacity:.3}100%{transform:translate(24px,-20px);opacity:0}}
+.fv-pulse{animation:fv-pulse 2.4s ease-in-out infinite}@keyframes fv-pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.1)}}
+/* the half remembered: the caret waits, the guesses come dot by dot and fade */
+.fv-blink{animation:fv-blink 1.05s steps(1) infinite}@keyframes fv-blink{50%{opacity:0}}
+.fv-guess{animation:fv-guess 4s ease-in-out var(--d) infinite backwards}
+@keyframes fv-guess{0%,6%{opacity:0;transform:scale(.3)}14%,74%{opacity:1;transform:scale(1)}86%,100%{opacity:0;transform:scale(.3)}}
+/* the advert opens under the ayah and shoves the page down, then folds away */
+.fv .fv-adin{transform-origin:50% 0;animation:fv-adin 5s cubic-bezier(.3,.7,.3,1) infinite}
+@keyframes fv-adin{0%,12%{transform:scaleY(0);opacity:0}24%,80%{transform:scaleY(1);opacity:1}90%,100%{transform:scaleY(0);opacity:0}}
+.fv-push{animation:fv-push 5s cubic-bezier(.3,.7,.3,1) infinite}
+@keyframes fv-push{0%,12%{transform:translateY(-24px)}24%,80%{transform:translateY(0)}90%,100%{transform:translateY(-24px)}}
+/* the features (1 Nov 2026). Sources: the seal stamps onto the page and the tick draws in */
+.fv-stamp{animation:fv-stamp 3.6s cubic-bezier(.3,.7,.3,1) infinite}
+@keyframes fv-stamp{0%,8%{transform:scale(1.7) rotate(-14deg);opacity:0}20%{transform:scale(.92) rotate(0);opacity:1}26%,86%{transform:scale(1);opacity:1}100%{transform:scale(1);opacity:0}}
+.fv-tick{stroke-dasharray:26;animation:fv-tick 3.6s ease-out infinite}@keyframes fv-tick{0%,22%{stroke-dashoffset:26}34%,100%{stroke-dashoffset:0}}
+/* reading: the toggle slides and the meaning changes language with it */
+.fv-knob{animation:fv-knob 4s cubic-bezier(.6,0,.3,1) infinite}@keyframes fv-knob{0%,40%{transform:translateX(0)}50%,90%{transform:translateX(26px)}100%{transform:translateX(0)}}
+.fv-la{animation:fv-la 4s ease-in-out infinite}@keyframes fv-la{0%,42%{opacity:1}50%,92%{opacity:0}100%{opacity:1}}
+.fv-lb{animation:fv-lb 4s ease-in-out infinite}@keyframes fv-lb{0%,42%{opacity:0}50%,92%{opacity:1}100%{opacity:0}}
+/* your table: the bookmark drops onto the kept card */
+.fv-drop{animation:fv-drop 3.4s cubic-bezier(.3,.7,.3,1) infinite}
+@keyframes fv-drop{0%,10%{transform:translateY(-22px);opacity:0}28%{transform:translateY(2px);opacity:1}34%,86%{transform:translateY(0);opacity:1}100%{transform:translateY(0);opacity:0}}
+/* audio: the speaker rings and gold follows the words, one every half second, right to left */
+.fv-ring{animation:fv-ring 1.4s ease-out infinite}.fv-ring.fv-r2{animation-delay:.35s}@keyframes fv-ring{0%{opacity:0}30%{opacity:1}100%{opacity:0}}
+.fv-word{animation:fv-word 4s linear var(--d) infinite backwards}@keyframes fv-word{0%{opacity:0}1%,12%{opacity:1}13.5%,100%{opacity:0}}
+/* prayer times: the minute hand comes round about the centre of the face, not its own box */
+.fv .fv-min{transform-box:view-box;transform-origin:78px 86px;animation:fv-min 6s linear infinite}@keyframes fv-min{to{transform:rotate(360deg)}}
+@media(prefers-reduced-motion:reduce){.fv [class*="fv-"]{animation:none}}
+/* the tone glyph: a mask in the pill's own text colour, so it is white on every tone and follows the swap */
+.dlg-name{display:inline-flex;align-items:center;gap:6px}
+[data-tone] .dlg-name::before{content:"";flex:none;width:14px;height:14px;background:currentColor;-webkit-mask:var(--tg) center/contain no-repeat;mask:var(--tg) center/contain no-repeat}
+.dlg .dlg-head .dlg-name{padding:6px 10px 6px 8px}.ba3-dlg .dlg-name{padding:6px 10px 6px 8px}
+@media(max-width:860px){[data-tone] .dlg-name::before{width:13px;height:13px}.dlg .dlg-head .dlg-name{padding:5.5px 9px 5.5px 7px}}
+/* the isometric family (icons_iso.py, 2 Nov 2026): every icon floats, out of step with its neighbours, paused under the pointer;
+   then each object moves its own way */
+.pain .ic svg.fv,.feat .ic svg.fv{animation:is-float 6s ease-in-out infinite;overflow:visible}
+.pcard:nth-child(2) .fv{animation-delay:-1.5s}.pcard:nth-child(3) .fv{animation-delay:-3s}.pcard:nth-child(4) .fv{animation-delay:-4.5s}.pcard:nth-child(5) .fv{animation-delay:-2.2s}.pcard:nth-child(6) .fv{animation-delay:-3.8s}
+.pcard:hover .fv{animation-play-state:paused}
+@keyframes is-float{0%,100%{transform:translateY(0)}50%{transform:translateY(-4px)}}
+.fv [class*="is-"]{transform-box:fill-box;transform-origin:center}
+.is-tw{animation:is-tw 2.6s ease-in-out infinite}.is-tw.is-t2{animation-delay:-1.3s}@keyframes is-tw{0%,100%{opacity:1;transform:scale(1) rotate(0)}50%{opacity:.2;transform:scale(.5) rotate(45deg)}}
+.is-breathe{animation:is-breathe 4s ease-in-out infinite}@keyframes is-breathe{0%,100%{transform:translateY(0)}50%{transform:translateY(-4px)}}
+.is-leaf{animation:is-leaf 3.8s cubic-bezier(.4,0,.3,1) infinite}@keyframes is-leaf{0%,20%{transform:translate(0,0);opacity:0}30%{opacity:1}100%{transform:translate(14px,-40px) rotate(-8deg);opacity:0}}
+.is-copy{animation:is-copy 3s ease-out infinite;opacity:0}.is-copy.is-c2{animation-delay:-1.5s}@keyframes is-copy{0%{transform:translate(0,0);opacity:0}15%{opacity:.6}100%{transform:translate(-16px,-18px);opacity:0}}
+.is-nudge{animation:is-nudge 3s cubic-bezier(.3,.7,.3,1) infinite}@keyframes is-nudge{0%,55%,100%{transform:translate(0,0)}30%{transform:translate(5px,-3px)}}
+.is-pop{animation:is-pop 3s cubic-bezier(.3,1.4,.4,1) infinite}@keyframes is-pop{0%,30%,100%{transform:scale(1)}45%{transform:scale(1.2)}60%{transform:scale(1)}}
+.is-blink{animation:is-blink 1.05s steps(1) infinite}@keyframes is-blink{50%{opacity:0}}
+.is-guess{animation:is-guess 4.2s ease-in-out var(--d) infinite backwards}@keyframes is-guess{0%,6%{opacity:0;transform:scale(.3)}14%,72%{opacity:1;transform:scale(1)}84%,100%{opacity:0;transform:scale(.3)}}
+.is-rise{animation:is-rise 5s cubic-bezier(.3,.7,.3,1) infinite}@keyframes is-rise{0%,12%{transform:translateY(26px)}26%,78%{transform:translateY(0)}92%,100%{transform:translateY(26px)}}
+.is-stamp{animation:is-stamp 4s cubic-bezier(.3,1.3,.4,1) infinite}@keyframes is-stamp{0%,8%{transform:scale(1.8) rotate(-16deg);opacity:0}20%{transform:scale(.94);opacity:1}28%,84%{transform:scale(1);opacity:1}100%{transform:scale(1);opacity:0}}
+.is-recoil{animation:is-recoil 4s ease-out infinite}@keyframes is-recoil{0%,19%,26%,100%{transform:translateY(0)}21%{transform:translateY(2px)}}
+.is-tick{stroke-dasharray:26;animation:is-tick 4s ease-out infinite}@keyframes is-tick{0%,22%{stroke-dashoffset:26}36%,100%{stroke-dashoffset:0}}
+.is-knob{animation:is-knob 4s cubic-bezier(.6,0,.3,1) infinite}@keyframes is-knob{0%,40%{transform:translate(0,0)}50%,90%{transform:translate(11px,6px)}100%{transform:translate(0,0)}}
+.is-la{animation:is-la 4s ease-in-out infinite}@keyframes is-la{0%,42%{opacity:1}50%,92%{opacity:0}100%{opacity:1}}
+.is-lb{animation:is-lb 4s ease-in-out infinite}@keyframes is-lb{0%,42%{opacity:0}50%,92%{opacity:1}100%{opacity:0}}
+.is-lift{animation:is-lift 4s cubic-bezier(.4,0,.2,1) infinite}@keyframes is-lift{0%,10%,60%,100%{transform:translateY(0)}30%{transform:translateY(-9px)}}
+.is-drop{animation:is-drop 4s cubic-bezier(.3,.7,.3,1) infinite}@keyframes is-drop{0%,30%{transform:translateY(-20px);opacity:0}46%{transform:translateY(1px);opacity:1}52%,90%{transform:translateY(0);opacity:1}100%{opacity:0}}
+.is-plane{animation:is-plane 3.6s ease-in-out infinite}@keyframes is-plane{0%,100%{transform:translate(0,0) rotate(0)}50%{transform:translate(6px,-8px) rotate(-3deg)}}
+.is-cone{animation:is-cone 2.1s ease-out infinite}@keyframes is-cone{0%{transform:scale(1)}15%{transform:scale(1.08)}100%{transform:scale(1)}}
+.fv .is-ring{transform-box:view-box;transform-origin:100px 58px;animation:is-ring 2.1s ease-out infinite both}.fv .is-ring:nth-of-type(2){animation-delay:.7s}.fv .is-ring:nth-of-type(3){animation-delay:1.4s}
+@keyframes is-ring{0%{transform:scale(.5);opacity:0}25%{opacity:1}100%{transform:scale(1.08);opacity:0}}
+.is-today{animation:is-today 6s steps(1) infinite}@keyframes is-today{0%{transform:translate(0,0)}25%{transform:translate(6.7px,-3.9px)}50%{transform:translate(13.4px,-7.8px)}75%{transform:translate(20.1px,-11.7px)}}
+@media(prefers-reduced-motion:reduce){.fv [class*="is-"],.pain .ic svg.fv,.feat .ic svg.fv{animation:none}}
+[data-tone="heart"]{--tg:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M10.4 20.4C10.1 20.4 9.8 20.3 9.5 20.1 5.4 17 2.6 14.4 2.6 10.9 2.6 8.6 4.4 6.8 6.7 6.8 8.2 6.8 9.6 7.6 10.4 8.8 11.2 7.6 12.6 6.8 14.1 6.8 16.4 6.8 18.2 8.6 18.2 10.9 18.2 14.4 15.4 17 11.3 20.1 11 20.3 10.7 20.4 10.4 20.4Z'/%3E%3Cpath d='M19.4 1.6Q19.4 4.6 22.4 4.6 19.4 4.6 19.4 7.6 19.4 4.6 16.4 4.6 19.4 4.6 19.4 1.6Z'/%3E%3C/svg%3E")}
+[data-tone="knowledge"]{--tg:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 3.6L23 8.8 12 14 1 8.8Z M5.8 12.2V16C5.8 17.9 8.6 19.4 12 19.4 15.4 19.4 18.2 17.9 18.2 16V12.2L12 15.1Z'/%3E%3Cpath d='M20.6 9.8V15.4' stroke='%23000' stroke-width='1.4' stroke-linecap='round'/%3E%3Ccircle cx='20.6' cy='16.6' r='1.5'/%3E%3C/svg%3E")}
+[data-tone="journey"]{--tg:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M2.6 13.8H21.4C20.6 16.6 18.3 18.2 15.4 18.2H8.6C5.7 18.2 3.4 16.6 2.6 13.8Z M11.1 2.6H12.9V13.8H11.1Z M13.9 3.6L20 12.4H13.9Z M10.1 6.2V12.4H5.4Z'/%3E%3Cpath d='M2.2 21.6C3.7 20.4 5.2 20.4 6.7 21.6 8.2 22.8 9.7 22.8 11.2 21.6 12.7 20.4 14.2 20.4 15.7 21.6 17.2 22.8 18.7 22.8 20.2 21.6' fill='none' stroke='%23000' stroke-width='1.7' stroke-linecap='round'/%3E%3C/svg%3E")}
+[data-tone="surah"]{--tg:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M2.4 5.4C5.4 4.4 8.8 5 11.1 6.8V14.2C8.8 12.6 5.4 12.1 2.4 12.9Z M21.6 5.4C18.6 4.4 15.2 5 12.9 6.8V14.2C15.2 12.6 18.6 12.1 21.6 12.9Z'/%3E%3Cpath d='M5.4 15.6L17 22.2M18.6 15.6L7 22.2' stroke='%23000' stroke-width='2.3' stroke-linecap='round'/%3E%3C/svg%3E")}
+[data-tone="protection"]{--tg:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill-rule='evenodd' d='M12 1.8L20.4 5V11.2C20.4 16.4 16.8 20.3 12 22.2 7.2 20.3 3.6 16.4 3.6 11.2V5Z M7.3 11.9L8.9 10.3 11 12.4 15.3 8.1 16.9 9.7 11 15.6Z'/%3E%3C/svg%3E")}
+[data-tone="world"]{--tg:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cg fill='none' stroke='%23000' stroke-width='1.9'%3E%3Ccircle cx='12' cy='12' r='9.2'/%3E%3Cellipse cx='12' cy='12' rx='4' ry='9.2'/%3E%3Cpath d='M2.8 12H21.2M4.4 7.2H19.6M4.4 16.8H19.6' stroke-width='1.6'/%3E%3C/g%3E%3C/svg%3E")}
+[data-tone="family"]{--tg:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill-rule='evenodd' d='M12 2.4L22 10.8H19.6V21H4.4V10.8H2Z M12 18.4C11.8 18.4 11.7 18.4 11.5 18.2 9.5 16.7 8.2 15.4 8.2 13.7 8.2 12.6 9.1 11.7 10.2 11.7 10.9 11.7 11.6 12.1 12 12.7 12.4 12.1 13.1 11.7 13.8 11.7 14.9 11.7 15.8 12.6 15.8 13.7 15.8 15.4 14.5 16.7 12.5 18.2 12.3 18.4 12.2 18.4 12 18.4Z'/%3E%3C/svg%3E")}
+/* ---- flat_vec.py end ---- */
+
+/* ---- 31 Oct 2026, a ground behind each reader (Bazil: "they should have background behind their character"): the portraits are
+   lifted PNGs (tools/ws/p2/av_lift.py), the ground is a pale gold disc from the page's own yellow, deepest at the foot and never
+   lighter than the cream hijabs and white kopiahs at the top, so they still stand off it ---- */
+.rev-top .av{background:linear-gradient(180deg,#EFE2C2 0%,#E3CE9E 100%)}
+
+/* ---- 1 Nov 2026 (Bazil: "arrow too long and they're too far apart"): the arrow keeps its head and loses most of its shaft, 34 px
+   in a 34 px column with 8 px either side, so the two pictures sit about 50 px apart instead of 76 ---- */
+.ba3{grid-template-columns:minmax(0,1fr) 34px minmax(0,1fr);gap:8px}
+.ba3-arrow,.ba3-arrow svg{width:34px;height:24px}
+@media(max-width:860px){.ba3{grid-template-columns:1fr;gap:10px}}
+
+/* the founding-members bar closes: a quiet X at its right edge, remembered in this browser */
+.ann{position:relative;padding-right:44px}
+.ann-x{position:absolute;right:max(10px,calc(var(--sgx) - 30px));top:50%;transform:translateY(-50%);width:28px;height:28px;display:grid;place-items:center;
+ border:0;border-radius:50%;background:transparent;color:rgba(255,255,255,.75);cursor:pointer;transition:background .15s,color .15s}
+.ann-x:hover{background:rgba(255,255,255,.12);color:#fff}
+.ann-x:focus-visible{outline:2px solid #fff;outline-offset:2px}
+.ann-x svg{width:15px;height:15px;stroke:currentColor;stroke-width:2;fill:none;stroke-linecap:round}
+/* the photo is shown 4:3 (a 1200-wide window centred on the 1600x900 frame), but the screenshot was
+   placed for the full 16:9 frame and missed the phone. The phone's screen in the frame is x 919-1189,
+   y 103-667; in the 4:3 window that is left 59.9%, width 22.5%, top 11.4%, height 62.7%. */
+.ba3-pic>img.ba3-screen{left:59.9%;top:11.4%;width:22.5%;height:62.7%;border-radius:11% / 5.2%}
+/* phones, after a pass at 320 to 768 wide */
+@media(max-width:600px){
+ /* the problem cards had a fixed shape with overflow hidden, so in two columns the line under the
+    title was cut off; the front face now sets the card's height and the back covers the same box */
+ .pcard.pain{aspect-ratio:auto;min-width:0}
+ .pains.four{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}
+ .pcard.pain .pcard-face.front{position:relative;inset:auto;height:100%;min-height:200px}
+}
+@media(max-width:760px){
+ /* stacked, the email field kept flex:1 along a column and collapsed to 18px tall */
+ .wait input{flex:none;width:100%}
+ /* touch areas: Join the list, the bar's X and the social icons were 17 to 25px; each now takes
+    a thumb-sized hit area without changing how it looks */
+ .ann a,.foot a.soc,a.soc{position:relative}
+ .ann a::after,a.soc::after{content:"";position:absolute;inset:-12px -10px}
+ .ann-x{width:40px;height:40px;right:4px}
+}
+/* stacked, the app section reads down the middle: the phone below is centred, so the store badges are too */
+@media(max-width:860px){#app .stores{justify-content:center}}
+/* "The dua exists." on one line and "Finding it is the hard part" on the next, set by style so the
+   translation key (the heading's markup) stays the same; the second line wraps only if a screen is too narrow */
+.h-two{max-width:none}.h-two em{display:block;white-space:nowrap}
+@media(max-width:420px){.h-two em{white-space:normal}}
